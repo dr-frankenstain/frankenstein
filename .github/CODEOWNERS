@@ -1,0 +1,13 @@
+# CODEOWNERS — routes reviews to maintainers.
+# Replace @SergeyIsakhanyan with your real org/team (or a list of @usernames).
+# NOTE: solution PRs are never merged, so code ownership mainly gates the
+# worsening/meta PRs that DO land on main.
+
+# Everything is owned by the maintainers by default.
+*                       @SergeyIsakhanyan
+
+# Project tooling & policy — extra care here.
+/.github/               @SergeyIsakhanyan
+CONTRIBUTING.md         @SergeyIsakhanyan
+SECURITY.md             @SergeyIsakhanyan
+CODE_OF_CONDUCT.md      @SergeyIsakhanyan

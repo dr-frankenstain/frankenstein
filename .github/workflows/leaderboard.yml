@@ -1,0 +1,100 @@
+name: leaderboard
+
+# Daily: reads 👍 reactions on open `solution` PRs, ranks them per challenge,
+# applies `top-solution` to the leader, tallies top contributors, and writes
+# LEADERBOARD.md.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build leaderboard
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+
+            // 1. Collect open solution PRs with their 👍 counts and linked issue.
+            const prs = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 });
+            const solutions = [];
+            for (const pr of prs) {
+              const labels = pr.labels.map(l => l.name);
+              if (!labels.includes('solution')) continue;
+
+              const reactions = await github.paginate(github.rest.reactions.listForIssue, { owner, repo, issue_number: pr.number, per_page: 100 });
+              const up = reactions.filter(r => r.content === '+1').length;
+
+              let issueNum = null;
+              const m = (pr.body || '').match(/[Aa]ddresses\s+#(\d+)/);
+              if (m) issueNum = parseInt(m[1], 10);
+              if (!issueNum) {
+                const bm = (pr.head.ref || '').match(/^solution\/(\d+)/);
+                if (bm) issueNum = parseInt(bm[1], 10);
+              }
+              solutions.push({ num: pr.number, title: pr.title, user: pr.user.login, url: pr.html_url, up, issue: issueNum });
+            }
+
+            // 2. Group by issue and rank.
+            const byIssue = {};
+            for (const s of solutions) {
+              const k = s.issue || 'unlinked';
+              (byIssue[k] = byIssue[k] || []).push(s);
+            }
+            for (const arr of Object.values(byIssue)) arr.sort((a, b) => b.up - a.up);
+
+            // 3. Apply / remove `top-solution` labels.
+            for (const arr of Object.values(byIssue)) {
+              for (let i = 0; i < arr.length; i++) {
+                const s = arr[i];
+                const current = (await github.rest.issues.listLabelsOnIssue({ owner, repo, issue_number: s.num })).data.map(l => l.name);
+                const has = current.includes('top-solution');
+                if (i === 0 && s.up > 0 && !has) {
+                  await github.rest.issues.addLabels({ owner, repo, issue_number: s.num, labels: ['top-solution'] });
+                } else if ((i !== 0 || s.up === 0) && has) {
+                  await github.rest.issues.removeLabel({ owner, repo, issue_number: s.num, name: 'top-solution' }).catch(() => {});
+                }
+              }
+            }
+
+            // 4. Contributor tally (by 👍 earned).
+            const tally = {};
+            for (const s of solutions) tally[s.user] = (tally[s.user] || 0) + s.up;
+            const topContribs = Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 20);
+
+            // 5. Render LEADERBOARD.md.
+            let md = '# 🏆 Frankenstein Leaderboard\n\n';
+            md += '_Auto-generated daily. Votes are 👍 reactions on open `solution` PRs._\n\n';
+            md += '## Top contributors\n\n| Rank | Contributor | 👍 total |\n|---|---|---|\n';
+            topContribs.forEach(([u, v], i) => { md += `| ${i + 1} | @${u} | ${v} |\n`; });
+            if (topContribs.length === 0) md += '| — | _no solutions yet_ | 0 |\n';
+
+            md += '\n## Top solution per challenge\n\n| Issue | Top solution | 👍 |\n|---|---|---|\n';
+            const issueKeys = Object.keys(byIssue).filter(k => k !== 'unlinked');
+            if (issueKeys.length === 0) md += '| — | _no solutions yet_ | 0 |\n';
+            for (const k of issueKeys) {
+              const top = byIssue[k][0];
+              md += `| #${k} | [#${top.num}](${top.url}) by @${top.user} | ${top.up} |\n`;
+            }
+
+            require('fs').writeFileSync('LEADERBOARD.md', md);
+            core.info('LEADERBOARD.md written.');
+
+      - name: Commit leaderboard
+        run: |
+          git config user.name "dr-frankenstein[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add LEADERBOARD.md
+          git diff --staged --quiet || git commit -m "chore: update leaderboard 🧟"
+          git push

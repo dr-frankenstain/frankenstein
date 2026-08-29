@@ -1,0 +1,94 @@
+# Source of truth for repo labels. Applied by the `label-sync` workflow
+# (micnncim/action-label-syncer). Colors are hex WITHOUT the leading '#'.
+
+# ── Discipline / language ──────────────────────────────────────────────
+- name: frontend
+  color: "1f6feb"
+  description: "Next.js / React / TypeScript"
+- name: python
+  color: "3572A5"
+  description: "Python API"
+- name: php
+  color: "4F5D95"
+  description: "PHP legacy service"
+- name: go
+  color: "00ADD8"
+  description: "Go booking service"
+- name: qa
+  color: "d876e3"
+  description: "Testing / bug bounty"
+- name: pm
+  color: "0e8a16"
+  description: "Product management"
+- name: design
+  color: "ff69b4"
+  description: "UI / UX / accessibility"
+- name: po
+  color: "5319e7"
+  description: "Product ownership"
+- name: devops
+  color: "0052cc"
+  description: "Setup / CI / deploy"
+- name: security
+  color: "b60205"
+  description: "Security / DevSecOps"
+
+# ── Difficulty ─────────────────────────────────────────────────────────
+- name: junior
+  color: "c2e0c6"
+  description: "Obvious, self-contained flaw"
+- name: mid
+  color: "fef2c0"
+  description: "Requires some context"
+- name: senior
+  color: "f9d0c4"
+  description: "Cross-cutting / subtle"
+- name: lead
+  color: "e99695"
+  description: "Systemic / architectural"
+
+# ── Type / scope ───────────────────────────────────────────────────────
+- name: challenge
+  color: "0075ca"
+  description: "A fixable flaw (most issues)"
+- name: qa-bounty
+  color: "c5def5"
+  description: "Undocumented bug to find + report"
+- name: cross-service
+  color: "fbca04"
+  description: "Bug at a service seam"
+- name: architecture
+  color: "d93f0b"
+  description: "Systemic / structural"
+- name: upgrade-fixable
+  color: "fef2c0"
+  description: "Best fixed by upgrading a version"
+
+# ── Workflow / status ──────────────────────────────────────────────────
+- name: solution
+  color: "6f42c1"
+  description: "On PRs — a never-merge answer; triggers challenge-guard"
+- name: top-solution
+  color: "a371f7"
+  description: "Current highest-👍 answer for its issue"
+- name: good-first-challenge
+  color: "7057ff"
+  description: "Easy entry point"
+- name: help-wanted
+  color: "008672"
+  description: "Wants more attempts"
+- name: dr-frankenstein
+  color: "24292e"
+  description: "A worsening (maintainer)"
+- name: needs-triage
+  color: "ededed"
+  description: "Unlabeled / unsorted"
+- name: duplicate
+  color: "cfd3d7"
+  description: "Already exists"
+- name: invalid
+  color: "e4e669"
+  description: "Not a valid challenge/solution"
+- name: wontfix-by-design
+  color: "ffffff"
+  description: "It's supposed to be broken"
