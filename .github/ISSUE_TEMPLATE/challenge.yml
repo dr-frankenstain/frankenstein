@@ -1,0 +1,71 @@
+name: 🧟 Challenge
+description: Document ONE flaw in the monster for people to solve.
+title: "[discipline] "
+labels: ["challenge", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for feeding the monster! 🧟
+
+        **One issue = one flaw.** Keep it focused. Solutions are submitted as Pull Requests that are **never merged** — the community votes with 👍 reactions.
+
+        Replace `discipline` in the title with the relevant tag, e.g. `[frontend] Cart crashes on corrupt localStorage`.
+  - type: dropdown
+    id: discipline
+    attributes:
+      label: Discipline
+      description: Which area does this flaw belong to?
+      options:
+        - frontend
+        - python
+        - php
+        - go
+        - qa
+        - pm
+        - design
+        - po
+        - devops
+        - security
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      description: Who should be able to solve it?
+      options:
+        - junior
+        - mid
+        - senior
+        - lead
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Affected page / route / endpoint / service
+      placeholder: "/cart · POST /api/orders · go-booking · docker-compose.yml"
+    validations:
+      required: true
+  - type: textarea
+    id: whats-wrong
+    attributes:
+      label: What's wrong
+      description: Describe the flaw and how to observe it.
+    validations:
+      required: true
+  - type: textarea
+    id: good-fix
+    attributes:
+      label: What a good solution shows
+      description: The acceptance-style guidance judges will look for.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Confirm
+      options:
+        - label: This is a challenge to be solved via a (never-merged) PR — not a request to fix `main`.
+          required: true

@@ -1,0 +1,44 @@
+name: auto-scorer
+
+# Runs the hidden test for a challenge (if one exists) against the PR's code.
+# Uses the `pull_request` trigger so fork code runs with a READ-ONLY token and
+# NO secrets — safe for untrusted contributions. The job's pass/fail is the
+# objective signal that complements 👍 voting.
+#
+# Hidden tests live at: .github/challenge-tests/<issue#>/run.sh  (exit 0 = pass)
+# Richer PR comments would require the workflow_run pattern (TODO).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve challenge id from branch
+        id: cid
+        run: |
+          NUM=""
+          if [[ "${{ github.head_ref }}" =~ ^solution/([0-9]+) ]]; then
+            NUM="${BASH_REMATCH[1]}"
+          fi
+          echo "id=$NUM" >> "$GITHUB_OUTPUT"
+
+      - name: Run hidden challenge test (if present)
+        run: |
+          ID="${{ steps.cid.outputs.id }}"
+          DIR=".github/challenge-tests/$ID"
+          if [[ -n "$ID" && -x "$DIR/run.sh" ]]; then
+            echo "Running hidden test for challenge #$ID"
+            echo "### auto-scorer: running hidden test for challenge #$ID" >> "$GITHUB_STEP_SUMMARY"
+            "$DIR/run.sh"
+          else
+            echo "No automated test for challenge '${ID:-unknown}'. Community 👍 decides."
+            echo "### auto-scorer: no automated test for this challenge — community 👍 decides." >> "$GITHUB_STEP_SUMMARY"
+          fi

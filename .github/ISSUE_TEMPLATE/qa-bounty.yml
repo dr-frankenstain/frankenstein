@@ -1,0 +1,67 @@
+name: 🐛 QA Bug Bounty
+description: Report an UNDOCUMENTED bug you found in the monster.
+title: "[qa] "
+labels: ["qa-bounty", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Found a bug that isn't already a documented challenge? Report it here. The best-documented reports earn 👍. 🧟
+
+        A great report is reproducible: clear steps, expected vs. actual, and where you saw it.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - "S1 — breaks a core flow / data loss"
+        - "S2 — major, has a workaround"
+        - "S3 — minor / cosmetic"
+        - "S4 — trivial"
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Where
+      placeholder: "/checkout on mobile Safari · POST /api/orders"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Browser / OS / device / monster version tag (e.g. v2.0)"
+    validations:
+      required: false
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Confirm
+      options:
+        - label: I searched existing issues and this bug isn't already documented.
+          required: true
+        - label: This is NOT one of the app's intentional security vulnerabilities (see SECURITY.md).
+          required: true

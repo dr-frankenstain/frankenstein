@@ -1,0 +1,69 @@
+name: issue-form-labeler
+
+# Reads the Discipline and Difficulty dropdown answers from an issue's body
+# (GitHub renders each issue-form field as a "### <label>" section) and applies
+# the matching labels automatically. Removes `needs-triage` once a discipline
+# has been assigned.
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+
+            const disciplines = ['frontend','python','php','go','qa','pm','design','po','devops','security'];
+            const difficulties = ['junior','mid','senior','lead'];
+
+            // Parse "### Header\n\n value" sections from the issue-form body.
+            // Split on the "### " headers (multiline) — robust and regex-anchor-free.
+            const sections = {};
+            for (const part of body.split(/^###\s+/m).slice(1)) {
+              const nl = part.indexOf('\n');
+              const header = (nl === -1 ? part : part.slice(0, nl)).trim().toLowerCase();
+              const value = (nl === -1 ? '' : part.slice(nl + 1)).trim();
+              sections[header] = value;
+            }
+
+            const valueFor = (predicate) => {
+              const key = Object.keys(sections).find(predicate);
+              if (!key) return null;
+              // take the first non-empty line; ignore GitHub's "_No response_"
+              const v = (sections[key].split('\n')[0] || '').trim().toLowerCase();
+              if (!v || v === '_no response_' || v === 'none') return null;
+              return v;
+            };
+
+            const toAdd = [];
+            const disc = valueFor(k => k.includes('disciplin'));
+            if (disc && disciplines.includes(disc)) toAdd.push(disc);
+
+            const diff = valueFor(k => k.includes('difficulty'));
+            if (diff && difficulties.includes(diff)) toAdd.push(diff);
+
+            if (toAdd.length === 0) {
+              core.info('No discipline/difficulty dropdown values found to label.');
+              return;
+            }
+
+            await github.rest.issues.addLabels({ owner, repo, issue_number: issue.number, labels: toAdd });
+            core.info(`Applied labels: ${toAdd.join(', ')}`);
+
+            // If we categorized a discipline, the issue is triaged enough — drop needs-triage.
+            if (disc && disciplines.includes(disc)) {
+              const current = (issue.labels || []).map(l => (typeof l === 'string' ? l : l.name));
+              if (current.includes('needs-triage')) {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number: issue.number, name: 'needs-triage' }).catch(() => {});
+              }
+            }

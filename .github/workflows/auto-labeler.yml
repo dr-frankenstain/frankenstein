@@ -1,0 +1,56 @@
+name: auto-labeler
+
+# Labels new PRs as `solution`, copies discipline/difficulty from the linked
+# issue, and posts the "this won't be merged" reminder.
+# Uses pull_request_target so it has a write token for fork PRs. It does NOT
+# check out or run PR code, so this is safe.
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+  issues: read
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const toAdd = new Set(['solution']);
+
+            // Resolve the linked issue from "Addresses #N" or branch "solution/<N>-..."
+            let issueNum = null;
+            const bodyMatch = (pr.body || '').match(/[Aa]ddresses\s+#(\d+)/);
+            if (bodyMatch) issueNum = parseInt(bodyMatch[1], 10);
+            if (!issueNum) {
+              const branchMatch = (pr.head.ref || '').match(/^solution\/(\d+)/);
+              if (branchMatch) issueNum = parseInt(branchMatch[1], 10);
+            }
+
+            const disciplines = ['frontend','python','php','go','qa','pm','design','po','devops','security'];
+            const difficulties = ['junior','mid','senior','lead'];
+
+            if (issueNum) {
+              try {
+                const issue = await github.rest.issues.get({ owner, repo, issue_number: issueNum });
+                for (const l of issue.data.labels) {
+                  const name = typeof l === 'string' ? l : l.name;
+                  if (disciplines.includes(name) || difficulties.includes(name)) toAdd.add(name);
+                }
+              } catch (e) {
+                core.warning(`Could not read linked issue #${issueNum}: ${e.message}`);
+              }
+            }
+
+            await github.rest.issues.addLabels({ owner, repo, issue_number: pr.number, labels: [...toAdd] });
+
+            const reminder = issueNum
+              ? `Thanks for your solution to #${issueNum}! 🧟\n\n**Heads up:** this PR will **not** be merged — that's by design. It's your submitted answer. The community votes with 👍 reactions, and the top-voted solution per issue wins.`
+              : `Thanks for your solution! 🧟 Please link the issue with \`Addresses #<issue>\` so we can label and rank it.\n\n**Heads up:** this PR will **not** be merged — that's by design.`;
+            await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: reminder });

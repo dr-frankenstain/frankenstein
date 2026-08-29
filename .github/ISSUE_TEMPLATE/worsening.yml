@@ -1,0 +1,46 @@
+name: 🧪 Propose a Worsening (maintainers)
+description: Propose a new horror to add to the monster. Maintainers only — everyone else, use Discussions.
+title: "[worsen] "
+labels: ["dr-frankenstein", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Dr. Frankenstein's laboratory. 🧟‍♂️ Worsenings are the **only** changes that land on `main`.
+
+        Propose a new bad pattern, then (once merged) tag a new "monster version" and open the challenges it spawns.
+  - type: textarea
+    id: horror
+    attributes:
+      label: The horror
+      description: What new bad pattern / dumb feature / regression are we adding?
+    validations:
+      required: true
+  - type: dropdown
+    id: discipline
+    attributes:
+      label: Primary discipline
+      options: [frontend, python, php, go, qa, pm, design, po, devops, security]
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty it targets
+      options: [junior, mid, senior, lead]
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Where it lives
+      placeholder: "New page /deals · go-booking lock logic · docker-compose.yml"
+    validations:
+      required: true
+  - type: textarea
+    id: challenges
+    attributes:
+      label: Challenges it will spawn
+      description: List the issues to open once this worsening is merged.
+    validations:
+      required: false

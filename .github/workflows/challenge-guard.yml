@@ -1,0 +1,27 @@
+name: challenge-guard
+
+# Makes solution PRs UN-MERGEABLE by design. Add this job as a REQUIRED
+# status check on `main` so the merge button stays blocked whenever a PR
+# is labeled `solution`.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block merge of solution PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = (context.payload.pull_request.labels || []).map(l => l.name);
+            if (labels.includes('solution')) {
+              core.setFailed('🧟 This is a solution PR. Solutions are never merged — this check fails on purpose to keep it un-mergeable. Your PR stays open as your submitted answer; the community votes with 👍.');
+            } else {
+              core.info('Not a solution PR — guard passes.');
+            }

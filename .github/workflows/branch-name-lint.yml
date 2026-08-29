@@ -1,0 +1,26 @@
+name: branch-name-lint
+
+# Warns (does NOT fail) when a PR's head branch doesn't match the naming
+# convention. Solutions should be `solution/<issue#>-<slug>`.
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const ref = context.payload.pull_request.head.ref || '';
+            const ok = /^(solution\/\d+-[a-z0-9-]+|(worsen|docs|ci|chore|infra)\/[a-z0-9-]+)$/.test(ref);
+            if (ok) {
+              core.info(`Branch name OK: ${ref}`);
+              return;
+            }
+            core.warning(`Branch "${ref}" doesn't match the naming convention. Solutions should be "solution/<issue#>-<slug>" (e.g. solution/42-input-validation). This is a warning, not a failure.`);
