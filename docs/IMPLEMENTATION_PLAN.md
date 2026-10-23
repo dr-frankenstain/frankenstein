@@ -26,7 +26,7 @@ The engineering companion to [`ROADMAP.md`](./ROADMAP.md). It defines *how* the 
 ### Non-functional (deliberately inverted)
 - **"Bad but working":** it must run and be usable; the badness is in *how*, not in crashing on boot.
 - **Deliberately broken but survivable setup:** first-run friction is intentional, but a documented workaround always exists.
-- **Deliberately outdated:** versions pinned 1–2 majors behind (React 17, Next 13, Node 16, TS 4.5, Python 3.8, Pydantic v1, PHP 7.4, Go 1.19).
+- **Deliberately outdated:** versions pinned 1–2 majors behind (React 17, Next 12, Node 16, TS 4.5, Python 3.8, Pydantic v1, PHP 7.4, Go 1.19).
 - **Hostable safely:** because it's intentionally vulnerable, production must be isolated, data-free, ephemeral/auto-reset, and rate-limited.
 
 ### Constraints
@@ -61,9 +61,9 @@ Next.js frontend ────────┤                      │           
 frankenstein/
 ├── .raise-the-monster.sh         # ⚠ HIDDEN, UNDOCUMENTED one-shot bootstrap (see §4)
 ├── .env.example                  # intentionally missing a few required vars
-├── frontend/                     # Next.js 13, React 17, TS 4.5
+├── frontend/                     # Next.js 12.3.4 (Pages Router), React 17, TS 4.5
 │   ├── docker-compose.yml        # frontend brought up ON ITS OWN
-│   ├── app/                      # one route per bad page
+│   ├── pages/                    # one route per bad page
 │   ├── components/ hooks/ styles/
 │   └── package.json              # pinned-old + duplicate/unused deps
 ├── backend/
@@ -106,7 +106,7 @@ Each `docs/frontend/pages/NN-*.md` and `docs/backend/**/NN-*.md` maps 1:1 to a r
 ## 5. How bad features are implemented (conventions)
 
 - **One headline bad pattern per page/handler.** Secondary flaws are allowed but the doc names the headline.
-- **FE:** a new route under `app/`, styling approach chosen *per page* on purpose (inline / CSS / SCSS / Tailwind) so inconsistency is visible and navigable.
+- **FE:** a new route under `pages/`, styling approach chosen *per page* on purpose (inline / CSS / SCSS / Tailwind) so inconsistency is visible and navigable.
 - **BE:** one handler per flaw; junior batch stays within a single service (no cross-service seams until senior/lead).
 - **Ship with issues:** every new bad feature opens its GitHub issue(s), tagged discipline + difficulty, in the same change.
 - **Realistic, not cartoonish:** the flaw should look like real production decay (N+1, missing validation), not a contrived crash.

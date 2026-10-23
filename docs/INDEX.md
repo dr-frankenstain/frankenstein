@@ -2,7 +2,7 @@
 id: index
 type: index
 status: current
-updated: 2026-09-23
+updated: 2026-10-23
 scope: [routing, navigation]
 covers: []
 related: []
@@ -32,11 +32,16 @@ superseded_by: null
 
 ### State
 
-- `state` — Frankenstein — current state — `docs/STATE.md` (current, 2026-09-23)
+- `state` — Frankenstein — current state — `docs/STATE.md` (current, 2026-10-23)
+
+### Decisions
+
+- `adr-0001-next12-react17` — The frontend runs Next.js 12.3.4 on React 17 (Pages Router) — `docs/decisions/0001-next12-react17.md` (current, 2026-10-23)
+- `adr-0002-shared-external-network` — Services share one external Docker network created by the DB — `docs/decisions/0002-shared-external-network.md` (current, 2026-10-23)
 
 ### Specs
 
-- `spec-phase1-design` — Phase 1 — Skeleton & Scaffolding: Technical Design — `docs/PHASE1_DESIGN.md` (current, 2026-09-07)
+- `spec-phase1-design` — Phase 1 — Skeleton & Scaffolding: Technical Design — `docs/PHASE1_DESIGN.md` (current, 2026-10-23)
 
 ### Operations
 
@@ -52,19 +57,18 @@ superseded_by: null
 - `ops-05-case-sensitive-search` — FE Page 05 — Search Page (case-sensitive exact match) — `docs/frontend/pages/05-case-sensitive-search.md` (current, 2026-08-10)
 - `ops-06-annoying-popups` — FE Page 06 — Deals Page (the popup hellscape) — `docs/frontend/pages/06-annoying-popups.md` (current, 2026-08-10)
 - `ops-github-setup` — GitHub Repository Configuration — Project Frankenstein — `docs/GITHUB_SETUP.md` (current, 2026-08-10)
-- `ops-ideas` — Frankenstein — Idea Backlog — `docs/IDEAS.md` (current, 2026-08-24)
+- `ops-ideas` — Frankenstein — Idea Backlog — `docs/IDEAS.md` (current, 2026-10-23)
 - `ops-junior-backend` — Bad Solutions — Junior Backend Developer — `docs/bad-solutions/junior-backend.md` (current, 2026-08-10)
 - `ops-junior-frontend` — Bad Solutions — Junior Frontend Developer — `docs/bad-solutions/junior-frontend.md` (current, 2026-08-10)
 - `ops-project` — Project Frankenstein — Vision & Overview — `docs/PROJECT.md` (current, 2026-08-10)
 - `ops-setup` — Backend — Setup & Conventions — `docs/backend/SETUP.md` (current, 2026-08-10)
-- `ops-setup-2` — Frontend — Setup & Conventions — `docs/frontend/SETUP.md` (current, 2026-08-10)
+- `ops-setup-2` — Frontend — Setup & Conventions — `docs/frontend/SETUP.md` (current, 2026-10-23)
 
 ### Plans
 
-- `plan-implementation-plan` — Project Frankenstein — Technical Implementation Plan — `docs/IMPLEMENTATION_PLAN.md` (current, 2026-08-10)
+- `plan-implementation-plan` — Project Frankenstein — Technical Implementation Plan — `docs/IMPLEMENTATION_PLAN.md` (current, 2026-10-23)
 - `plan-owner-manual-tasks` — Owner Manual Tasks — Sergey's Checklist — `docs/OWNER_MANUAL_TASKS.md` (current, 2026-08-10)
-- `plan-roadmap` — Project Frankenstein — Roadmap — `docs/ROADMAP.md` (current, 2026-08-29)
-- `plan-phase1-skeleton` — Phase 1 — Skeleton & Scaffolding Implementation Plan — `docs/plans/2026-10-23-phase1-skeleton.md` (draft, 2026-10-23)
+- `plan-roadmap` — Project Frankenstein — Roadmap — `docs/ROADMAP.md` (current, 2026-10-23)
 
 ## Archive
 
