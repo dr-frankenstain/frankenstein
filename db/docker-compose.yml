@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: frankenstein-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_monster
+      MYSQL_DATABASE: frankenstein
+      MYSQL_USER: frank
+      MYSQL_PASSWORD: monster
+    volumes:
+      - frankenstein-db-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot_monster"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  frankenstein-db-data:
+    name: frankenstein-db-data
+
+# Every other service joins this network as "external", so the DB has to be
+# started first. Nobody wrote that down.
+networks:
+  default:
+    name: frankenstein-net
