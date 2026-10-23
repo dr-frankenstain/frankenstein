@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frankenstein | THROWAWAY DRAFT</title>
+<!-- THROWAWAY DRAFT of the landing page. Not product code. Fonts via Google Fonts CDN and GSAP via cdnjs for the draft only. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0a0c0b;
+    --surface: #0f1311;
+    --surface-2: #151a17;
+    --line: rgba(230, 232, 225, .14);
+    --text: #e6e8e1;
+    --muted: #9aa39c;
+    --accent: #a3e635;          /* the one accent: galvanic green */
+    --accent-ink: #0a0c0b;
+    --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    --body: "Geist", system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+    --wrap: 1360px;
+    --pad: clamp(1rem, 4vw, 3rem);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { background: var(--bg); }
+  body { background: var(--bg); color: var(--text); font: 400 1rem/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--pad); }
+  .display { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.01em; line-height: .92; }
+  .mono { font-family: var(--mono); }
+  p { max-width: 62ch; }
+
+  /* buttons: sharp corners everywhere (shape lock) */
+  .btn { display: inline-flex; align-items: center; gap: .6rem; white-space: nowrap; padding: .95rem 1.5rem; font: 600 .95rem var(--body); border: 1px solid var(--accent); transition: transform .25s cubic-bezier(.16,1,.3,1), background .25s, color .25s; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-primary:active { transform: translateY(1px) scale(.98); }
+  .btn-ghost { color: var(--text); border-color: var(--line); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* nav: one line, 64px */
+  .nav { position: fixed; inset: 0 0 auto 0; height: 64px; z-index: 40; background: linear-gradient(var(--bg), rgba(10,12,11,.7)); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .nav .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .brand { font: 900 1.5rem/1 var(--display); letter-spacing: .04em; text-transform: uppercase; border-bottom: 2px dashed var(--accent); padding-bottom: 2px; }
+  .nav ul { display: flex; gap: 2rem; list-style: none; padding: 0; }
+  .nav ul a { font-size: .9rem; color: var(--muted); transition: color .2s; }
+  .nav ul a:hover { color: var(--text); }
+  .nav .btn { padding: .55rem 1rem; font-size: .85rem; }
+
+  /* hero: asymmetric split, fits the viewport */
+  .hero { position: relative; min-height: 100dvh; display: flex; align-items: center; padding-top: 64px; overflow: hidden; }
+  #arc { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .hero .wrap { position: relative; width: 100%; display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; }
+  .hero-copy { grid-column: 1 / span 10; padding-block: 4rem 3rem; }
+  .hero h1 { font-size: clamp(3.1rem, 7vw, 7.2rem); }
+  .hero h1 .line { display: block; overflow: hidden; padding-bottom: .06em; }
+  .hero h1 .line > span { display: block; }
+  .hero h1 .broken { color: var(--accent); }
+  .hero .sub { margin-top: 1.75rem; font-size: clamp(1.05rem, 1.5vw, 1.3rem); color: var(--muted); max-width: 34ch; }
+  .hero .cta { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+  .flash { position: fixed; inset: 0; background: #dfffb0; opacity: 0; pointer-events: none; z-index: 60; mix-blend-mode: soft-light; }
+
+  /* the one marquee: real flaws from the project */
+  .marquee { border-block: 1px solid var(--line); background: var(--surface); overflow: hidden; }
+  .marquee-track { display: flex; width: max-content; animation: slide 46s linear infinite; }
+  .marquee span { font: 500 .95rem var(--mono); color: var(--muted); padding: 1rem 2.25rem; white-space: nowrap; }
+  .marquee span:nth-child(3n) { color: var(--accent); }
+  @keyframes slide { to { transform: translateX(-50%); } }
+
+  /* lore: horizontal pan */
+  .lore { position: relative; overflow: hidden; }
+  .lore-track { display: flex; align-items: stretch; min-height: 100dvh; }
+  .lore-panel { flex: 0 0 min(78vw, 920px); padding: 7rem var(--pad) 5rem; display: flex; flex-direction: column; justify-content: center; border-right: 1px dashed var(--line); }
+  .lore-panel.intro { flex-basis: min(60vw, 700px); }
+  .lore-panel h2 { font-size: clamp(2.6rem, 6vw, 5.5rem); }
+  .lore-year { font: 900 clamp(5rem, 15vw, 14rem)/.85 var(--display); color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+  .lore-panel h3 { margin-top: 1.5rem; font-size: clamp(1.8rem, 3vw, 2.6rem); }
+  .lore-panel p { margin-top: 1rem; color: var(--muted); font-size: 1.1rem; }
+  .lore-panel.last .lore-year { -webkit-text-stroke: 0; color: var(--text); font-size: clamp(3rem, 8vw, 7rem); line-height: .95; }
+
+  /* anatomy: bento, exactly 5 cells, stitched seams */
+  .section { padding: clamp(5rem, 11vw, 9rem) 0; }
+  .section-head h2 { font-size: clamp(2.4rem, 5.5vw, 5rem); max-width: 14ch; }
+  .section-head p { margin-top: 1.25rem; color: var(--muted); font-size: 1.1rem; }
+  .bento { margin-top: 3rem; display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; }
+  .cell { position: relative; min-height: 15rem; padding: 1.75rem; border: 1px dashed var(--line); display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; transition: border-color .3s; overflow: hidden; }
+  .cell:hover { border-color: var(--accent); }
+  .cell h3 { font-size: clamp(2rem, 3.4vw, 3.2rem); }
+  .cell p { color: var(--muted); font-size: 1rem; max-width: 40ch; }
+  .cell .pin { font: 500 .8rem var(--mono); color: var(--accent); }
+  .c-front { grid-column: span 4; background: radial-gradient(120% 140% at 100% 0%, rgba(163,230,53,.18), transparent 55%), var(--surface); min-height: 22rem; }
+  .c-py { grid-column: span 2; background: repeating-linear-gradient(0deg, transparent 0 23px, rgba(230,232,225,.05) 23px 24px), repeating-linear-gradient(90deg, transparent 0 23px, rgba(230,232,225,.05) 23px 24px), var(--surface); }
+  .c-php { grid-column: span 2; background: repeating-linear-gradient(135deg, transparent 0 10px, rgba(230,232,225,.06) 10px 11px), var(--surface); }
+  .c-db { grid-column: span 2; background: var(--accent); color: var(--accent-ink); border-style: solid; border-color: var(--accent); }
+  .c-db p, .c-db .pin { color: #1c2a07; }
+  .c-go { grid-column: span 2; border-color: rgba(230,232,225,.3); }
+  .c-go h3 { color: var(--muted); }
+
+  /* how it works: sticky stack */
+  .stack { margin-top: 3rem; }
+  .stack-card { position: sticky; top: 64px; min-height: 78dvh; display: flex; align-items: center; }
+  .stack-inner { width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: clamp(1.5rem, 4vw, 3.5rem); display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: end; min-height: 22rem; }
+  .stack-inner h3 { font-size: clamp(3.5rem, 9vw, 8rem); color: var(--accent); }
+  .stack-inner p { font-size: clamp(1.1rem, 1.7vw, 1.5rem); color: var(--text); max-width: 36ch; }
+
+  /* challenges: vertical grouped list beside a sticky headline */
+  .challenges { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .challenges .section-head { position: sticky; top: 112px; }
+  .group + .group { margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px dashed var(--line); }
+  .group h3 { font: 600 .85rem var(--mono); color: var(--accent); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1rem; }
+  .row { display: grid; grid-template-columns: minmax(11rem, 14rem) 1fr; gap: 1.25rem; padding: .9rem 0; align-items: baseline; }
+  .row code { font: 500 .95rem var(--mono); color: var(--text); }
+  .row span { color: var(--muted); }
+
+  /* final */
+  .final { text-align: left; }
+  .final h2 { font-size: clamp(3rem, 10vw, 10rem); max-width: 12ch; }
+  .final .cta { margin-top: 2.5rem; }
+  footer { border-top: 1px solid var(--line); padding: 2rem 0 3rem; color: var(--muted); font-size: .9rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+  footer nav { display: flex; gap: 1.5rem; }
+  footer a:hover { color: var(--text); }
+
+  /* mobile collapse */
+  @media (max-width: 767px) {
+    .nav ul { display: none; }
+    .hero-copy { grid-column: 1 / -1; }
+    .lore-track { flex-direction: column; min-height: 0; }
+    .lore-panel, .lore-panel.intro { flex-basis: auto; padding: 4rem var(--pad); border-right: 0; border-bottom: 1px dashed var(--line); }
+    .bento { grid-template-columns: 1fr; }
+    .bento .cell { grid-column: auto; }
+    .stack-inner { grid-template-columns: 1fr; align-items: start; }
+    .challenges { grid-template-columns: 1fr; }
+    .challenges .section-head { position: static; }
+    .row { grid-template-columns: 1fr; gap: .15rem; }
+  }
+  /* no pinned pan when motion is reduced: let the lore scroll sideways by hand */
+  @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+    .lore-track { overflow-x: auto; scroll-snap-type: x mandatory; }
+    .lore-panel { scroll-snap-align: start; }
+    .marquee-track { animation: none; }
+    .stack-card { position: static; min-height: 0; padding-block: .75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="flash" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Frankenstein</a>
+    <ul>
+      <li><a href="#lore">Lore</a></li>
+      <li><a href="#anatomy">Anatomy</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#challenges">Challenges</a></li>
+    </ul>
+    <a class="btn btn-ghost" href="https://github.com/dr-frankenstain/frankenstein">GitHub</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <canvas id="arc" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="hero-copy">
+        <h1 class="display">
+          <span class="line"><span>Alive, and</span></span>
+          <span class="line"><span class="broken">broken on purpose.</span></span>
+        </h1>
+        <p class="sub">A real web app stitched from every bad decision in production. Fix a flaw. The best answer wins.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#challenges">Browse challenges</a>
+          <a class="btn btn-ghost" href="#lore">Read the lore</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-label="A few of the flaws living in the monster">
+    <div class="marquee-track">
+      <span>SELECT * FROM users WHERE email = '$_GET[email]'</span><span>200 OK {"success": false}</span><span>const user: any</span><span>@ts-ignore</span><span>password == md5($input)</span><span>GET /api/delete-item?id=5</span><span>JSON.parse(localStorage.getItem('cart'))</span><span>setInterval(showNewsletterPopup, 3000)</span><span>font-family: Comic Sans MS</span>
+      <span>SELECT * FROM users WHERE email = '$_GET[email]'</span><span>200 OK {"success": false}</span><span>const user: any</span><span>@ts-ignore</span><span>password == md5($input)</span><span>GET /api/delete-item?id=5</span><span>JSON.parse(localStorage.getItem('cart'))</span><span>setInterval(showNewsletterPopup, 3000)</span><span>font-family: Comic Sans MS</span>
+    </div>
+  </div>
+
+  <section class="lore" id="lore">
+    <div class="lore-track">
+      <article class="lore-panel intro">
+        <h2 class="display">How the monster got built</h2>
+        <p>Nobody planned this. It accumulated.</p>
+      </article>
+      <article class="lore-panel">
+        <div class="lore-year">2014</div>
+        <h3 class="display">A PHP monolith</h3>
+        <p>The founder's cousin built it. It worked, mostly, and nobody wrote anything down.</p>
+      </article>
+      <article class="lore-panel">
+        <div class="lore-year">2019</div>
+        <h3 class="display">Half a rewrite</h3>
+        <p>A new team ported the backend to Python on half a budget. Payments and PDFs stayed behind in the old PHP service.</p>
+      </article>
+      <article class="lore-panel">
+        <div class="lore-year">2021</div>
+        <h3 class="display">Go and Redis, bolted on</h3>
+        <p>To survive a big on-sale, someone wired a Go service straight into the old PHP, around the new API. That team is gone too.</p>
+      </article>
+      <article class="lore-panel">
+        <div class="lore-year">2023</div>
+        <h3 class="display">A new face</h3>
+        <p>A contractor rewrote the frontend in Next.js, then left mid-project.</p>
+      </article>
+      <article class="lore-panel last">
+        <div class="lore-year">Nobody has the full picture.<br>Now it's your turn.</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="anatomy">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 class="display">Five languages, one shared database</h2>
+        <p>The worst bugs live inside each layer and in the gaps between them.</p>
+      </div>
+      <div class="bento">
+        <article class="cell c-front" data-reveal><div><h3 class="display">Next.js frontend</h3></div><div><p>Every bad pattern gets its own page, so each one is a challenge you can pick up on its own.</p><span class="pin">React 17 / TypeScript 4.5</span></div></article>
+        <article class="cell c-py" data-reveal><h3 class="display">Python API</h3><div><p>Trusts the client. Leaks its config.</p><span class="pin">Python 3.8 / Pydantic v1</span></div></article>
+        <article class="cell c-php" data-reveal><h3 class="display">PHP legacy</h3><div><p>Concatenates SQL. Stores passwords like it's 2008.</p><span class="pin">PHP 7.4</span></div></article>
+        <article class="cell c-db" data-reveal><h3 class="display">One MySQL</h3><div><p>Python and PHP both write straight into it.</p><span class="pin">MySQL 8.0</span></div></article>
+        <article class="cell c-go" data-reveal><h3 class="display">Go and Redis</h3><div><p>The seat-booking deep end. Arrives in v2.0.</p><span class="pin">Go 1.19</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 class="display">Fix it on paper</h2>
+        <p>The main branch only gets worse. Your fix is an answer, not a patch.</p>
+      </div>
+      <div class="stack">
+        <div class="stack-card"><div class="stack-inner"><h3 class="display">Pick</h3><p>Choose an issue. Each one documents exactly one flaw, tagged by discipline and difficulty.</p></div></div>
+        <div class="stack-card"><div class="stack-inner"><h3 class="display">Fork</h3><p>Work in your own fork on a solution branch. Nothing you do touches the monster.</p></div></div>
+        <div class="stack-card"><div class="stack-inner"><h3 class="display">Fix</h3><p>Open a pull request. It will never be merged, and that is the point. It is your answer, on the record.</p></div></div>
+        <div class="stack-card"><div class="stack-inner"><h3 class="display">Vote</h3><p>The community reacts with a thumbs-up. The top-voted pull request is the crowd's best answer.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="challenges">
+    <div class="wrap challenges">
+      <div class="section-head" data-reveal>
+        <h2 class="display">Eleven rooms, all on fire</h2>
+        <p>Fifty-six flaws are open as issues right now. Start with any junior one.</p>
+        <p style="margin-top:2rem"><a class="btn btn-primary" href="https://github.com/dr-frankenstain/frankenstein/issues">Browse challenges</a></p>
+      </div>
+      <div class="list">
+        <div class="group" data-reveal><h3>Frontend</h3>
+          <div class="row"><code>/product</code><span>Inline styles on every element</span></div>
+          <div class="row"><code>/profile</code><span>TypeScript, but everything is any</span></div>
+          <div class="row"><code>/cart</code><span>localStorage as the source of truth</span></div>
+          <div class="row"><code>/signup</code><span>A form that validates nothing</span></div>
+          <div class="row"><code>/search</code><span>Exact, case-sensitive matches only</span></div>
+          <div class="row"><code>/deals</code><span>A popup you cannot close</span></div>
+        </div>
+        <div class="group" data-reveal><h3>Python API</h3>
+          <div class="row"><code>POST /api/orders</code><span>Trusts whatever the client sends</span></div>
+          <div class="row"><code>GET /api/delete-item</code><span>Deletes data on a GET request</span></div>
+          <div class="row"><code>GET /api/config</code><span>Hands out its own secrets</span></div>
+        </div>
+        <div class="group" data-reveal><h3>PHP service</h3>
+          <div class="row"><code>GET /php/lookup</code><span>SQL built by string concatenation</span></div>
+          <div class="row"><code>POST /php/login</code><span>Plaintext and MD5 passwords</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section final">
+    <div class="wrap" data-reveal>
+      <h2 class="display">It stays broken. You can still win.</h2>
+      <div class="cta"><a class="btn btn-primary" href="https://github.com/dr-frankenstain/frankenstein/issues">Browse challenges</a></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Intentionally vulnerable. Fake data only. Do not use it for anything real.</span>
+    <nav><a href="#lore">Lore</a><a href="#challenges">Challenges</a><a href="https://github.com/dr-frankenstain/frankenstein">GitHub</a></nav>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function () {
+  gsap.registerPlugin(ScrollTrigger);
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- lightning (canvas, driven by gsap.ticker) ---------- */
+  var hero = document.querySelector('.hero');
+  var cvs = document.getElementById('arc');
+  var ctx = cvs.getContext('2d');
+  var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var bolt = { paths: [], life: 0, max: 0 };
+  var pointer = { x: null, y: null, t: 0 };
+
+  function resize() {
+    var r = hero.getBoundingClientRect();
+    W = r.width; H = r.height;
+    cvs.width = W * dpr; cvs.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function jag(a, b, disp, out) {
+    if (disp < 3) { out.push(b); return; }
+    var m = { x: (a.x + b.x) / 2 + (Math.random() - .5) * disp, y: (a.y + b.y) / 2 + (Math.random() - .5) * disp };
+    jag(a, m, disp / 2, out); jag(m, b, disp / 2, out);
+  }
+  function makePath(a, b) {
+    var pts = [a];
+    jag(a, b, Math.hypot(b.x - a.x, b.y - a.y) * .35, pts);
+    return pts;
+  }
+  function strike(seeded) {
+    var a = { x: W * (.62 + Math.random() * .3), y: 0 };
+    var fresh = pointer.x !== null && performance.now() - pointer.t < 2500;
+    var b = fresh ? { x: pointer.x, y: pointer.y } : { x: W * (.55 + Math.random() * .38), y: H * (.35 + Math.random() * .5) };
+    var main = makePath(a, b), paths = [main];
+    for (var i = 0; i < 2; i++) {
+      var s = main[Math.floor(main.length * (.3 + Math.random() * .4))];
+      paths.push(makePath(s, { x: s.x + (Math.random() - .5) * W * .25, y: s.y + H * (.12 + Math.random() * .2) }));
+    }
+    bolt.paths = paths; bolt.max = bolt.life = seeded ? 1 : 12;
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (bolt.life <= 0) return;
+    var k = bolt.life / bolt.max, flick = (bolt.life % 2 === 0 ? .55 : 1) * (reduce ? .8 : k);
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    bolt.paths.forEach(function (p, idx) {
+      [[6, .10], [1.6, .9]].forEach(function (s) {
+        ctx.beginPath(); ctx.lineWidth = s[0] * (idx ? .6 : 1);
+        ctx.strokeStyle = 'rgba(163,230,53,' + (s[1] * flick) + ')';
+        p.forEach(function (pt, i) { i ? ctx.lineTo(pt.x, pt.y) : ctx.moveTo(pt.x, pt.y); });
+        ctx.stroke();
+      });
+    });
+    if (!reduce && location.search.indexOf('hold') < 0) bolt.life--;
+  }
+  function schedule() { gsap.delayedCall(2.6 + Math.random() * 3.2, function () { strike(); gsap.to('.flash', { opacity: .12, duration: .05, yoyo: true, repeat: 1 }); schedule(); }); }
+
+  resize(); window.addEventListener('resize', resize);
+  hero.addEventListener('pointermove', function (e) { var r = hero.getBoundingClientRect(); pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; pointer.t = performance.now(); }, { passive: true });
+
+  if (reduce) { strike(true); draw(); }
+  else { gsap.ticker.add(draw); }
+
+  /* ---------- hero intro: the reanimation ---------- */
+  if (!reduce) {
+    var spans = gsap.utils.toArray('.hero h1 .line > span');
+    gsap.set(spans, { yPercent: 110 });
+    gsap.set(['.hero .sub', '.hero .cta'], { opacity: 0, y: 18 });
+    var tl = gsap.timeline({ delay: .3 });
+    tl.to('.flash', { opacity: .35, duration: .06, yoyo: true, repeat: 3, ease: 'steps(1)' })
+      .add(function () { strike(); })
+      .to(spans, { yPercent: 0, duration: .9, ease: 'expo.out', stagger: .12 }, '<')
+      .to('.hero .broken', { opacity: .15, duration: .05, yoyo: true, repeat: 5, ease: 'steps(1)' }, '-=.35')
+      .to(['.hero .sub', '.hero .cta'], { opacity: 1, y: 0, duration: .7, ease: 'power3.out', stagger: .1 }, '-=.4')
+      .add(schedule);
+  }
+
+  /* ---------- scroll choreography ---------- */
+  var mm = gsap.matchMedia();
+
+  /* lore: pinned horizontal pan, desktop only. Reason: the story is a sequence of years. */
+  mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', function () {
+    var track = document.querySelector('.lore-track');
+    var dist = function () { return track.scrollWidth - window.innerWidth; };
+    gsap.to(track, { x: function () { return -dist(); }, ease: 'none',
+      scrollTrigger: { trigger: '.lore', start: 'top top', end: function () { return '+=' + dist(); }, pin: true, scrub: 1, invalidateOnRefresh: true } });
+  });
+
+  /* how it works: sticky stack. Reason: each step buries the one before it. */
+  mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', function () {
+    var cards = gsap.utils.toArray('.stack-card');
+    cards.forEach(function (card, i) {
+      if (i === cards.length - 1) return;
+      gsap.to(card.querySelector('.stack-inner'), { scale: .93, opacity: .5, ease: 'none',
+        scrollTrigger: { trigger: cards[i + 1], start: 'top bottom', end: 'top top+=64', scrub: true } });
+    });
+  });
+
+  /* section reveals: hierarchy, once */
+  if (!reduce) {
+    gsap.utils.toArray('[data-reveal]').forEach(function (el) {
+      gsap.from(el, { opacity: 0, y: 28, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+    });
+  }
+})();
+</script>
+</body>
+</html>

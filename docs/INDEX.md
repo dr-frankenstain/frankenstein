@@ -41,6 +41,7 @@ superseded_by: null
 
 ### Specs
 
+- `spec-landing-design` — Landing Page — Design — `docs/LANDING_DESIGN.md` (draft, 2026-10-23)
 - `spec-phase1-design` — Phase 1 — Skeleton & Scaffolding: Technical Design — `docs/PHASE1_DESIGN.md` (current, 2026-10-23)
 
 ### Operations
@@ -66,6 +67,7 @@ superseded_by: null
 
 ### Plans
 
+- `plan-landing-page` — Landing Page Implementation Plan — `docs/plans/2026-10-23-landing-page.md` (current, 2026-10-23)
 - `plan-implementation-plan` — Project Frankenstein — Technical Implementation Plan — `docs/IMPLEMENTATION_PLAN.md` (current, 2026-10-23)
 - `plan-owner-manual-tasks` — Owner Manual Tasks — Sergey's Checklist — `docs/OWNER_MANUAL_TASKS.md` (current, 2026-08-10)
 - `plan-roadmap` — Project Frankenstein — Roadmap — `docs/ROADMAP.md` (current, 2026-10-23)
