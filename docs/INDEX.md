@@ -64,6 +64,7 @@ superseded_by: null
 - `plan-implementation-plan` — Project Frankenstein — Technical Implementation Plan — `docs/IMPLEMENTATION_PLAN.md` (current, 2026-08-10)
 - `plan-owner-manual-tasks` — Owner Manual Tasks — Sergey's Checklist — `docs/OWNER_MANUAL_TASKS.md` (current, 2026-08-10)
 - `plan-roadmap` — Project Frankenstein — Roadmap — `docs/ROADMAP.md` (current, 2026-08-29)
+- `plan-phase1-skeleton` — Phase 1 — Skeleton & Scaffolding Implementation Plan — `docs/plans/2026-10-23-phase1-skeleton.md` (draft, 2026-10-23)
 
 ## Archive
 
