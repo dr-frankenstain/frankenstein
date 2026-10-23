@@ -83,4 +83,12 @@ fi
 assert_contains "$html" '<canvas' "shared lightning canvas"
 assert_contains "$html" 'aria-hidden="true"' "decorative canvas is hidden from assistive tech"
 
+# --- patches
+assert_eq "$(grep -o 'data-patch' "$tmp/home.html" | wc -l | tr -d ' ')" 6 "six patches"
+for id in lore anatomy how challenges; do
+  assert_eq "$(grep -o "<section id=\"$id\"" "$tmp/home.html" | wc -l | tr -d ' ')" 1 "one #$id section"
+done
+assert_eq "$(grep -o 'clip-path:polygon(' "$tmp/home.html" | wc -l | tr -d ' ')" 6 "every patch body has a cut edge"
+assert_not_contains "$html" "transform:" "nothing starts transformed on the server"
+
 echo "PASS: landing html"

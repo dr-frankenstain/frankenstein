@@ -4,10 +4,12 @@ import { FinalCta } from '../components/FinalCta';
 import { Footer } from '../components/Footer';
 import { Hero } from '../components/Hero';
 import { HowItWorks } from '../components/HowItWorks';
-import { Lore } from '../components/Lore';
 import { LightningCanvas } from '../components/LightningCanvas';
+import { Lore } from '../components/Lore';
 import { Marquee } from '../components/Marquee';
 import { Nav } from '../components/Nav';
+import { Patch } from '../components/Patch';
+import { ScrollRefresh } from '../components/ScrollRefresh';
 import { VitalSigns } from '../components/VitalSigns';
 import s from '../styles/landing.module.css';
 
@@ -15,16 +17,17 @@ export default function Page() {
   return (
     <div className={s.root}>
       <LightningCanvas />
+      <ScrollRefresh />
       <Nav />
       <main id="top">
         <Hero />
         <Marquee />
-        <section id="vitals"><VitalSigns /></section>
-        <section id="lore"><Lore /></section>
-        <section id="anatomy"><Anatomy /></section>
-        <section id="how"><HowItWorks /></section>
-        <section id="challenges"><Challenges /></section>
-        <section><FinalCta /></section>
+        <Patch id="vitals" seed={11} tilt={1}><VitalSigns /></Patch>
+        <Patch id="lore" seed={23} tilt={-1}><Lore /></Patch>
+        <Patch id="anatomy" seed={37} tilt={1}><Anatomy /></Patch>
+        <Patch id="how" seed={41} tilt={-1}><HowItWorks /></Patch>
+        <Patch id="challenges" seed={59} tilt={1}><Challenges /></Patch>
+        <Patch seed={73} tilt={-1}><FinalCta /></Patch>
       </main>
       <Footer />
     </div>

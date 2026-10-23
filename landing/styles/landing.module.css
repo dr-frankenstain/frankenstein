@@ -678,3 +678,29 @@
   z-index: 30;
   pointer-events: none;
 }
+
+/* patches: a donor part with a cut edge, stitched to the one above */
+.patch {
+  position: relative;
+  background: var(--surface-2);
+}
+
+.patchBody {
+  background: var(--bg);
+}
+
+.seam {
+  position: absolute;
+  left: 0;
+  top: -8px;
+  pointer-events: none;
+}
+
+.seam line {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: 0.55;
+}
