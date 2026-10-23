@@ -1,10 +1,12 @@
+name: frankenstein-python
+
 services:
   python-api:
     build: .
     container_name: frankenstein-python
     env_file: .env
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
 
 networks:
   default:

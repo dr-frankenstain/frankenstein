@@ -1,3 +1,5 @@
+name: frankenstein-db
+
 services:
   db:
     image: mysql:8.0

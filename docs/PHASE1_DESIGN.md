@@ -56,7 +56,7 @@ frankenstein/
 
 No root `docker-compose.yml` — each service is started separately, per `IMPLEMENTATION_PLAN.md` §4. This is the primary carrier of the "distributed monolith" architecture at the ops level.
 
-**Runtime wiring.** `db/docker-compose.yml` creates the network `frankenstein-net`; the PHP and Python compose files declare it `external`, so starting either before the DB fails at the compose level with an error naming the network. Containers: `frankenstein-db`, `frankenstein-php`, `frankenstein-python`, `frankenstein-frontend` (services `db`, `php-service`, `python-api`, `frontend`). Host ports: frontend 3000, Python 8000, PHP 8080; the DB is not published. All credentials are fake: DB `frankenstein`, user `frank`, password `monster`, PHP API key `igor-says-hello`.
+**Runtime wiring.** `db/docker-compose.yml` creates the network `frankenstein-net`; the PHP and Python compose files declare it `external`, so starting either before the DB fails at the compose level with an error naming the network. Containers: `frankenstein-db`, `frankenstein-php`, `frankenstein-python`, `frankenstein-frontend` (services `db`, `php-service`, `python-api`, `frontend`). Host ports, bound to `127.0.0.1` only: frontend 3000, Python 8000, PHP 8080; the DB is not published. Each compose file sets a unique project `name:` (`frankenstein-db`, `-php`, `-python`, `-frontend`) so `down -v` can never touch another project's containers. All credentials are fake: DB `frankenstein`, user `frank`, password `monster`, PHP API key `igor-says-hello`.
 
 ## 2. Database (`db/init.sql`)
 
@@ -88,7 +88,7 @@ Starter tables per `IMPLEMENTATION_PLAN.md` §6, seeded with obviously-fake data
 
 **Config, done three different ways** — directly implements the "auth/config done three ways" architectural smell from `IMPLEMENTATION_PLAN.md` §2, and falls out naturally rather than being contrived:
 - `db/docker-compose.yml` uses MySQL's own image convention: `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`.
-- Python's `.env.example`: `DB_HOST` / `DB_USER` / `DB_PASSWORD` / `DB_NAME`, plus `PHP_SERVICE_URL` and `PHP_SERVICE_API_KEY`.
+- Python's code reads `DB_HOST` / `DB_USER` / `DB_PASSWORD` / `DB_NAME`, plus `PHP_SERVICE_URL` and `PHP_SERVICE_API_KEY`.
 - PHP's code reads `MYSQL_HOST` / `MYSQL_USER` / `MYSQL_PASS` / `MYSQL_DATABASE` (note: `PASS`, not `PASSWORD`), plus its own `API_KEY`.
 
 The committed `.env.example` files are deliberately wrong (`IMPLEMENTATION_PLAN.md` §4): Python's omits `PHP_SERVICE_API_KEY`, so a container started from it crashes with `KeyError`; PHP's documents `MYSQL_PASSWORD`, so it never receives the DB password and answers `503`. `.raise-the-monster.sh --env-only` writes the working `.env` files.
