@@ -76,4 +76,11 @@ for needle in "Proof of life" "These readings come from the stack running right 
 done
 assert_order "$html" "Proof of life" "How the monster got built"
 
+# --- no full-screen flash (WCAG: at most three flashes per second)
+if grep -rqE 'mix-blend-mode: ?soft-light|__flash' landing/.next/static; then
+  fail "built assets still contain the draft's full-screen flash overlay"
+fi
+assert_contains "$html" '<canvas' "shared lightning canvas"
+assert_contains "$html" 'aria-hidden="true"' "decorative canvas is hidden from assistive tech"
+
 echo "PASS: landing html"
