@@ -2,7 +2,7 @@
 id: ops-02-untyped-profile-page
 type: ops
 status: current
-updated: 2026-08-10
+updated: 2026-10-23
 scope: [untyped, profile, page]
 covers: []
 related: []
@@ -32,7 +32,7 @@ Displays the logged-in user's profile (name, email, join date, order count) fetc
 
 Can the contributor define proper interfaces/types for the domain and the API response, remove every `any` and `@ts-ignore`, add safe access, and keep the page compiling and behaving the same? The date flaw adds an **upgrade angle**: recognizing that `moment.js` is deprecated and bloated, and replacing it with a native/lighter solution.
 
-> Related (deferred to a later batch): this page is on **React 17** and hand-rolls element IDs, which can cause SSR hydration mismatches — a `useId` (React 18) upgrade fix. Kept out of the junior scope; tracked in `docs_local/IDEAS.md` → "Deliberately outdated versions."
+> Related (deferred to a later batch): this page is on **React 17** and hand-rolls element IDs, which can cause SSR hydration mismatches — a `useId` (React 18) upgrade fix. Kept out of the junior scope; tracked in `docs/IDEAS.md` → "Deliberately outdated versions."
 
 ## Solver hints (for the issue body)
 

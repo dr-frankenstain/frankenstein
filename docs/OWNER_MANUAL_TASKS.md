@@ -2,7 +2,7 @@
 id: plan-owner-manual-tasks
 type: plan
 status: current
-updated: 2026-08-10
+updated: 2026-10-23
 scope: [owner, manual, tasks]
 covers: []
 related: []
@@ -15,7 +15,7 @@ Everything that **only you can do** — things that require your machine, your a
 
 Legend: 🔴 blocker · 🟡 important · 🟢 nice-to-have. References point to [`GITHUB_SETUP.md`](./GITHUB_SETUP.md).
 
-> 🤫 **Insider knowledge (keep it off all public docs).** There is deliberately no single documented "up everything" command — each service starts separately (that friction is intentional). The one-shot easy button is a hidden, committed-but-undocumented script at the repo root: **`.raise-the-monster.sh`**. It brings the whole stack up in the right order. It's referenced only here and in `IMPLEMENTATION_PLAN.md` (both private). Anyone who digs through the repo can discover it; nobody is told. Built in Phase 1.
+> 🤫 **Insider knowledge (keep it off all public docs).** There is deliberately no single documented "up everything" command — each service starts separately (that friction is intentional). The one-shot easy button is a hidden, committed-but-undocumented script at the repo root: **`.raise-the-monster.sh`**. It brings the whole stack up in the right order. It's referenced only here and in `IMPLEMENTATION_PLAN.md` (both in `docs/`, which is committed to the repo). Anyone who digs through the repo can discover it; nobody is told. Built in Phase 1.
 
 ---
 

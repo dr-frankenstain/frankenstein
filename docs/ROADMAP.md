@@ -2,7 +2,7 @@
 id: plan-roadmap
 type: plan
 status: current
-updated: 2026-08-29
+updated: 2026-10-23
 scope: [roadmap]
 covers: []
 related: []
@@ -78,7 +78,7 @@ Content status so far: junior FE + BE **challenge docs are written**; all app **
 
 **Goal:** the first real, playable slice — enough badness to be worth sharing.
 
-**Scope (already specced in `docs_local/`):**
+**Scope (already specced in `docs/`):**
 
 - 6 FE pages: `/product` (inline styles), `/profile` (`any` + moment.js), `/cart` (localStorage abuse), `/signup` (no validation + node-fetch), `/search` (case-sensitive), `/deals` (hostile UX).
 - 5 BE features: Python (no input validation, wrong HTTP semantics, leaked traces/secrets) + PHP (SQL injection, plaintext/MD5 passwords).
