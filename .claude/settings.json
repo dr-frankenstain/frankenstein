@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "compact|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/inject-doc-context.sh",
+            "timeout": 15,
+            "statusMessage": "Loading documentation map"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/check-docs-touched.sh",
+            "timeout": 20,
+            "statusMessage": "Checking documentation is in sync"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/stamp-updated.sh",
+            "timeout": 15,
+            "statusMessage": "Stamping doc frontmatter"
+          }
+        ]
+      }
+    ]
+  }
+}
