@@ -1,7 +1,7 @@
 ---
 id: plan-phase1-skeleton
 type: plan
-status: draft
+status: done
 updated: 2026-10-23
 scope: [phase1, skeleton, scaffolding]
 covers: []

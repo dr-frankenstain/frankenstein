@@ -22,7 +22,7 @@ A phased plan for building and launching the monster. Framed as **Now / Next / L
 | Phase | Name | Horizon | Status | Version |
 |---|---|---|---|---|
 | 0 | Governance & repo setup | **Now** | In progress | — |
-| 1 | Skeleton & scaffolding | **Now** | Not started | `v0.1` |
+| 1 | Skeleton & scaffolding | **Now** | Done | `v0.1` |
 | 2 | Junior batch (Minimum Lovable Monster) | **Next** | Docs ready, code not started | `v1.0` |
 | 3 | Soft launch & hosting | **Next** | Not started | `v1.x` |
 | 4 | Seat-booking flagship (Go + Redis) | **Later** | Design ready | `v2.0` |
@@ -62,7 +62,7 @@ Content status so far: junior FE + BE **challenge docs are written**; all app **
 - Shared MySQL with seed schema + obviously-fake data.
 - The **deliberately broken but survivable** setup baked in from day one (separate-startup friction, service ordering, missing env docs) — plus the pinned "Getting it to run" workaround.
 - The **distributed-monolith architecture** established from the start (shared DB, API bypass, no shared contracts).
-- Deliberately outdated pinned versions (React 17, Next 13, Node 16, Python 3.8, PHP 7.4, Pydantic v1) locked in lockfiles.
+- Deliberately outdated pinned versions (React 17, Next 12, Node 16, Python 3.8, PHP 7.4, Pydantic v1) locked in lockfiles.
 
 **Dependencies:** Phase 0 (repo exists).
 
