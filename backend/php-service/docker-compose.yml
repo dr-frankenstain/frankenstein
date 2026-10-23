@@ -1,0 +1,12 @@
+services:
+  php-service:
+    build: .
+    container_name: frankenstein-php
+    env_file: .env
+    ports:
+      - "8080:8080"
+
+networks:
+  default:
+    name: frankenstein-net
+    external: true
