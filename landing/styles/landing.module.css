@@ -271,3 +271,307 @@
     animation: none;
   }
 }
+
+/* sections */
+.section {
+  padding: clamp(5rem, 11vw, 9rem) 0;
+}
+
+.sectionTitle {
+  font-size: clamp(2.4rem, 5.5vw, 5rem);
+  max-width: 14ch;
+}
+
+.sectionHead p {
+  margin-top: 1.25rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+/* lore: horizontal pan */
+.lore {
+  position: relative;
+  overflow: hidden;
+}
+
+.loreTrack {
+  display: flex;
+  align-items: stretch;
+  min-height: 100dvh;
+}
+
+.lorePanel {
+  flex: 0 0 min(78vw, 920px);
+  padding: 7rem var(--pad) 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px dashed var(--line);
+}
+
+.loreIntro {
+  flex-basis: min(60vw, 700px);
+}
+
+.loreHeading {
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+}
+
+.loreYear {
+  font: 900 clamp(5rem, 15vw, 14rem) / 0.85 var(--display);
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent);
+}
+
+.loreTitle {
+  margin-top: 1.5rem;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+}
+
+.lorePanel p {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.loreLast .loreYear {
+  -webkit-text-stroke: 0;
+  color: var(--text);
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 0.95;
+}
+
+/* anatomy: bento, exactly 5 cells */
+.bento {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+}
+
+.cell {
+  position: relative;
+  min-height: 15rem;
+  padding: 1.75rem;
+  border: 1px dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  transition: border-color 0.3s;
+  overflow: hidden;
+}
+
+.cell:hover {
+  border-color: var(--accent);
+}
+
+.cellTitle {
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
+}
+
+.cell p {
+  color: var(--muted);
+  font-size: 1rem;
+  max-width: 40ch;
+}
+
+.pin {
+  font: 500 0.8rem var(--mono);
+  color: var(--accent);
+}
+
+.cFront {
+  grid-column: span 4;
+  min-height: 22rem;
+  background: radial-gradient(120% 140% at 100% 0%, rgba(163, 230, 53, 0.18), transparent 55%), var(--surface);
+}
+
+.cPy {
+  grid-column: span 2;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 23px, rgba(230, 232, 225, 0.05) 23px 24px),
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(230, 232, 225, 0.05) 23px 24px),
+    var(--surface);
+}
+
+.cPhp {
+  grid-column: span 2;
+  background: repeating-linear-gradient(135deg, transparent 0 10px, rgba(230, 232, 225, 0.06) 10px 11px), var(--surface);
+}
+
+.cDb {
+  grid-column: span 2;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.cDb p,
+.cDb .pin {
+  color: #1c2a07;
+}
+
+.cGo {
+  grid-column: span 2;
+  border-color: rgba(230, 232, 225, 0.3);
+}
+
+.cGo .cellTitle {
+  color: var(--muted);
+}
+
+/* how it works: sticky stack */
+.stack {
+  margin-top: 3rem;
+}
+
+.stackCard {
+  position: sticky;
+  top: 64px;
+  min-height: 78dvh;
+  display: flex;
+  align-items: center;
+}
+
+.stackInner {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  align-items: end;
+  min-height: 22rem;
+}
+
+.stackTitle {
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  color: var(--accent);
+}
+
+.stackInner p {
+  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+  color: var(--text);
+  max-width: 36ch;
+}
+
+/* challenges */
+.challenges {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+
+.challengesHead {
+  position: sticky;
+  top: 112px;
+}
+
+.headCta {
+  margin-top: 2rem;
+}
+
+.group + .group {
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px dashed var(--line);
+}
+
+.groupTitle {
+  font: 600 0.85rem var(--mono);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(11rem, 14rem) 1fr;
+  gap: 1.25rem;
+  padding: 0.9rem 0;
+  align-items: baseline;
+}
+
+.row code {
+  font: 500 0.95rem var(--mono);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.row span {
+  color: var(--muted);
+}
+
+/* final */
+.finalTitle {
+  font-size: clamp(3rem, 10vw, 10rem);
+  max-width: 12ch;
+}
+
+.final .cta {
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 767px) {
+  .loreTrack {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .lorePanel,
+  .loreIntro {
+    flex-basis: auto;
+    padding: 4rem var(--pad);
+    border-right: 0;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .bento {
+    grid-template-columns: 1fr;
+  }
+
+  .bento .cell {
+    grid-column: auto;
+  }
+
+  .stackInner {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .challenges {
+    grid-template-columns: 1fr;
+  }
+
+  .challengesHead {
+    position: static;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
+
+/* no pinned pan when motion is reduced: let the lore scroll sideways by hand */
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  .loreTrack {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .lorePanel {
+    scroll-snap-align: start;
+  }
+
+  .stackCard {
+    position: static;
+    min-height: 0;
+    padding-block: 0.75rem;
+  }
+}
