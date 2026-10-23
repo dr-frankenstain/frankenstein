@@ -2,7 +2,7 @@
 id: ops-ideas
 type: ops
 status: current
-updated: 2026-08-24
+updated: 2026-10-23
 scope: [ideas]
 covers: []
 related: []
@@ -222,7 +222,7 @@ Keep versions **old-but-not-fossil** so the upgrade is a realistic 1–2 major b
 | Tech | Pinned (bad) | Upgrade unlocks (the intended fix) |
 |---|---|---|
 | React | 17.x | 18/19: automatic batching, `useId`, `useTransition`, `useDeferredValue`, `createRoot`, `useSyncExternalStore`; (19) `use`, Actions, `useOptimistic`, `useFormStatus` |
-| Next.js | 13.x (mixed Pages + App router) | modern App Router, Server Actions, `next/font`, image improvements |
+| Next.js | 12.3.x (Pages Router) | 13+: App Router, Server Actions, `next/font`, image improvements (requires the React 18 upgrade) |
 | Node | 16 (EOL) | 20/22: native `fetch`, built-in test runner, performance |
 | TypeScript | 4.5 | 5.x: `satisfies`, `const` type params, modern decorators |
 | Python | 3.8 (EOL) | 3.11/3.12: `match`, `X | Y` unions, `list[..]` generics, tz-aware datetime, speed |

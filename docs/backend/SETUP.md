@@ -48,7 +48,7 @@ backend/
 ├── python-api/
 │   ├── main.py                 # routes; junior batch flaws live here
 │   ├── db.py                   # DB access (intentionally naive)
-│   ├── requirements.txt        # unpinned on purpose
+│   ├── requirements.txt        # exact pins (see the Phase 1 spec)
 │   └── ...
 ├── php-service/
 │   ├── index.php               # entry; routes to legacy handlers
@@ -68,25 +68,24 @@ Redis runs as its own service in `docker compose` (seat locks/holds).
 There is **no root compose / single "up" command** — each service (DB, Python API, PHP, Go, Redis) is started **separately**, in the right order, with its own config. The hidden `.pull-the-lever.sh` at the repo root does it all at once, but it is undocumented publicly (owner-only; see `IMPLEMENTATION_PLAN.md`). To run services individually:
 
 ```bash
-# Python API
+# Python API (DB stack must already be up; reads backend/python-api/.env)
 cd backend/python-api
-pip install -r requirements.txt      # requirements are intentionally unpinned
-uvicorn main:app --reload --port 8000
+docker compose up -d --build          # http://localhost:8000
 
-# PHP service
+# PHP service (same prerequisite; reads backend/php-service/.env)
 cd backend/php-service
-php -S localhost:8080                 # or via the compose container
+docker compose up -d --build          # http://localhost:8080
 
 # Go booking service
 cd backend/go-booking
 go run .                              # needs Redis running (see compose)
 ```
 
-> Reminder: services must come up in order (DB first, then APIs, then frontend); the PHP service races the DB on first boot, so starting things out of order fails. This is a known (intentional) issue; the workaround is pinned in Discussions.
+> Reminder: services must come up in order (DB first, then APIs, then frontend); a service started before the DB fails at the compose level because it joins the DB's `frankenstein-net` network, and one that connects before MySQL is ready answers `503`. This is intentional; the workaround is pinned in Discussions.
 
 ## Versions are deliberately outdated
 
-Python, Pydantic, PHP, and Go are pinned a major version or two behind (e.g., Python 3.8, Pydantic v1, PHP 7.4, Go 1.19). A whole class of challenge is fixable by *upgrading* and adopting the newer idiomatic pattern — PHP 8.1 enums/`match`, Pydantic v2, Python `match` + modern typing, Go 1.22 (which fixes loop-variable capture) + `slices`/generics. Pins are explicit even though other deps are intentionally unpinned. See `docs/IDEAS.md` → "Deliberately outdated versions."
+Python, Pydantic, PHP, and Go are pinned a major version or two behind (e.g., Python 3.8, Pydantic v1, PHP 7.4, Go 1.19). A whole class of challenge is fixable by *upgrading* and adopting the newer idiomatic pattern — PHP 8.1 enums/`match`, Pydantic v2, Python `match` + modern typing, Go 1.22 (which fixes loop-variable capture) + `slices`/generics. Pins are explicit in `requirements.txt` and the Dockerfiles. See `docs/IDEAS.md` → "Deliberately outdated versions."
 
 ## Difficulty tagging
 
