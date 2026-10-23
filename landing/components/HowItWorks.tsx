@@ -1,3 +1,7 @@
+'use client';
+
+import { useRef } from 'react';
+import { gsap, useGSAP } from '../lib/gsap';
 import s from '../styles/landing.module.css';
 
 const STEPS = [
@@ -8,8 +12,29 @@ const STEPS = [
 ];
 
 export function HowItWorks() {
+  const root = useRef<HTMLDivElement>(null);
+
+  // Sticky stack, desktop only: each step buries the one before it.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+        const cards = gsap.utils.toArray<HTMLElement>('[data-card]', root.current);
+        cards.slice(0, -1).forEach((card, i) => {
+          gsap.to(card.querySelector('[data-card-inner]'), {
+            scale: 0.93,
+            opacity: 0.5,
+            ease: 'none',
+            scrollTrigger: { trigger: cards[i + 1], start: 'top bottom', end: 'top top+=64', scrub: true },
+          });
+        });
+      });
+    },
+    { scope: root },
+  );
+
   return (
-    <div className={s.section}>
+    <div ref={root} className={s.section}>
       <div className={s.wrap}>
         <div className={s.sectionHead}>
           <h2 className={`${s.display} ${s.sectionTitle}`}>Fix it on paper</h2>
@@ -17,8 +42,8 @@ export function HowItWorks() {
         </div>
         <div className={s.stack}>
           {STEPS.map((step) => (
-            <div key={step.title} className={s.stackCard}>
-              <div className={s.stackInner}>
+            <div key={step.title} className={s.stackCard} data-card>
+              <div className={s.stackInner} data-card-inner>
                 <h3 className={`${s.display} ${s.stackTitle}`}>{step.title}</h3>
                 <p>{step.text}</p>
               </div>

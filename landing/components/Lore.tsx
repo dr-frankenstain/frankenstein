@@ -1,3 +1,7 @@
+'use client';
+
+import { useRef } from 'react';
+import { gsap, useGSAP } from '../lib/gsap';
 import s from '../styles/landing.module.css';
 
 const PANELS = [
@@ -8,9 +12,35 @@ const PANELS = [
 ];
 
 export function Lore() {
+  const root = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+
+  // Pinned horizontal pan, desktop only: the story is a sequence of years.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+        const distance = () => track.current!.scrollWidth - window.innerWidth;
+        gsap.to(track.current, {
+          x: () => -distance(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: root.current,
+            start: 'top top',
+            end: () => `+=${distance()}`,
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+      });
+    },
+    { scope: root },
+  );
+
   return (
-    <div className={s.lore}>
-      <div className={s.loreTrack}>
+    <div ref={root} className={s.lore}>
+      <div ref={track} className={s.loreTrack}>
         <article className={`${s.lorePanel} ${s.loreIntro}`}>
           <h2 className={`${s.display} ${s.loreHeading}`}>How the monster got built</h2>
           <p>Nobody planned this. It accumulated.</p>
