@@ -4,8 +4,8 @@ type: spec
 status: draft
 updated: 2026-10-23
 scope: [landing, frontend, design, motion, gsap]
-covers: [frontend/pages/index.tsx, frontend/components/landing/**, frontend/styles/landing.module.css, frontend/lib/challenges.ts]
-related: [spec-phase1-design, adr-0001-next12-react17]
+covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
+related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
 superseded_by: null
 ---
 
@@ -31,22 +31,22 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 - No photographs or illustrations. The lightning is the hero visual.
 - No light theme. Dark only.
 - No new routes or challenge pages (Phase 2 builds those).
-- No changes to any page other than `/`, and no global styles that could reach them.
+- No change to the challenge pages or their stack. The landing page is a separate app (`adr-0003-landing-as-separate-app`), so none of its styles or fonts can reach them.
 - No custom cursor, scroll cue, version badge, or decorative status dots.
 
 ## Anti-goals (a failure even if it technically works)
 
-- Landing styles or fonts leak onto the deliberately ugly pages. Concretely (author's call): the landing page is a full-height wrapper div that carries the dark background; an effect on mount sets `color-scheme: dark` and the dark `html` background and removes both on unmount; the font packages' CSS is imported from `pages/index.tsx` only. A CSS Module cannot style `html` or `body`, so this is how overscroll stays dark without touching `_app.tsx`.
+- Landing styles or fonts leak onto the deliberately ugly pages. Concretely (author's call): the landing page is its own app; `app/globals.css` sets only the dark `html`/`body`, and component styles live in one CSS Module.
 - Patch motion makes content hard to read, or hides it until an animation finishes.
 - Any full-screen flash or strobing. See Accessibility.
 - The page looks empty, blank or broken when the Python API is down.
 
 ## Constraints
 
-- Stack is fixed: Next.js 12.3.4 Pages Router, React 17.0.2, TypeScript 4.5.5, Node 16, exact-pinned lockfile (`adr-0001-next12-react17`). New dependencies are pinned exactly and must install without `--legacy-peer-deps`.
+- The landing page is `landing/`, a latest-stack app: Next.js 16.4.3 App Router, React 19.3.1, TypeScript 7.0.2 (5.9.3 only if Next rejects it), Node 22, exact-pinned lockfile (`adr-0003-landing-as-separate-app`). The challenge pages stay in `frontend/` on Next 12.3.4 and React 17 (`adr-0001-next12-react17`). Dependencies are pinned exactly and install without `--legacy-peer-deps`.
 - GSAP from npm, free build. Use the installed GSAP skills (`gsap-react`, `gsap-scrolltrigger`, `gsap-timeline`, `gsap-core`, `gsap-performance`).
-- The landing page's styling is a CSS Module imported only by `pages/index.tsx`. Nothing is added to `_app.tsx` or a global stylesheet. (`/product` is meant to use inline styles; the landing page must not be written that way.)
-- Fonts are self-hosted through npm packages (Next 12 has no `next/font`).
+- Component styles are one CSS Module (`landing/styles/landing.module.css`); `landing/app/globals.css` sets only `html`/`body`. No inline styles except a patch's computed `clip-path`.
+- Fonts are self-hosted: `@fontsource` packages loaded through `next/font/local`.
 - Ship no scroll listeners on `window` and no `requestAnimationFrame` loops that touch React state. Use ScrollTrigger and `gsap.ticker`. Every animation has cleanup on unmount.
 - Honour `prefers-reduced-motion`. Motion that collapses to static in that mode: the load intro, lightning strikes, patch settle, zaps, marquee, pinned lore pan, sticky stack, and the heartbeat.
 
@@ -75,7 +75,7 @@ The marquee is part of the hero's band and has no cut edge. The footer is not a 
 
 Copy is the draft's copy, with one change: the challenges intro says "Every flaw is open as its own issue" instead of a hard-coded "fifty-six" (author's call: a hard number rots). The "Eleven rooms" headline is derived from the registry length. No em-dashes anywhere on the page; use hyphens. No emoji.
 
-The Challenges list renders from `frontend/lib/challenges.ts`. The `Challenge` type becomes `{ label: string; group: 'Frontend' | 'Python API' | 'PHP service'; summary: string; href: string; built: boolean }` (author's call). `label` is what the code cell shows (`/product`, `POST /api/orders`). `href` is the page route for frontend rooms and a GitHub issues search URL for that endpoint for backend rooms. All 11 junior-batch rooms are registered now with `built: false`; an unbuilt entry renders as plain text, a built one as a link to `href`. Phase 2 flips `built` as each room ships. The old `route`/`title` fields are removed.
+The Challenges list renders from `landing/lib/challenges.ts`. The `Challenge` type becomes `{ label: string; group: 'Frontend' | 'Python API' | 'PHP service'; summary: string; href: string; built: boolean }` (author's call). `label` is what the code cell shows (`/product`, `POST /api/orders`). `href` is the route for frontend rooms, joined to `NEXT_PUBLIC_CHALLENGES_URL` (default `http://localhost:3001`) when rendered, and a GitHub issues search URL for that endpoint for backend rooms. Rooms link with plain `<a>`, not `next/link`. All 11 junior-batch rooms are registered now with `built: false`; an unbuilt entry renders as plain text, a built one as a link to `href`. Phase 2 flips `built` as each room ships. The old `route`/`title` fields are removed.
 
 ## The patch system (the central piece)
 
@@ -100,7 +100,7 @@ Rules:
 
 Layout (author's call, there is no draft reference): a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; brain and nerve show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
 
-The live Phase 1 API round trip stays on the landing page, restyled as the monster's vitals. Reuse `runChecks` from `lib/checks.ts` unchanged; keep each row's `data-testid="check-<name>"` and its `OK (...)` / `FAIL: ...` text so tests and the browser check keep working.
+The live Phase 1 API round trip stays on the landing page, restyled as the monster's vitals. Reuse `runChecks` (moved unchanged into `landing/lib/checks.ts`); keep each row's `data-testid="check-<name>"` and its `OK (...)` / `FAIL: ...` text so tests and the browser check keep working.
 
 Mapping (the metaphor names are the author's guess; the user asked for "heart and brain"):
 
@@ -122,18 +122,21 @@ States, all within the single accent:
 - Keyboard focus is visible (accent outline). Anchor links work without JavaScript.
 - Decorative canvas and stitches are `aria-hidden`.
 
+## Routing
+
+Two apps, two origins, no proxy. The landing page owns `http://localhost:3000`; the Next 12 app owns `http://localhost:3001`. The legacy `/` redirects to the landing origin and forwards a `redirectTo` query param (the destination origin comes from `NEXT_PUBLIC_LANDING_URL`, never from the request). The Python API's CORS list contains both origins. Production uses two hostnames with the same env-driven code.
+
 ## Tests and verification
 
-- Update `tests/phase1/check_frontend.sh`: it currently asserts the HTML contains "Challenges" and "No challenges yet". Replace the second assertion with the new page's equivalent (the Challenges heading and one registered room, e.g. `/product`). Keep the build, typecheck and lockfile assertions.
-- `npx tsc --noEmit` and `next build` pass in the pinned `node:16` container.
+- Pure logic (challenge registry, bolt and patch geometry, vitals view-model) has Vitest unit tests, run by `tests/landing/run_unit.sh`.
+- `tests/landing/check_landing_html.sh` builds the app and asserts on the server-rendered HTML (copy, order, six patches, no em-dash, no flash CSS). `tests/landing/check_routing.sh` asserts the redirect and origins against the running stack. `tests/landing/check_landing_app.sh` pins the versions and runs typecheck and build.
+- `tests/phase1/check_frontend.sh` checks the legacy app: build, typecheck, lockfile, and its redirecting `/`.
 - Browser verification at desktop and mobile widths: hero reanimates, a bolt is visible, each patch settles and shows its stitches, vitals show `OK` with the stack up and per-tile `FAIL:` with Python stopped, lore pan and sticky stack still work after settling, and there is no horizontal overflow on mobile.
-- Verify with `prefers-reduced-motion` on.
-- Other pages (when they exist) must render with no landing styles or fonts applied.
+- Verify with `prefers-reduced-motion` on, and with Back from the legacy origin.
 
 ## Left to the builder
 
 - Exact polygon shapes, stitch spacing and length, easing, and timings.
-- Component and CSS Module file layout under `frontend/components/landing/` and `frontend/styles/`.
-- Which font packages, and whether `@gsap/react`'s `useGSAP` installs cleanly on React 17 (otherwise use `gsap.context` in an effect).
+- Component and CSS Module file layout under `landing/components/` and `landing/styles/`.
 - How the shared canvas knows each seam's position (read from the patch's DOM rect via ScrollTrigger).
 - Heartbeat rendering (SVG path or canvas).

@@ -49,6 +49,7 @@ superseded_by: null
 
 - Frontend is Next.js 12.3.4 + React 17 on the Pages Router (`adr-0001-next12-react17`).
 - Services share the external network `frankenstein-net` owned by the DB compose file (`adr-0002-shared-external-network`).
+- The landing page is a separate Next 16 app on :3000; the Next 12 app moves to :3001 and its `/` redirects to the landing page (`adr-0003-landing-as-separate-app`).
 
 ## Open questions
 
