@@ -1,0 +1,273 @@
+/* Landing page styles. Sharp corners everywhere; one accent (#a3e635). */
+
+.root {
+  --bg: #0a0c0b;
+  --surface: #0f1311;
+  --surface-2: #151a17;
+  --line: rgba(230, 232, 225, 0.14);
+  --text: #e6e8e1;
+  --muted: #9aa39c;
+  --accent: #a3e635;
+  --accent-ink: #0a0c0b;
+  --display: var(--font-display), 'Arial Narrow', sans-serif;
+  --body: var(--font-body), system-ui, sans-serif;
+  --mono: var(--font-mono), ui-monospace, monospace;
+  --wrap: 1360px;
+  --pad: clamp(1rem, 4vw, 3rem);
+
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 1rem/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+.root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.root :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.root h1,
+.root h2,
+.root h3,
+.root p {
+  margin: 0;
+}
+
+.root p {
+  max-width: 62ch;
+}
+
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding-inline: var(--pad);
+}
+
+.display {
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+}
+
+/* buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+  padding: 0.95rem 1.5rem;
+  font: 600 0.95rem var(--body);
+  border: 1px solid var(--accent);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s, color 0.25s;
+}
+
+.btnPrimary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.root .btnPrimary {
+  color: var(--accent-ink);
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+}
+
+.btnPrimary:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btnGhost {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.btnGhost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* nav: one line, 64px */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 64px;
+  z-index: 40;
+  background: linear-gradient(var(--bg), rgba(10, 12, 11, 0.7));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.navInner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  font: 900 1.5rem/1 var(--display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 2px dashed var(--accent);
+  padding-bottom: 2px;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLinks a {
+  font-size: 0.9rem;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.navLinks a:hover {
+  color: var(--text);
+}
+
+.navCta {
+  padding: 0.55rem 1rem;
+  font-size: 0.85rem;
+}
+
+/* hero */
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  padding-top: 64px;
+  overflow: hidden;
+}
+
+.heroGrid {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+.heroCopy {
+  grid-column: 1 / span 10;
+  padding-block: 4rem 3rem;
+}
+
+.headline {
+  font-size: clamp(3.1rem, 7vw, 7.2rem);
+}
+
+.line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.line > span {
+  display: block;
+}
+
+.broken {
+  color: var(--accent);
+}
+
+.sub {
+  margin-top: 1.75rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  color: var(--muted);
+  max-width: 34ch;
+}
+
+.cta {
+  margin-top: 2.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* the one marquee: real flaws from the project */
+.marquee {
+  border-block: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  animation: slide 46s linear infinite;
+}
+
+.marqueeTrack span {
+  font: 500 0.95rem var(--mono);
+  color: var(--muted);
+  padding: 1rem 2.25rem;
+  white-space: nowrap;
+}
+
+.marqueeTrack span:nth-child(3n) {
+  color: var(--accent);
+}
+
+@keyframes slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* footer */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem 0 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.footerInner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.footerNav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 767px) {
+  .navLinks {
+    display: none;
+  }
+
+  .heroCopy {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack {
+    animation: none;
+  }
+}

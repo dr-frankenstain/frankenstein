@@ -1,0 +1,13 @@
+html,
+body {
+  margin: 0;
+  background: #0a0c0b;
+  color: #e6e8e1;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
