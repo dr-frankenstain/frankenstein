@@ -7,6 +7,7 @@ import { HowItWorks } from '../components/HowItWorks';
 import { Lore } from '../components/Lore';
 import { Marquee } from '../components/Marquee';
 import { Nav } from '../components/Nav';
+import { VitalSigns } from '../components/VitalSigns';
 import s from '../styles/landing.module.css';
 
 export default function Page() {
@@ -16,6 +17,7 @@ export default function Page() {
       <main id="top">
         <Hero />
         <Marquee />
+        <section id="vitals"><VitalSigns /></section>
         <section id="lore"><Lore /></section>
         <section id="anatomy"><Anatomy /></section>
         <section id="how"><HowItWorks /></section>

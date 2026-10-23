@@ -68,4 +68,12 @@ case "$(echo "$html" | tr 'A-Z' 'a-z')" in *fifty*) fail "page still hard-codes 
 assert_not_contains "$html" "data-reveal" "scroll reveal attributes are gone"
 assert_not_contains "$html" 'href="http://localhost:3001/product"' "unbuilt rooms are plain text"
 
+# --- vital signs (server-rendered loading state)
+for needle in "Proof of life" "These readings come from the stack running right now." 'data-testid="check-health"' \
+  'data-testid="check-products"' 'data-testid="check-php-check"' "Heart" "Brain" "Nerve" \
+  "The Python API answers" "MySQL remembers" "PHP, reached through Python" "Checking"; do
+  assert_contains "$html" "$needle" "vital signs copy"
+done
+assert_order "$html" "Proof of life" "How the monster got built"
+
 echo "PASS: landing html"

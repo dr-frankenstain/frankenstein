@@ -575,3 +575,96 @@
     padding-block: 0.75rem;
   }
 }
+
+/* vital signs */
+.tiles {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.tile {
+  min-height: 16rem;
+  padding: 1.75rem;
+  border: 1px dashed var(--line);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: border-color 0.3s;
+}
+
+.organ {
+  font: 600 0.85rem var(--mono);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tileTitle {
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+}
+
+.beat {
+  width: 100%;
+  height: 40px;
+  margin-top: auto;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.reading {
+  font: 500 0.9rem var(--mono);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.tileLoading .beat {
+  stroke-dasharray: 4 6;
+  opacity: 0.5;
+}
+
+.tileLoading .reading {
+  color: var(--muted);
+}
+
+.tileOk {
+  border-color: rgba(163, 230, 53, 0.45);
+}
+
+.tileOk .beat {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: beat 2.4s linear infinite;
+}
+
+.tileFail .beat {
+  opacity: 0.3;
+}
+
+.tileFail .reading {
+  color: var(--muted);
+}
+
+@keyframes beat {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tileOk .beat {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
