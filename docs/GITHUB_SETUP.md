@@ -2,7 +2,7 @@
 id: ops-github-setup
 type: ops
 status: current
-updated: 2026-08-10
+updated: 2026-10-23
 scope: [github, setup]
 covers: []
 related: []
@@ -40,7 +40,7 @@ The app code is never *improved*. The project's own tooling (docs, workflows, le
 - **Issues:** ON — issues are the challenges.
 - **Discussions:** ON — the meta layer (setup help, non-code deliverables, announcements).
 - **Projects:** ON — the batch roadmap board.
-- **Wiki:** OFF — all docs live in `docs_local/` and are version-controlled.
+- **Wiki:** OFF — all docs live in `docs/` and are version-controlled.
 - **Sponsorships:** optional.
 - **Forking:** **ON** — contributors submit from forks; this is essential, do not disable.
 
@@ -66,12 +66,12 @@ Contributors work in **their own fork** and open PRs against `upstream/main`. Ma
 |---|---|---|---|---|
 | `solution/<issue#>-<slug>` | Contributors (fork) | One answer to one issue | `main` (PR only) | **Never** |
 | `worsen/<slug>` | Maintainers / Dr. Frankenstein | Add or intensify badness | `main` | Yes (squash) |
-| `docs_local/<slug>` | Maintainers | Documentation only | `main` | Yes |
+| `docs/<slug>` | Maintainers | Documentation only | `main` | Yes |
 | `ci/<slug>` | Maintainers | Workflows / automation | `main` | Yes |
 | `chore/<slug>` | Maintainers | Repo meta, tooling, deps machinery | `main` | Yes |
 | `infra/<slug>` | Maintainers | Hosting / deploy config | `main` | Yes |
 
-Examples: `solution/42-input-validation`, `worsen/booking-lock-ttl`, `docs_local/mid-batch-catalog`, `ci/leaderboard-action`.
+Examples: `solution/42-input-validation`, `worsen/booking-lock-ttl`, `docs/mid-batch-catalog`, `ci/leaderboard-action`.
 
 Rules of thumb: lowercase, kebab-case, no personal names, always start with the issue number for `solution/*` so automation can link PR → issue.
 

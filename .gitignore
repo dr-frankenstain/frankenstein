@@ -1,12 +1,6 @@
 .env
-node_modules
 .mcp.json
-
-# Private, owner-only docs (the "answer key") — never pushed
-docs_local/
-/docs_local.env
+node_modules
 
 # macOS
 .DS_Store
-.env
-.mcp.json

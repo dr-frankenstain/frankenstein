@@ -2,7 +2,7 @@
 id: ops-setup
 type: ops
 status: current
-updated: 2026-08-10
+updated: 2026-10-23
 scope: [setup]
 covers: []
 related: []
@@ -36,8 +36,8 @@ Seat booking bypasses the Python API: frontend calls PHP directly, PHP → Go �
 
 Each backend flaw gets its own doc:
 
-- Python features → `docs_local/backend/python/NN-name.md`
-- PHP features → `docs_local/backend/php/NN-name.md`
+- Python features → `docs/backend/python/NN-name.md`
+- PHP features → `docs/backend/php/NN-name.md`
 
 Cross-service flaws (bugs at the *seam* between Python and PHP) will get their own `cross-service` docs in later (mid/senior/lead) batches. This junior batch keeps each flaw contained within a single service.
 
@@ -86,7 +86,7 @@ go run .                              # needs Redis running (see compose)
 
 ## Versions are deliberately outdated
 
-Python, Pydantic, PHP, and Go are pinned a major version or two behind (e.g., Python 3.8, Pydantic v1, PHP 7.4, Go 1.19). A whole class of challenge is fixable by *upgrading* and adopting the newer idiomatic pattern — PHP 8.1 enums/`match`, Pydantic v2, Python `match` + modern typing, Go 1.22 (which fixes loop-variable capture) + `slices`/generics. Pins are explicit even though other deps are intentionally unpinned. See `docs_local/IDEAS.md` → "Deliberately outdated versions."
+Python, Pydantic, PHP, and Go are pinned a major version or two behind (e.g., Python 3.8, Pydantic v1, PHP 7.4, Go 1.19). A whole class of challenge is fixable by *upgrading* and adopting the newer idiomatic pattern — PHP 8.1 enums/`match`, Pydantic v2, Python `match` + modern typing, Go 1.22 (which fixes loop-variable capture) + `slices`/generics. Pins are explicit even though other deps are intentionally unpinned. See `docs/IDEAS.md` → "Deliberately outdated versions."
 
 ## Difficulty tagging
 
@@ -95,5 +95,5 @@ Every feature doc states its difficulty. This batch is **junior**: single-servic
 ## Adding a new bad feature (for maintainers / Dr. Frankenstein)
 
 1. Implement exactly one headline bad pattern in the relevant service.
-2. Write the doc in `docs_local/backend/python/` or `docs_local/backend/php/`.
+2. Write the doc in `docs/backend/python/` or `docs/backend/php/`.
 3. Open the matching GitHub issue(s), tagged with the language + difficulty.

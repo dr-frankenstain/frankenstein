@@ -2,7 +2,7 @@
 id: plan-implementation-plan
 type: plan
 status: current
-updated: 2026-08-10
+updated: 2026-10-23
 scope: [implementation]
 covers: []
 related: []
@@ -80,7 +80,7 @@ frankenstein/
 
 Note: there is **no root `docker-compose.yml`**. Each service (`frontend/`, `backend/python-api/`, `backend/php-service/`, `backend/go-booking/`, `db/`, `redis`) owns its own compose file / run steps and is started **separately**. The only thing that brings everything up in one shot is the hidden `.pull-the-lever.sh` (§4).
 
-Each `docs_local/frontend/pages/NN-*.md` and `docs_local/backend/**/NN-*.md` maps 1:1 to a route/handler here.
+Each `docs/frontend/pages/NN-*.md` and `docs/backend/**/NN-*.md` maps 1:1 to a route/handler here.
 
 ---
 
@@ -96,7 +96,7 @@ Each `docs_local/frontend/pages/NN-*.md` and `docs_local/backend/**/NN-*.md` map
 **The hidden bootstrap — `.pull-the-lever.sh`:**
 - A single script at the repo root that brings the entire stack up correctly in one shot (right order, waits for health, seeds the DB, wires env).
 - It **is committed** (so it's in the public repo) but is **referenced nowhere** — not in the README, not in any public doc, not in `CONTRIBUTING`. Only the owner and anyone who actually *digs through the repo* (lists dotfiles, reads the tree) will find it. A reward for the curious.
-- Keep it out of every public doc. It is documented **only here and in `OWNER_MANUAL_TASKS.md`** (both private, in `docs_local/`).
+- Keep it out of every public doc. It is documented **only here and in `OWNER_MANUAL_TASKS.md`** (both in `docs/`, which is committed to the repo).
 - Hidden-ness is by obscurity, not enforcement: a leading-dot filename that no doc points to.
 
 **The safety valve:** a pinned "Getting it to run (God help you)" Discussion holds a *partial*, painful public workaround (the per-service path), so newcomers aren't fully locked out — but the easy button stays hidden.
