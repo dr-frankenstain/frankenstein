@@ -2,7 +2,7 @@
 id: state
 type: state
 status: current
-updated: 2026-10-24
+updated: 2026-10-25
 scope: [status, current, progress]
 covers: []
 related: [index]
@@ -24,7 +24,7 @@ superseded_by: null
 ## Shipped and working
 
 - Phase 1 skeleton (`spec-phase1-design`): MySQL with the deliberately messy schema and seed data, FastAPI service, PHP service, the legacy Next.js app, and the hidden `.pull-the-lever.sh` one-shot bring-up. Verified by `tests/phase1/check_*.sh`.
-- Landing page (`spec-landing-design`): a separate Next 16 app in `landing/` on :3000 with the patchwork sections, shared lightning canvas, and live vital signs from the API checks. The legacy Next 12 app in `frontend/` is on :3001 and its `/` redirects to the landing page. Verified by `tests/landing/*.sh` and `tests/phase1/check_frontend.sh`.
+- Landing page (`spec-landing-design`): a separate Next 16 app in `landing/` on :3000 with the patchwork sections, shared lightning canvas, live vital signs from the API checks, animated how-it-works diagrams, and a searchable, filterable board of the repo's GitHub challenge issues (the best ones first). The legacy Next 12 app in `frontend/` is on :3001 and its `/` redirects to the landing page. Verified by `tests/landing/*.sh` and `tests/phase1/check_frontend.sh`.
 
 ## In progress
 

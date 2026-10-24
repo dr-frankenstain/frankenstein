@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { challenges, groupChallenges, resolveHref } from '../lib/challenges';
+import { challenges, fallbackIssues, groupChallenges, liveHref, resolveHref } from '../lib/challenges';
 import { issueSearchUrl } from '../lib/links';
 
 describe('challenge registry', () => {
@@ -38,5 +38,22 @@ describe('challenge registry', () => {
 
   it('never uses an em-dash', () => {
     expect(challenges.some((c) => (c.summary + c.label).includes('—'))).toBe(false);
+  });
+
+  it('falls back to one featured issue per room when GitHub is unreachable', () => {
+    const issues = fallbackIssues(challenges);
+    expect(issues).toHaveLength(11);
+    expect(issues.every((i) => i.featured && i.number === null)).toBe(true);
+    expect(issues[0]).toMatchObject({ route: '/product', title: 'Inline styles on every element', stack: 'Frontend' });
+    expect(issues[6]).toMatchObject({ route: 'POST /api/orders', stack: 'Python API', url: issueSearchUrl('POST /api/orders') });
+  });
+
+  it('links a frontend issue to its live page only once that room is built', () => {
+    const issue = fallbackIssues(challenges)[0];
+    expect(liveHref(issue, challenges, 'http://localhost:3001')).toBeNull();
+    const built = challenges.map((c) => (c.label === '/product' ? { ...c, built: true } : c));
+    expect(liveHref(issue, built, 'http://localhost:3001/')).toBe('http://localhost:3001/product');
+    const backend = fallbackIssues(built)[6];
+    expect(liveHref(backend, built, 'http://localhost:3001')).toBeNull();
   });
 });

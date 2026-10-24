@@ -1,3 +1,4 @@
+import type { Issue } from './issues';
 import { issueSearchUrl } from './links';
 
 export type ChallengeGroup = 'Frontend' | 'Python API' | 'PHP service';
@@ -45,4 +46,27 @@ export function groupChallenges(list: Challenge[]): { group: ChallengeGroup; ite
 // Frontend rooms live on the legacy app's origin; backend rooms already carry an absolute URL.
 export function resolveHref(c: Challenge, challengesUrl: string): string {
   return c.group === 'Frontend' ? challengesUrl.replace(/\/+$/, '') + c.href : c.href;
+}
+
+// Used when GitHub cannot be reached: one featured entry per registered room.
+export function fallbackIssues(list: Challenge[]): Issue[] {
+  return list.map((c) => ({
+    number: null,
+    title: c.summary,
+    route: c.label,
+    wrong: '',
+    stack: c.group,
+    difficulty: 'junior',
+    tags: [],
+    featured: true,
+    url: issueSearchUrl(c.label),
+    createdAt: '',
+  }));
+}
+
+// The live page for a frontend issue, once its room is built.
+export function liveHref(issue: Issue, list: Challenge[], challengesUrl: string): string | null {
+  if (issue.stack !== 'Frontend') return null;
+  const room = list.find((c) => c.group === 'Frontend' && c.built && c.label === issue.route);
+  return room ? resolveHref(room, challengesUrl) : null;
 }

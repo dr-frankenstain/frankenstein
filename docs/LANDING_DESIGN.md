@@ -2,7 +2,7 @@
 id: spec-landing-design
 type: spec
 status: current
-updated: 2026-10-24
+updated: 2026-10-25
 scope: [landing, frontend, design, motion, gsap]
 covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
 related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
@@ -19,14 +19,14 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 
 ## Goals
 
-- Intrigue in the first five minutes: a hero that reanimates on load, a lore timeline, a stack anatomy, a "how it works" sequence, and the list of challenge rooms.
+- Intrigue in the first five minutes: a hero that reanimates on load, a lore timeline, a stack anatomy, a "how it works" sequence, and the list of challenges.
 - The page reads as one designed thing, with a single idea (patchwork assembly) carried by motion, not decoration.
 - A live "vital signs" strip makes the monster feel alive (see Vital signs).
 - Lightweight and robust: it works with the API down, with reduced motion, on mobile, and without imagery.
 
 ## Non-goals
 
-- No photographs or illustrations. The lightning is the hero visual.
+- No photographs or illustrations. The lightning is the hero visual. The only drawings are the four small SVG diagrams of the how-it-works steps.
 - No light theme. Dark only.
 - No new routes or challenge pages (Phase 2 builds those).
 - No change to the challenge pages or their stack. The landing page is a separate app (`adr-0003-landing-as-separate-app`), so none of its styles or fonts can reach them.
@@ -46,7 +46,7 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 - Component styles are one CSS Module (`landing/styles/landing.module.css`); `landing/app/globals.css` sets only `html`/`body`. No inline styles except a patch's computed `clip-path`.
 - Fonts are self-hosted: `@fontsource` packages loaded through `next/font/local`.
 - Ship no scroll listeners on `window` and no `requestAnimationFrame` loops that touch React state. Use ScrollTrigger and `gsap.ticker`. Every animation has cleanup on unmount.
-- Honour `prefers-reduced-motion`. Motion that collapses to static in that mode: the load intro, lightning strikes, patch settle, zaps, marquee, pinned lore pan, sticky stack, and the heartbeat.
+- Honour `prefers-reduced-motion`. Motion that collapses to static in that mode: the load intro, lightning strikes, patch settle, zaps, marquee, pinned lore pan, sticky stack, the step diagrams, and the heartbeat.
 
 ## Look and feel
 
@@ -58,7 +58,7 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 
 ## Code layout
 
-The app is `landing/`. Server components render the static sections; each animating piece is a `'use client'` leaf in `landing/components/` that calls GSAP directly. Pure logic lives in `landing/lib/` and is unit-tested: `challenges.ts`, `links.ts`, `rng.ts`, `bolt.ts`, `patch.ts`, `vitals.ts`. `lib/lightning.ts` owns the one shared canvas layer, reached through a module-level ref.
+The app is `landing/`. Server components render the static sections; each animating piece is a `'use client'` leaf in `landing/components/` that calls GSAP directly. Pure logic lives in `landing/lib/` and is unit-tested: `challenges.ts`, `issues.ts`, `board.ts`, `github.ts`, `links.ts`, `rng.ts`, `bolt.ts`, `patch.ts`, `vitals.ts`. `lib/lightning.ts` owns the one shared canvas layer, reached through a module-level ref.
 
 ## Page structure
 
@@ -67,17 +67,29 @@ Order:
 1. Hero (lightning canvas, reanimation intro)
 2. Marquee: one only, real flaws from the project
 3. Vital signs (patch)
-4. Lore: "How the monster got built", pinned horizontal pan on desktop, vertical stack on mobile (patch)
+4. Lore: "How the monster got built", pinned horizontal pan on desktop, vertical stack on mobile, years 2014 to 2026 (patch)
 5. Anatomy: five-cell bento of the stack, exactly five cells, each with a different texture (patch)
-6. How it works: Pick / Fork / Fix / Vote as a sticky stack (patch)
-7. Challenges: sticky headline beside grouped list (patch)
+6. How it works: Pick / Fork / Fix / Vote as a sticky stack, each step with a small animated diagram (patch)
+7. Challenges: sticky headline beside a searchable, filterable list of GitHub issues (patch)
 8. Final call to action (patch), then the footer
 
 The marquee is part of the hero's band and has no cut edge. The footer is not a patch. That makes six patches: Vital signs, Lore, Anatomy, How it works, Challenges, Final call to action.
 
-The challenges intro says "Every flaw is open as its own issue" and never hard-codes a count of flaws, because a fixed number rots. The "Eleven rooms" headline is derived from the registry length. No em-dashes anywhere on the page; use hyphens. No emoji.
+The challenges intro says "Every flaw is open as its own issue" and never hard-codes a count of flaws, because a fixed number rots. The headline ("56 flaws, all on fire") is derived from the number of issues. No em-dashes anywhere on the page (issue text has them replaced by hyphens); use hyphens. No emoji.
 
-The Challenges list renders from `landing/lib/challenges.ts`. The `Challenge` type is `{ label: string; group: 'Frontend' | 'Python API' | 'PHP service'; summary: string; href: string; built: boolean }`. `label` is what the code cell shows (`/product`, `POST /api/orders`). `href` is the route for frontend rooms, joined to `NEXT_PUBLIC_CHALLENGES_URL` (default `http://localhost:3001`) when rendered, and a GitHub issues search URL for that endpoint for backend rooms. Rooms link with plain `<a>`, not `next/link`. All 11 junior-batch rooms are registered now with `built: false`; an unbuilt entry renders as plain text, a built one as a link to `href`. Phase 2 flips `built` as each room ships.
+## Challenges board
+
+The list is the repo's open issues carrying the `challenge` label, fetched server-side from the GitHub REST API (`lib/github.ts`, revalidated every 30 minutes; an optional `GITHUB_TOKEN` env var lifts the unauthenticated rate limit). `lib/issues.ts` reads each issue form into `Issue`: the title without its `[stack]` prefix and without the route, the affected route, the "What's wrong" text, the stack (Frontend, Python API, PHP service), the difficulty, and the tags (labels other than the challenge, stack and difficulty ones). If GitHub cannot be reached, the board falls back to the 11-room registry in `lib/challenges.ts`, one featured entry per room. The registry's `Challenge` type is `{ label: string; group: 'Frontend' | 'Python API' | 'PHP service'; summary: string; href: string; built: boolean }`; all 11 junior-batch rooms are registered with `built: false`, and Phase 2 flips `built` as each room ships. `href` is the route for a frontend room (joined to `NEXT_PUBLIC_CHALLENGES_URL`, default `http://localhost:3001`) and a GitHub issue search for a backend room. Rooms link with plain `<a>`, not `next/link`.
+
+A row shows only the route and the one-line flaw, in the same two-column look as before. Stack, difficulty and tags are never shown on a row; they are values for the controls. Opening a row (`<details>`) shows the "What's wrong" text and links to the issue; a frontend room whose registry `built` flag is true also links to its live page on `NEXT_PUBLIC_CHALLENGES_URL`.
+
+Default view: the issues labelled `good-first-challenge`, grouped by stack, with a "Show all" button. Controls (client component `ChallengeBoard`, logic in `lib/board.ts`):
+
+- Search: every word must appear in the title, route, "What's wrong" text, stack, difficulty or a tag.
+- Filter: one stack, and any number of tags (an issue needs all selected tags). Chips show counts.
+- Sort: Stack (grouped, default), Newest, Oldest, Route, Most tagged.
+- Any search or filter looks through all issues, not just the featured ones. The status line states how many of the total are shown. An empty result offers to clear the search.
+- Without JavaScript the featured rows still render and expand; the controls do nothing.
 
 ## The patch system (the central piece)
 
@@ -93,6 +105,7 @@ Chosen level: **restrained**. Sections settle into place with a stitch and a spa
 Rules:
 - The settle must be finished (and `transform` cleared with `clearProps`) before any pinned content inside the patch reaches its pin start. Pinned lore and the sticky stack work as soon as it has settled. A transformed ancestor breaks pinning, so never leave a transform on a patch.
 - A patch that contains a pinned element (the lore) does not tilt or offset: a transformed ancestor skews the pin's range after any refresh. Its stitches still draw and it still sparks.
+- The sticky stack dims a buried card with a brightness filter, never with opacity, so the next card cannot show through it. Each step diagram plays once as its card arrives and is server-rendered in its final state.
 - Content inside a patch is readable at all times; the settle moves the patch, it never fades content to invisible. There are no scroll-triggered fades: the patch settle is the only scroll motion.
 - **Server-rendered and no-JS state is the final, fully visible state.** The hero's masked headline and hidden sub line and buttons are only set up by JavaScript, in a layout effect before paint, and only when motion is allowed. A wall-clock failsafe (`setTimeout`, not GSAP's clock) reveals everything after 3 seconds if the intro has not finished. The lore track scrolls sideways by hand until JS marks it pinned.
 - All lightning is drawn on **one shared fixed canvas** (`pointer-events: none`) driven by one `gsap.ticker` callback. The hero strikes and the seam sparks use the same bolt generator. Do not create a canvas per patch.

@@ -13,6 +13,9 @@ import { ScrollRefresh } from '../components/ScrollRefresh';
 import { VitalSigns } from '../components/VitalSigns';
 import s from '../styles/landing.module.css';
 
+// The challenge list comes from GitHub issues; refresh it on a timer instead of on every request.
+export const revalidate = 1800;
+
 export default function Page() {
   return (
     <div className={s.root}>

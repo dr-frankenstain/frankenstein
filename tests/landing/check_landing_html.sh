@@ -59,15 +59,19 @@ PY
 
 # --- static sections
 for needle in "How the monster got built" "Nobody has the full picture" "Five languages, one shared database" \
-  "Fix it on paper" "Eleven rooms, all on fire" "Every flaw is open as its own issue" 'id="challenges"' \
-  "/product" "POST /api/orders" "POST /php/login" "It stays broken. You can still win."; do
+  "Fix it on paper" "flaws, all on fire" "Every flaw is open as its own issue" 'id="challenges"' \
+  "/product" "/api/" "/php/" "It stays broken. You can still win."; do
   assert_contains "$html" "$needle" "static section copy"
 done
-assert_order "$html" "2014" "2019" "2021" "2023" "Nobody has the full picture"
+assert_order "$html" "2014" "2019" "2021" "2023" "2026" "Nobody has the full picture"
 assert_order "$html" "Next.js frontend" "Python API" "PHP legacy" "One MySQL" "Go and Redis"
 assert_order "$html" "Pick" "Fork" "Fix" "Vote"
 assert_order "$html" "Frontend" "Python API" "PHP service"
 case "$(echo "$html" | tr 'A-Z' 'a-z')" in *fifty*) fail "page still hard-codes a count of flaws" ;; esac
+assert_contains "$html" 'aria-label="Search flaws"' "challenge search"
+assert_contains "$html" 'aria-label="Filter by stack"' "challenge stack filter"
+assert_contains "$html" "<details" "challenge rows expand"
+for step in Pick Fork Fix Vote; do assert_contains "$html" "data-art=\"$step\"" "step diagram $step"; done
 assert_not_contains "$html" "data-reveal" "scroll reveal attributes are gone"
 assert_not_contains "$html" 'href="http://localhost:3001/product"' "unbuilt rooms are plain text"
 

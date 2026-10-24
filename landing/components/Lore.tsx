@@ -9,6 +9,7 @@ const PANELS = [
   { year: '2019', title: 'Half a rewrite', text: 'A new team ported the backend to Python on half a budget. Payments and PDFs stayed behind in the old PHP service.' },
   { year: '2021', title: 'Go and Redis, bolted on', text: 'To survive a big on-sale, someone wired a Go service straight into the old PHP, around the new API. That team is gone too.' },
   { year: '2023', title: 'A new face', text: 'A contractor rewrote the frontend in Next.js, then left mid-project.' },
+  { year: '2026', title: 'Open for repair', text: 'The repository goes public. Dr. Frankenstein files every known flaw as an issue, and keeps adding new ones.' },
 ];
 
 export function Lore() {
