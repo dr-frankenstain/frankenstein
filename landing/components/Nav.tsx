@@ -14,7 +14,7 @@ export function Nav() {
           <li><a href="#how">How it works</a></li>
           <li><a href="#challenges">Challenges</a></li>
         </ul>
-        <a className={`${s.btn} ${s.btnGhost} ${s.navCta}`} href={REPO_URL}>
+        <a className={`${s.btn} ${s.btnGhost} ${s.navCta}`} href={REPO_URL} target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
       </div>

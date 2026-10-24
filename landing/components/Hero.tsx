@@ -47,7 +47,7 @@ export function Hero() {
           next?.kill();
           next = null;
           if (!introDone || !inView) return;
-          next = gsap.delayedCall(2.6 + Math.random() * 3.2, () => {
+          next = gsap.delayedCall(1.1 + Math.random() * 1.7, () => {
             strike();
             schedule();
           });

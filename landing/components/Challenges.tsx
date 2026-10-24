@@ -24,7 +24,7 @@ export async function Challenges() {
           <h2 className={`${s.display} ${s.sectionTitle}`}>{`${NUMBER_WORDS[count] ?? count} flaws, all on fire`}</h2>
           <p>Every flaw is open as its own issue. These are the best places to start.</p>
           <p className={s.headCta}>
-            <a className={`${s.btn} ${s.btnPrimary}`} href={ISSUES_URL}>Browse challenges</a>
+            <a className={`${s.btn} ${s.btnPrimary}`} href={ISSUES_URL} target="_blank" rel="noopener noreferrer">Browse challenges</a>
           </p>
         </div>
         <ChallengeBoard issues={issues} live={live} />

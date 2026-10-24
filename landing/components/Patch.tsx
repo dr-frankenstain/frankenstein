@@ -50,7 +50,7 @@ export function Patch({ id, seed, tilt, children }: { id?: string; seed: number;
             scrollTrigger: {
               trigger: el,
               start: 'top 92%',
-              end: 'top 45%',
+              end: 'top 10%',
               scrub: true,
               onRefresh: (self) => {
                 if (self.progress === 1) rest();
@@ -68,15 +68,16 @@ export function Patch({ id, seed, tilt, children }: { id?: string; seed: number;
             { rotation: 0, y: 0, ease: 'none' },
             0,
           )
-          .to(lines, { strokeDashoffset: 0, ease: 'none', stagger: { each: 0.4 / lines.length } }, 0);
+          // Stitches fill in across the whole range, the last one closing as the patch reaches the top.
+          .to(lines, { strokeDashoffset: 0, ease: 'none', duration: 0.3, stagger: { each: 0.7 / lines.length } }, 0);
       });
 
       mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
         gsap.set(lines, { strokeDashoffset: 1 });
         gsap.to(lines, {
           strokeDashoffset: 0,
-          duration: 0.8,
-          stagger: { each: 0.6 / lines.length },
+          duration: 1.4,
+          stagger: { each: 1.2 / lines.length },
           scrollTrigger: { trigger: el, start: 'top 90%', once: true },
         });
       });

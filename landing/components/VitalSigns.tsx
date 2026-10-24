@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { CHECKS, CheckResult, runCheck } from '../lib/checks';
 import { mergeResult, toVitals, Vital } from '../lib/vitals';
 import s from '../styles/landing.module.css';
+import { BrainArt, NerveArt } from './NeuralArt';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 const WATCHDOG_MS = 8000;
@@ -35,6 +36,9 @@ export function VitalSigns() {
     };
   }, []);
 
+  const vitals = toVitals(results, timedOut);
+  const ok = (organ: string) => vitals.find((v) => v.organ === organ)?.status === 'ok';
+
   return (
     <div className={s.section}>
       <div className={s.wrap}>
@@ -43,13 +47,17 @@ export function VitalSigns() {
           <p>These readings come from the stack running right now.</p>
         </div>
         <div className={s.tiles}>
-          {toVitals(results, timedOut).map((v) => (
+          {vitals.map((v) => (
             <article key={v.name} className={`${s.tile} ${TILE_STATE[v.status]}`} data-testid={`check-${v.name}`}>
               <span className={s.organ}>{v.organ}</span>
               <h3 className={`${s.display} ${s.tileTitle}`}>{v.descriptor}</h3>
-              <svg className={s.beat} viewBox="0 0 200 40" aria-hidden="true" focusable="false">
-                <polyline points={v.organ === 'Heart' && v.status === 'ok' ? BEAT : FLAT} />
-              </svg>
+              {v.organ === 'Heart' && (
+                <svg className={s.beat} viewBox="0 0 200 40" aria-hidden="true" focusable="false">
+                  <polyline points={v.status === 'ok' ? BEAT : FLAT} />
+                </svg>
+              )}
+              {v.organ === 'Brain' && <BrainArt active={v.status === 'ok'} />}
+              {v.organ === 'Nerve' && <NerveArt active={v.status === 'ok'} brainActive={ok('Brain')} />}
               <p className={s.reading}>{v.reading}</p>
             </article>
           ))}

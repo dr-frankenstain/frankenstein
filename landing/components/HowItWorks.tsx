@@ -151,6 +151,7 @@ export function HowItWorks() {
               </div>
             </div>
           ))}
+          <div className={s.stackHold} aria-hidden="true" />
         </div>
       </div>
     </div>

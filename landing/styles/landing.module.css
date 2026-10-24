@@ -437,6 +437,10 @@
   margin-top: 3rem;
 }
 
+.stackHold {
+  height: 60dvh;
+}
+
 .stackCard {
   position: sticky;
   top: 64px;
@@ -857,6 +861,10 @@
     min-height: 0;
     padding-block: 0.75rem;
   }
+
+  .stackHold {
+    display: none;
+  }
 }
 
 /* vital signs */
@@ -905,6 +913,41 @@
   font: 500 0.9rem var(--mono);
   color: var(--text);
   overflow-wrap: anywhere;
+}
+
+.neural {
+  width: calc(100% + 3.5rem);
+  margin: auto -1.75rem 0;
+  height: auto;
+  overflow: visible;
+}
+
+.neuralEdge {
+  stroke: #6c746e;
+  stroke-width: 1;
+  stroke-opacity: 0.55;
+}
+
+.neuralNode {
+  fill: #0f1311;
+  stroke: var(--muted);
+  stroke-width: 1.2;
+}
+
+.neuralOutlet {
+  fill: var(--accent);
+}
+
+.neuralPulse {
+  fill: var(--accent);
+}
+
+.tileLoading .neural {
+  opacity: 0.4;
+}
+
+.tileFail .neural {
+  opacity: 0.25;
 }
 
 .tileLoading .beat {

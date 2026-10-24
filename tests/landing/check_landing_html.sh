@@ -38,6 +38,7 @@ assert_contains "$html" "Browse challenges" "primary cta"
 assert_contains "$html" "Read the lore" "secondary cta"
 assert_contains "$html" 'href="#lore"' "lore anchor"
 assert_contains "$html" "https://github.com/dr-frankenstain/frankenstein" "github link"
+assert_contains "$html" 'target="_blank" rel="noopener noreferrer"' "github links open in a new tab"
 assert_contains "$html" "SELECT * FROM users" "marquee flaw"
 assert_contains "$html" "Intentionally vulnerable" "footer disclaimer"
 case "$html" in *$'—'*) fail "page copy contains an em-dash" ;; esac

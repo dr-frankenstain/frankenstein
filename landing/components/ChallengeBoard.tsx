@@ -114,7 +114,7 @@ export function ChallengeBoard({ issues, live }: { issues: Issue[]; live: Record
                 <div className={s.issueBody}>
                   {i.wrong && <p>{i.wrong}</p>}
                   <p className={s.issueLinks}>
-                    <a href={i.url}>{i.number ? `Open issue #${i.number}` : 'Find the issue'}</a>
+                    <a href={i.url} target="_blank" rel="noopener noreferrer">{i.number ? `Open issue #${i.number}` : 'Find the issue'}</a>
                     {live[i.url] && <a href={live[i.url]}>Visit the page</a>}
                   </p>
                 </div>

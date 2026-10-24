@@ -2,7 +2,7 @@
 id: spec-landing-design
 type: spec
 status: current
-updated: 2026-10-25
+updated: 2026-10-26
 scope: [landing, frontend, design, motion, gsap]
 covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
 related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
@@ -97,7 +97,7 @@ Each of the six sections tagged "(patch)" in Page structure is wrapped in a patc
 
 - A **cut top edge**: a jagged `clip-path` polygon, different for every patch, deterministic (seeded, not random per render).
 - A **seam**: stitches drawn along the cut edge. They are short strokes crossing the edge at regular spacing, generated from the polygon's points (not hand-drawn), in the accent at reduced opacity.
-- A **settle**: as the patch enters, it starts slightly misaligned (about 1 degree of rotation and a small vertical offset, alternating direction per patch) and settles to rest, scrubbed to scroll. The seam's stitches draw progressively over the same range.
+- A **settle**: as the patch enters, it starts slightly misaligned (about 1 degree of rotation and a small vertical offset, alternating direction per patch) and settles to rest, scrubbed to scroll from the patch's top reaching 92% of the viewport height to 10%. The seam's stitches fill in across that whole range and the last one closes as the patch reaches the top.
 - A **spark**: when the patch finishes settling, one short lightning strike runs along its seam, once per page load per patch.
 
 Chosen level: **restrained**. Sections settle into place with a stitch and a spark; they do not fly in from different directions.
@@ -105,6 +105,9 @@ Chosen level: **restrained**. Sections settle into place with a stitch and a spa
 Rules:
 - The settle must be finished (and `transform` cleared with `clearProps`) before any pinned content inside the patch reaches its pin start. Pinned lore and the sticky stack work as soon as it has settled. A transformed ancestor breaks pinning, so never leave a transform on a patch.
 - A patch that contains a pinned element (the lore) does not tilt or offset: a transformed ancestor skews the pin's range after any refresh. Its stitches still draw and it still sparks.
+- The lore pan holds on its first and last panel (extra scroll distance with the track at rest), and the sticky stack keeps its last card stuck for another 60% of the viewport height before releasing it.
+- Hero lightning strikes every 1 to 3 seconds while the hero is on screen.
+- Links to GitHub (nav, footer, "Browse challenges" buttons, issue links) open in a new tab with `rel="noopener noreferrer"`.
 - The sticky stack dims a buried card with a brightness filter, never with opacity, so the next card cannot show through it. Each step diagram plays once as its card arrives and is server-rendered in its final state.
 - Content inside a patch is readable at all times; the settle moves the patch, it never fades content to invisible. There are no scroll-triggered fades: the patch settle is the only scroll motion.
 - **Server-rendered and no-JS state is the final, fully visible state.** The hero's masked headline and hidden sub line and buttons are only set up by JavaScript, in a layout effect before paint, and only when motion is allowed. A wall-clock failsafe (`setTimeout`, not GSAP's clock) reveals everything after 3 seconds if the intro has not finished. The lore track scrolls sideways by hand until JS marks it pinned.
@@ -114,7 +117,7 @@ Rules:
 
 ## Vital signs
 
-Layout: a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; brain and nerve show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
+Layout: a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; the brain tile a small network of cells passing signals to each other; the nerve tile a branching nerve that a signal from the brain tile spreads along. Brain and nerve also show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
 
 The live Phase 1 API round trip stays on the landing page, restyled as the monster's vitals. Reuse `runChecks` (moved unchanged into `landing/lib/checks.ts`); keep each row's `data-testid="check-<name>"` and its `OK (...)` / `FAIL: ...` text so tests and the browser check keep working.
 
@@ -128,7 +131,7 @@ Mapping:
 
 States, all within the single accent:
 - Loading: "Checking" with a placeholder shaped like the final tile.
-- OK: the heart tile shows a pulsing line (heartbeat); brain and nerve tiles show their live detail text.
+- OK: the heart tile shows a pulsing line (heartbeat). The brain tile animates: pulses hop between cells at random, and every few seconds one leaves through the outlet on the tile's right edge. That signal enters the nerve tile on its left edge and spreads along every branch. If the brain check fails while the nerve is OK, the nerve fires on its own every few seconds. Both stop while off screen and are static under reduced motion. Loading and fail dim the drawing.
 - Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own. Each tile fills in as its own check answers. If a check has not answered after 8 seconds, only its tile shows `FAIL: timed out`. Tiles reserve four lines for the reading, so a long error never changes their height.
 
 ## Accessibility and safety

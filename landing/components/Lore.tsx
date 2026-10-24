@@ -12,6 +12,10 @@ const PANELS = [
   { year: '2026', title: 'Open for repair', text: 'The repository goes public. Dr. Frankenstein files every known flaw as an issue, and keeps adding new ones.' },
 ];
 
+// Fractions of the pan distance spent standing still on the first and last panel.
+const HOLD_START = 0.2;
+const HOLD_END = 0.35;
+
 export function Lore() {
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
@@ -25,18 +29,22 @@ export function Lore() {
         const el = root.current!;
         el.setAttribute('data-pinned', '');
         const distance = () => track.current!.scrollWidth - window.innerWidth;
-        gsap.to(track.current, {
-          x: () => -distance(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: root.current,
-            start: 'top top',
-            end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 1,
-            invalidateOnRefresh: true,
-          },
-        });
+        // The pan holds on the first and last panel: extra scroll distance with the track at rest.
+        gsap
+          .timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: {
+              trigger: root.current,
+              start: 'top top',
+              end: () => `+=${distance() * (1 + HOLD_START + HOLD_END)}`,
+              pin: true,
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          })
+          .to({}, { duration: HOLD_START })
+          .to(track.current, { x: () => -distance(), duration: 1 })
+          .to({}, { duration: HOLD_END });
         return () => el.removeAttribute('data-pinned');
       });
     },

@@ -9,7 +9,7 @@ export function Footer() {
         <nav className={s.footerNav}>
           <a href="#lore">Lore</a>
           <a href="#challenges">Challenges</a>
-          <a href={REPO_URL}>GitHub</a>
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub</a>
         </nav>
       </div>
     </footer>
