@@ -107,7 +107,7 @@ Rules:
 - A patch that contains a pinned element (the lore) does not tilt or offset: a transformed ancestor skews the pin's range after any refresh. Its stitches still draw and it still sparks.
 - Each lore diagram (`lib/lore.ts`, `LoreArt`) shows every part that exists by that year; the parts and links new that year are drawn in the accent and play in once as the panel arrives (2026 adds a flaw marker on every part). Without JavaScript or under reduced motion the diagram is static.
 - The lore pan holds on its first and last panel (extra scroll distance with the track at rest), and the sticky stack keeps its last card stuck for another 60% of the viewport height before releasing it.
-- Hero lightning strikes every 1 to 3 seconds while the hero is on screen.
+- Hero lightning strikes every 0.5 to 1.4 seconds while the hero is on screen. Once it scrolls away, a bolt still comes down at a random spot every 2.5 to 5 seconds.
 - Links to GitHub (nav, footer, "Browse challenges" buttons, issue links) open in a new tab with `rel="noopener noreferrer"`.
 - The sticky stack dims a buried card with a brightness filter, never with opacity, so the next card cannot show through it. Each step diagram starts when its card has stuck in place (one at a time, not while it is still scrolling in), resets when the page scrolls back above the card so it plays again on the next arrival, and is server-rendered in its final state. The triggers are computed from the stack's position and the card heights, because a trigger on a sticky card measures a moving target.
 - Content inside a patch is readable at all times; the settle moves the patch, it never fades content to invisible. There are no scroll-triggered fades: the patch settle is the only scroll motion.

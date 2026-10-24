@@ -30,6 +30,12 @@ export function Hero() {
         const { from, to } = aim();
         lightning.current?.strike(from, to);
       };
+      // Below the hero, now and then a bolt still comes down somewhere on the screen.
+      const strikeAnywhere = () =>
+        lightning.current?.strike(
+          { x: window.innerWidth * (0.1 + Math.random() * 0.8), y: 0 },
+          { x: window.innerWidth * (0.1 + Math.random() * 0.8), y: window.innerHeight * (0.35 + Math.random() * 0.5) },
+        );
 
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         const onMove = (e: PointerEvent) => (pointer = { x: e.clientX, y: e.clientY, t: performance.now() });
@@ -46,9 +52,11 @@ export function Hero() {
         const schedule = () => {
           next?.kill();
           next = null;
-          if (!introDone || !inView) return;
-          next = gsap.delayedCall(1.1 + Math.random() * 1.7, () => {
-            strike();
+          if (!introDone) return;
+          const delay = inView ? 0.5 + Math.random() * 0.9 : 2.5 + Math.random() * 2.5;
+          next = gsap.delayedCall(delay, () => {
+            if (inView) strike();
+            else strikeAnywhere();
             schedule();
           });
         };
