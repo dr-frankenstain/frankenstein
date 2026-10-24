@@ -9,7 +9,7 @@ related: [index]
 superseded_by: null
 ---
 
-# Frankenstein — current state
+# Project Frankenstein — current state
 
 <!-- The single answer to "where is this project right now?".
      Imported into CLAUDE.md and re-injected after compaction, so it is the one thing

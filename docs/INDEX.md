@@ -9,7 +9,7 @@ related: []
 superseded_by: null
 ---
 
-# Frankenstein — documentation index
+# Project Frankenstein — documentation index
 
 <!-- Imported into CLAUDE.md, so this loads in EVERY session and is re-injected after
      compaction. ONE LINE PER DOC. It is a routing table, not a summary.
@@ -19,20 +19,20 @@ superseded_by: null
 
 ## Task routing
 
-| If the task is... | Read first | Then update |
-|---|---|---|
-| Implementing a feature | that feature's `spec`, `docs/STATE.md` | the `spec`, `docs/STATE.md` |
-| Changing architecture or picking a technology | current ADRs in `docs/decisions/` | new ADR + supersede the old one |
-| Deploying or changing infra | `docs/ops/deployment.md` | same file, in place |
-| Writing or changing tests | `docs/ops/testing.md` | same file, in place |
-| Market, pricing or competitor question | newest doc in `docs/research/` | new dated `research` doc |
-| "What's the status of X?" | `docs/STATE.md` only | — |
+| If the task is...                             | Read first                             | Then update                     |
+| --------------------------------------------- | -------------------------------------- | ------------------------------- |
+| Implementing a feature                        | that feature's `spec`, `docs/STATE.md` | the `spec`, `docs/STATE.md`     |
+| Changing architecture or picking a technology | current ADRs in `docs/decisions/`      | new ADR + supersede the old one |
+| Deploying or changing infra                   | `docs/ops/deployment.md`               | same file, in place             |
+| Writing or changing tests                     | `docs/ops/testing.md`                  | same file, in place             |
+| Market, pricing or competitor question        | newest doc in `docs/research/`         | new dated `research` doc        |
+| "What's the status of X?"                     | `docs/STATE.md` only                   | —                               |
 
 ## Documents
 
 ### State
 
-- `state` — Frankenstein — current state — `docs/STATE.md` (current, 2026-10-23)
+- `state` — Project Frankenstein — current state — `docs/STATE.md` (current, 2026-10-23)
 
 ### Decisions
 
@@ -59,7 +59,7 @@ superseded_by: null
 - `ops-05-case-sensitive-search` — FE Page 05 — Search Page (case-sensitive exact match) — `docs/frontend/pages/05-case-sensitive-search.md` (current, 2026-08-10)
 - `ops-06-annoying-popups` — FE Page 06 — Deals Page (the popup hellscape) — `docs/frontend/pages/06-annoying-popups.md` (current, 2026-08-10)
 - `ops-github-setup` — GitHub Repository Configuration — Project Frankenstein — `docs/GITHUB_SETUP.md` (current, 2026-08-10)
-- `ops-ideas` — Frankenstein — Idea Backlog — `docs/IDEAS.md` (current, 2026-10-23)
+- `ops-ideas` — Project Frankenstein — Idea Backlog — `docs/IDEAS.md` (current, 2026-10-23)
 - `ops-junior-backend` — Bad Solutions — Junior Backend Developer — `docs/bad-solutions/junior-backend.md` (current, 2026-08-10)
 - `ops-junior-frontend` — Bad Solutions — Junior Frontend Developer — `docs/bad-solutions/junior-frontend.md` (current, 2026-08-10)
 - `ops-project` — Project Frankenstein — Vision & Overview — `docs/PROJECT.md` (current, 2026-10-25)

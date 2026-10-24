@@ -9,7 +9,8 @@ related: []
 superseded_by: null
 review: "guessed: type,updated"
 ---
-# Frankenstein — Idea Backlog
+
+# Project Frankenstein — Idea Backlog
 
 Everything discussed during brainstorming, captured so nothing is lost. Items here are not all committed — this is the pool we draw from when building batches. Decisions that are locked are marked ✅.
 
@@ -25,13 +26,13 @@ Everything discussed during brainstorming, captured so nothing is lost. Items he
 - ✅ Leaderboard via GitHub Action for retention.
 - ✅ "Dr. Frankenstein" maintainer persona commits new horrors / reintroduces bugs to keep the cycle alive.
 - Idea: "Hall of Shame" README section screenshotting the worst features for HN/Reddit virality.
-- Idea: only the *data* (best solution per issue type) is the long-term asset, even though community is the near-term focus.
+- Idea: only the _data_ (best solution per issue type) is the long-term asset, even though community is the near-term focus.
 
 ## Architecture
 
 - ✅ Polyglot legacy mess: Next.js → Python API → PHP service, sharing a DB two services write to.
 - ✅ Realistic legacy tone with a backstory (2014 PHP → 2019 half-migration to Python → 2023 Next.js rewrite).
-- ✅ Bad code both *within* layers and at the *seams* between services.
+- ✅ Bad code both _within_ layers and at the _seams_ between services.
 - ✅ Setup is deliberately broken but **survivable** (pinned workaround always exists).
 - Cross-service bug ideas: PHP timestamps vs Python ISO vs JS parsing; `[]` vs `{}` serialization; no shared contract/OpenAPI; auth done 3 ways; synchronous cross-network N+1; float money math mismatches.
 
@@ -168,6 +169,7 @@ Real-world-inspired. A React/Next page loads a **ThreeJS venue map** (venue stor
 **Backstory hook:** the 2021 attempt to survive high-demand on-sales — a Go microservice + Redis bolted onto the PHP booking path by a team that has since left.
 
 **Concurrency / correctness (senior/lead):**
+
 - No lock → two users reserve the same seat, both succeed (double-booking).
 - Check-then-set race in Go: `GET status` then `SET reserved`, non-atomic (should be `SETNX` / Lua).
 - Redis lock with no TTL → a crashed request locks a seat forever (ghost seats).
@@ -178,6 +180,7 @@ Real-world-inspired. A React/Next page loads a **ThreeJS venue map** (venue stor
 - No idempotency: a double-click creates two reservations.
 
 **Seams (Go ↔ PHP ↔ FE):**
+
 - PHP calls Go synchronously with no timeout → Go slow → FE spinner forever.
 - Retry storm when Go is down (no backoff / circuit breaker).
 - `int64` seat IDs from Go truncated/floated by PHP on large venues.
@@ -186,6 +189,7 @@ Real-world-inspired. A React/Next page loads a **ThreeJS venue map** (venue stor
 - Go returns an error; PHP swallows it and returns success to FE.
 
 **Frontend / ThreeJS:**
+
 - Loads the entire venue JSON on every render; parses on the main thread → frozen UI, no loading state.
 - Every seat a separate mesh (no instancing) → FPS tanks on big venues.
 - ThreeJS geometries/materials never disposed on unmount → memory leak.
@@ -194,11 +198,13 @@ Real-world-inspired. A React/Next page loads a **ThreeJS venue map** (venue stor
 - Whole map re-polled every 500ms instead of deltas/websocket.
 
 **Data modeling:**
+
 - Whole venue in one JSON blob/row → must load/rewrite the entire venue to change one seat.
 - Seat availability computed by scanning the full JSON each request.
 - No optimistic-concurrency/version on the venue JSON → concurrent edits lost (last write wins).
 
 **Go-specific (junior→mid for Go devs):**
+
 - Goroutine leaks; goroutines that never exit.
 - Shared map written by multiple goroutines without a mutex → data race / panic.
 - Unbuffered channel deadlock.
@@ -206,6 +212,7 @@ Real-world-inspired. A React/Next page loads a **ThreeJS venue map** (venue stor
 - Seat holds kept in a global in-memory map instead of Redis (lost on restart, not shared across instances).
 
 **Redis-specific:**
+
 - Confirmed bookings stored only in Redis (data loss on eviction/restart).
 - `KEYS *` to scan seats in production.
 - Giant JSON under one key; whole-venue `SET` on every seat change.
@@ -215,21 +222,21 @@ This scenario alone can seed an entire senior/lead + Go + cross-service batch, p
 
 ## ✅ Deliberately outdated versions — upgrade challenges
 
-Every technology is pinned **a major version or two behind** on purpose. A distinct class of bad solution is one whose best fix is *not* a rewrite but an **upgrade + adoption of the newer idiomatic API/hook/pattern**. This tests whether a contributor knows how the ecosystem has evolved — strong hiring signal. Pins are explicit (lockfiles, `go.mod`, `composer.json`, `pyproject.toml`); this coexists with the "unpinned deps" mess elsewhere, which is realistically inconsistent.
+Every technology is pinned **a major version or two behind** on purpose. A distinct class of bad solution is one whose best fix is _not_ a rewrite but an **upgrade + adoption of the newer idiomatic API/hook/pattern**. This tests whether a contributor knows how the ecosystem has evolved — strong hiring signal. Pins are explicit (lockfiles, `go.mod`, `composer.json`, `pyproject.toml`); this coexists with the "unpinned deps" mess elsewhere, which is realistically inconsistent.
 
 Keep versions **old-but-not-fossil** so the upgrade is a realistic 1–2 major bumps, not an archaeology dig.
 
-| Tech | Pinned (bad) | Upgrade unlocks (the intended fix) |
-|---|---|---|
-| React | 17.x | 18/19: automatic batching, `useId`, `useTransition`, `useDeferredValue`, `createRoot`, `useSyncExternalStore`; (19) `use`, Actions, `useOptimistic`, `useFormStatus` |
-| Next.js | 12.3.x (Pages Router) | 13+: App Router, Server Actions, `next/font`, image improvements (requires the React 18 upgrade) |
-| Node | 16 (EOL) | 20/22: native `fetch`, built-in test runner, performance |
-| TypeScript | 4.5 | 5.x: `satisfies`, `const` type params, modern decorators |
-| Python | 3.8 (EOL) | 3.11/3.12: `match`, `X | Y` unions, `list[..]` generics, tz-aware datetime, speed |
-| Pydantic | v1 | v2: `model_validate`/`model_dump`, `field_validator`, big perf gains |
-| PHP | 7.4 (EOL) | 8.1+: enums, `match`, constructor promotion, `readonly`, nullsafe `?->`, strict types, JIT |
-| Go | 1.19 | 1.21/1.22: `slices`/`maps` stdlib, `min`/`max`, `errors.Join`, **fixed loop-variable capture**, generics adoption |
-| Misc deps | `moment.js`, `node-fetch` polyfill, old `axios` | native `Intl`/`date-fns`/`Temporal`, native `fetch` |
+| Tech       | Pinned (bad)                                    | Upgrade unlocks (the intended fix)                                                                                                                                   |
+| ---------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| React      | 17.x                                            | 18/19: automatic batching, `useId`, `useTransition`, `useDeferredValue`, `createRoot`, `useSyncExternalStore`; (19) `use`, Actions, `useOptimistic`, `useFormStatus` |
+| Next.js    | 12.3.x (Pages Router)                           | 13+: App Router, Server Actions, `next/font`, image improvements (requires the React 18 upgrade)                                                                     |
+| Node       | 16 (EOL)                                        | 20/22: native `fetch`, built-in test runner, performance                                                                                                             |
+| TypeScript | 4.5                                             | 5.x: `satisfies`, `const` type params, modern decorators                                                                                                             |
+| Python     | 3.8 (EOL)                                       | 3.11/3.12: `match`, `X                                                                                                                                               | Y`unions,`list[..]` generics, tz-aware datetime, speed |
+| Pydantic   | v1                                              | v2: `model_validate`/`model_dump`, `field_validator`, big perf gains                                                                                                 |
+| PHP        | 7.4 (EOL)                                       | 8.1+: enums, `match`, constructor promotion, `readonly`, nullsafe `?->`, strict types, JIT                                                                           |
+| Go         | 1.19                                            | 1.21/1.22: `slices`/`maps` stdlib, `min`/`max`, `errors.Join`, **fixed loop-variable capture**, generics adoption                                                    |
+| Misc deps  | `moment.js`, `node-fetch` polyfill, old `axios` | native `Intl`/`date-fns`/`Temporal`, native `fetch`                                                                                                                  |
 
 **Example upgrade-fixable flaws (by level):**
 
@@ -239,20 +246,20 @@ Keep versions **old-but-not-fossil** so the upgrade is a realistic 1–2 major b
 - **[mid]** TS 4.5: awkward casts where `satisfies` belongs. Fix: TS 5 + `satisfies`.
 - **[mid]** Python 3.8: long `if/elif` chains screaming for `match`; `Optional[List[int]]`; `datetime.utcnow()`. Fix: 3.12 + `match` + modern typing + tz-aware datetimes.
 - **[senior]** Pydantic v1 (`.dict()`, `@validator`, `Config`). Fix: migrate to v2.
-- **[mid/senior]** PHP 7.4: string status constants + `switch`, manual constructor assignment, `array()`, loose `==`. Fix: PHP 8.1 enums + `match` + constructor promotion + strict types — *also closes the type-juggling auth bug in `php/02`.*
-- **[senior]** Go 1.19: the classic **loop-variable capture** bug in the seat-booking goroutines (every goroutine sees the last seat). Fix: upgrade to Go 1.22 (semantics fixed) or capture correctly; adopt `slices`/`maps`/generics. *Ties directly into the concurrency flagship.*
+- **[mid/senior]** PHP 7.4: string status constants + `switch`, manual constructor assignment, `array()`, loose `==`. Fix: PHP 8.1 enums + `match` + constructor promotion + strict types — _also closes the type-juggling auth bug in `php/02`._
+- **[senior]** Go 1.19: the classic **loop-variable capture** bug in the seat-booking goroutines (every goroutine sees the last seat). Fix: upgrade to Go 1.22 (semantics fixed) or capture correctly; adopt `slices`/`maps`/generics. _Ties directly into the concurrency flagship._
 
-**Cross-links worth noting:** the PHP `==` auth bug and the Go loop-var concurrency bug are each fixable from *two* angles (correct the code, or upgrade the platform) — great for showing multiple valid solutions competing on 👍.
+**Cross-links worth noting:** the PHP `==` auth bug and the Go loop-var concurrency bug are each fixable from _two_ angles (correct the code, or upgrade the platform) — great for showing multiple valid solutions competing on 👍.
 
 ## ✅ Dependency & migration challenges
 
 Builds on "Deliberately outdated versions," but these test managing breaking change at the **graph / architecture / scale** level, not a single-package bump. Primary audience: senior devs, tech leads, and the new **DevOps/DevSecOps** discipline.
 
 - **Transitive / lockfile / peer-dependency conflicts.** Seed the tree so an upgrade triggers `npm ERESOLVE`, diamond conflicts (two sub-deps needing incompatible versions of a third library), and mismatched `@types/*`. Fix: `overrides`/`resolutions`, deduping, and graph untangling. Elevates the existing "duplicate dependencies" idea from cosmetic to a real puzzle. `[senior / devops]`
-- **Supply-chain / known-CVE remediation.** Pin specific old libraries that carry *public CVEs*. Challenge: detect them (`npm audit` / SCA / Dependabot-style scanning), bump them, resolve the breaking patch, and prove no regression. On-brand — the app is already intentionally vulnerable. ⚠️ **Label clearly as an intentional lab**, since these are real CVEs in a public, running app. `[devsecops / security]`
+- **Supply-chain / known-CVE remediation.** Pin specific old libraries that carry _public CVEs_. Challenge: detect them (`npm audit` / SCA / Dependabot-style scanning), bump them, resolve the breaking patch, and prove no regression. On-brand — the app is already intentionally vulnerable. ⚠️ **Label clearly as an intentional lab**, since these are real CVEs in a public, running app. `[devsecops / security]`
 - **Framework coupling → dependency inversion (architecture).** Business logic entangled with framework/ORM/serialization annotations so the framework can't be upgraded without breaking the domain (e.g., Pydantic models used directly as domain models; business logic living in route handlers; PHP logic fused with `mysqli`). Fix: extract interfaces / ports-and-adapters so the framework or library can be swapped with zero domain changes. Connects the upgrade theme to the architecture theme. `[senior/lead]`
-- **Codemod-scale migration.** Repeat a legacy pattern across *many* components (e.g., React class components with `componentWillReceiveProps` everywhere) so the fix is a written/applied AST codemod (jscodeshift-style), not a per-file edit. The senior version of our upgrade challenges. Coexists with the one-bad-pattern-per-page rule — same pattern repeated, one codemod fixes all. `[senior]`
-- **Cross-cutting rule:** every upgrade/migration challenge should require *proving no behavior change* — pairs naturally with the QA characterization-tests angle.
+- **Codemod-scale migration.** Repeat a legacy pattern across _many_ components (e.g., React class components with `componentWillReceiveProps` everywhere) so the fix is a written/applied AST codemod (jscodeshift-style), not a per-file edit. The senior version of our upgrade challenges. Coexists with the one-bad-pattern-per-page rule — same pattern repeated, one codemod fixes all. `[senior]`
+- **Cross-cutting rule:** every upgrade/migration challenge should require _proving no behavior change_ — pairs naturally with the QA characterization-tests angle.
 
 These, plus the deliberately broken setup, lockfile mess, and CI/deploy path, anchor the new **DevOps/DevSecOps** discipline (see below).
 
@@ -262,20 +269,20 @@ Frontend, Backend (Python + PHP + Go), QA, PM, Design, Product Owner, and **DevO
 
 ## ✅ Deliberately bad ARCHITECTURE — the "distributed monolith"
 
-Goal: the system's *architecture* is as bad as the code inside it. The meta-framing: it's a **distributed monolith** — the operational pain of microservices with the tight coupling of a monolith. Worst of both worlds, and the flagship **lead/architect** challenge ("how would you actually decompose or recombine this without downtime?").
+Goal: the system's _architecture_ is as bad as the code inside it. The meta-framing: it's a **distributed monolith** — the operational pain of microservices with the tight coupling of a monolith. Worst of both worlds, and the flagship **lead/architect** challenge ("how would you actually decompose or recombine this without downtime?").
 
 Architectural anti-patterns to bake in:
 
 - **Polyglot for no reason** — four languages where one would do; each service a different stack, style, and tooling.
-- **No single entry point / no gateway** — the FE calls the Python API for most things but hits PHP *directly* for seat booking (already locked). Clients must know the topology.
-- **Integration-by-database** — Python, PHP (and Go via PHP) read/write the same tables with no clear ownership; the DB *is* the integration layer, so a schema change anywhere breaks others.
+- **No single entry point / no gateway** — the FE calls the Python API for most things but hits PHP _directly_ for seat booking (already locked). Clients must know the topology.
+- **Integration-by-database** — Python, PHP (and Go via PHP) read/write the same tables with no clear ownership; the DB _is_ the integration layer, so a schema change anywhere breaks others.
 - **Circular service calls** — Python → PHP → back into Python for some flows; no clear dependency direction.
 - **Duplicated business logic across services** — price/total computed in both Python and PHP with subtly different rounding → results that don't reconcile.
 - **No shared contracts** — no OpenAPI/schema/typed clients between services; loosely-typed JSON passed around; rename a field and things break silently.
 - **Three ways to do everything** — auth (JWT / session cookie / hardcoded API key), config (env / `.ini` / hardcoded / JSON), error handling, date formats.
 - **Inconsistent communication styles** — sync REST here, direct DB writes there, Redis as ad-hoc IPC; a queue absent where you'd want one and (later) present where you wouldn't.
 - **God service + anemic services** — PHP does too much (payments, PDFs, booking entry, lookups); others are thin pass-throughs.
-- **Distributed-monolith deployability** — nothing deploys independently (shared DB + synchronous chains), yet ops are *split into separate startups* anyway (see the separate-startup decision) → the pain of distribution without the benefit.
+- **Distributed-monolith deployability** — nothing deploys independently (shared DB + synchronous chains), yet ops are _split into separate startups_ anyway (see the separate-startup decision) → the pain of distribution without the benefit.
 - **Wrong state placement** — durable data in Redis (evictable), session/ephemeral data in the DB, secrets in `NEXT_PUBLIC_`, business state in the frontend.
 - **Structure that lies** — repo layout doesn't match runtime/service boundaries; shared code copy-pasted rather than shared.
 - **No layering within services** — controllers reach into other services' internals / DB tables directly; no domain layer (feeds the dependency-inversion challenge).
@@ -288,7 +295,8 @@ Challenge value: prime **lead/architect + PM/PO** territory ("map the architectu
 Distinct from per-feature flaws: pervasive, low-grade mess spanning every page/service and every seniority (juniors spot obvious misplacement; leads spot systemic inconsistency). Use as many as possible and **sprinkle throughout** rather than concentrating.
 
 **Project / folder organization (FE):**
-- Proper folders exist (`components/`, `hooks/`, `utils/`, `reducers/`, `contexts/`) but some hooks/components/utils/reducers are dumped directly inside a page/section/component folder instead — no consistent colocation strategy. *(the owner's example)*
+
+- Proper folders exist (`components/`, `hooks/`, `utils/`, `reducers/`, `contexts/`) but some hooks/components/utils/reducers are dumped directly inside a page/section/component folder instead — no consistent colocation strategy. _(the owner's example)_
 - Mixed philosophies: some features colocated by feature, others split by type — inconsistently.
 - Barrel `index.ts` in some folders, not others; some re-export everything, some nothing; a few create circular imports.
 - Duplicate utilities: the same helper (date format, currency, debounce) reimplemented in 3 places, slightly differently.
@@ -297,6 +305,7 @@ Distinct from per-feature flaws: pervasive, low-grade mess spanning every page/s
 - Tests (where they exist) placed inconsistently: some `__tests__/`, some `*.test.tsx` beside the file, most missing.
 
 **Code style / patterns (FE):**
+
 - Class and function components coexist for no reason.
 - State managed four ways for similar data: Redux + Context + prop-drilling + local `useState`.
 - Mixed async: `.then()` chains and `async/await` intermixed, sometimes in one function.
@@ -311,6 +320,7 @@ Distinct from per-feature flaws: pervasive, low-grade mess spanning every page/s
 - Comments in mixed languages / misleading comments that contradict the code.
 
 **Backend parallels (Python / PHP / Go):**
+
 - Business logic in route handlers; a 1500-line `utils.py` / `helpers.php`; no service/domain layer.
 - Inconsistent module structure across services; duplicated logic (the price calc again).
 - Mixed sync/async (Python); mixed procedural/OO (PHP); ignored errors (Go `_ =`).
@@ -320,21 +330,21 @@ Distinct from per-feature flaws: pervasive, low-grade mess spanning every page/s
 
 ## ✅ Real-world-sourced ideas — from seat-map-creator / seat-map-view / seat-map-creator-svg
 
-🔒 **Private provenance note — do not mention these source repos anywhere public.** These are patterns found by auditing three of the owner's real past projects (a seat-map creator on 2019-era CRA + Express, its companion renderer package, and a 2023 Gatsby/TS rewrite). They're kept here so we don't lose *why* each idea is credible, but every public-facing doc (issues, README, page docs) must describe the flaw generically — never name or imply the source project. Reimplement fresh inside Frankenstein's own stack (Next.js/Python/PHP/Go); don't import any of this code or its dependencies.
+🔒 **Private provenance note — do not mention these source repos anywhere public.** These are patterns found by auditing three of the owner's real past projects (a seat-map creator on 2019-era CRA + Express, its companion renderer package, and a 2023 Gatsby/TS rewrite). They're kept here so we don't lose _why_ each idea is credible, but every public-facing doc (issues, README, page docs) must describe the flaw generically — never name or imply the source project. Reimplement fresh inside Project Frankenstein's own stack (Next.js/Python/PHP/Go); don't import any of this code or its dependencies.
 
 Rated by how much stronger they are than what we'd invented — top picks first.
 
-**No-auth, single-shared-file "database" (backend).** The Express backend has zero authentication and stores its entire state in one `venue.json` / `sample.png` on disk — every client reads and writes the *same* file, so two "different" venues are silently the same venue. Stronger than our existing IDOR/no-multi-tenancy ideas because it's not even row-level — there's no isolation concept at all. **Adapt directly** as a Python or PHP junior/mid challenge: an endpoint that "saves the venue" to one global record with no user/tenant scoping. `[junior/mid, backend]`
+**No-auth, single-shared-file "database" (backend).** The Express backend has zero authentication and stores its entire state in one `venue.json` / `sample.png` on disk — every client reads and writes the _same_ file, so two "different" venues are silently the same venue. Stronger than our existing IDOR/no-multi-tenancy ideas because it's not even row-level — there's no isolation concept at all. **Adapt directly** as a Python or PHP junior/mid challenge: an endpoint that "saves the venue" to one global record with no user/tenant scoping. `[junior/mid, backend]`
 
 **Double-response / crash-on-error bug (backend).** A handler performs two independent `fs.writeFile`s, each able to send a `500` on failure, then unconditionally sends a `200` afterward regardless — triggers "Cannot set headers after they are sent" whenever either write fails. A sibling handler does `if (err) throw err` inside an fs callback, which crashes the whole process instead of returning `500`. Two distinct, very specific error-handling flaws in adjacent code. **Adapt directly** as two separate junior BE issues (Python or PHP): "handler sends a response after already sending one" and "unhandled error in a callback takes down the process." `[junior, backend]`
 
 **Dual-schema conversion layer (architecture/migration).** Real code has two live venue-data shapes (`seatmap` array-based old structure vs `groups` newer structure) coexisting, with dedicated `mergeData`/`splitData`-style modules whose only job is converting between them on every read/write — evidence of a schema migration that was started but never finished. Stronger than our generic "framework coupling" idea. **Adapt** as a mid/senior migration challenge: two endpoints/tables represent the same entity differently, with an ever-growing translation layer between them; the fix is picking one shape and completing the migration. `[mid/senior, backend, architecture]`
 
-**Copy-pasted component fork instead of a prop (messy code).** A component and its entire stylesheet were duplicated wholesale for a client variant (different suffix, ~half the lines removed/changed) instead of adding a variant prop — both the `.js` and its `.css` forked in parallel. Stronger than our generic "copy-pasted components" bullet because it shows the *whole vertical slice* (component + styles) forked. **Adapt directly** into the messy-code catalog and/or a dedicated FE page: two near-identical components/stylesheets where a `variant` prop was clearly warranted. `[junior/mid, frontend]`
+**Copy-pasted component fork instead of a prop (messy code).** A component and its entire stylesheet were duplicated wholesale for a client variant (different suffix, ~half the lines removed/changed) instead of adding a variant prop — both the `.js` and its `.css` forked in parallel. Stronger than our generic "copy-pasted components" bullet because it shows the _whole vertical slice_ (component + styles) forked. **Adapt directly** into the messy-code catalog and/or a dedicated FE page: two near-identical components/stylesheets where a `variant` prop was clearly warranted. `[junior/mid, frontend]`
 
-**Decorative TypeScript strictness (upgrade/TS-discipline, sharper than our `/profile` page).** `tsconfig.json` has `"strict": true`, but the build script is a bundler/transpiler (Babel-based) that strips types without ever running `tsc` — so nothing is actually type-checked, and hooks/components have fully untyped parameters (implicit `any`, not even the explicit keyword) that would fail strict mode if it were enforced. This is a *better* version of "TS in name only" than an explicit `any` everywhere: the config looks rigorous but is theater. **Strongly consider replacing or supplementing** the junior `/profile` `any`-everywhere page with this variant — the fix isn't "remove `any`," it's "wire `tsc --noEmit` into the actual build/CI so strict mode is real." `[junior/mid, frontend, devops]`
+**Decorative TypeScript strictness (upgrade/TS-discipline, sharper than our `/profile` page).** `tsconfig.json` has `"strict": true`, but the build script is a bundler/transpiler (Babel-based) that strips types without ever running `tsc` — so nothing is actually type-checked, and hooks/components have fully untyped parameters (implicit `any`, not even the explicit keyword) that would fail strict mode if it were enforced. This is a _better_ version of "TS in name only" than an explicit `any` everywhere: the config looks rigorous but is theater. **Strongly consider replacing or supplementing** the junior `/profile` `any`-everywhere page with this variant — the fix isn't "remove `any`," it's "wire `tsc --noEmit` into the actual build/CI so strict mode is real." `[junior/mid, frontend, devops]`
 
-**Leftover scaffold identity (messy code / DevOps).** `package.json` still has `"name": "gatsby-starter-default"` (the framework's own starter name, never renamed) and `"test": "echo \"Write tests! -> ...\" && exit 1"` (the scaffold's placeholder test script, still in place — so `npm test` always "fails with a reminder" and clearly nobody runs it). Small but very authentic. **Adapt** as a couple of one-line easter eggs in Frankenstein's own `package.json`/CI: an unrenamed placeholder project name, and a stub `test` script that never got replaced. `[junior, devops]`
+**Leftover scaffold identity (messy code / DevOps).** `package.json` still has `"name": "gatsby-starter-default"` (the framework's own starter name, never renamed) and `"test": "echo \"Write tests! -> ...\" && exit 1"` (the scaffold's placeholder test script, still in place — so `npm test` always "fails with a reminder" and clearly nobody runs it). Small but very authentic. **Adapt** as a couple of one-line easter eggs in Project Frankenstein's own `package.json`/CI: an unrenamed placeholder project name, and a stub `test` script that never got replaced. `[junior, devops]`
 
 **`window.onresize =` / `window.onkeydown =` with a fake-Firefox-bug workaround (workaround-for-a-simple-problem, frontend).** Global handlers assigned via property (not `addEventListener`, so only one handler can ever exist and nothing is cleaned up on unmount), and the resize handler's fix for "reload not working in Firefox" is `window.location.href = window.location.href` — a full page reload on every resize, with a comment blaming the browser for what's actually the app's own bug. Excellent, ready-to-use example for the existing "workaround for an issue with a simple solution" FE category. **Adapt directly.** `[junior/mid, frontend]`
 

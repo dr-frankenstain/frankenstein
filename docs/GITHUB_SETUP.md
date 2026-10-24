@@ -9,11 +9,12 @@ related: []
 superseded_by: null
 review: "guessed: type,updated"
 ---
+
 # GitHub Repository Configuration — Project Frankenstein
 
-How to configure the repo so it serves Frankenstein's inverted model rather than fighting it. Read `PROJECT.md` first for the mechanics; this doc turns them into concrete GitHub settings.
+How to configure the repo so it serves Project Frankenstein's inverted model rather than fighting it. Read `PROJECT.md` first for the mechanics; this doc turns them into concrete GitHub settings.
 
-> **The guiding principle:** `main` is permanently broken and only ever *worsened*. **Solutions are Pull Requests that are never merged.** Voting is 👍 reactions. Almost every GitHub default assumes the opposite (that PRs get merged and code improves), so we deliberately reconfigure or guard those defaults below.
+> **The guiding principle:** `main` is permanently broken and only ever _worsened_. **Solutions are Pull Requests that are never merged.** Voting is 👍 reactions. Almost every GitHub default assumes the opposite (that PRs get merged and code improves), so we deliberately reconfigure or guard those defaults below.
 
 ---
 
@@ -21,13 +22,13 @@ How to configure the repo so it serves Frankenstein's inverted model rather than
 
 There are **three kinds of change** in this repo, and the whole config exists to keep them separate:
 
-| Kind | Who | Example | Merges to `main`? |
-|---|---|---|---|
-| **Solution** | Contributors (from a fork) | "Here's how I'd fix the SQL injection" | **Never** — it's an answer, not a change |
-| **Worsening** | Maintainers / Dr. Frankenstein | "Add a new race condition to booking" | **Yes** (the *only* app changes that land) |
-| **Meta** | Maintainers | Docs, CI, leaderboard, hosting config | **Yes** — project tooling is maintained normally |
+| Kind          | Who                            | Example                                | Merges to `main`?                                |
+| ------------- | ------------------------------ | -------------------------------------- | ------------------------------------------------ |
+| **Solution**  | Contributors (from a fork)     | "Here's how I'd fix the SQL injection" | **Never** — it's an answer, not a change         |
+| **Worsening** | Maintainers / Dr. Frankenstein | "Add a new race condition to booking"  | **Yes** (the _only_ app changes that land)       |
+| **Meta**      | Maintainers                    | Docs, CI, leaderboard, hosting config  | **Yes** — project tooling is maintained normally |
 
-The app code is never *improved*. The project's own tooling (docs, workflows, leaderboard) is maintained like any normal repo. Keep that distinction crisp — it resolves almost every "wait, are we allowed to merge this?" question.
+The app code is never _improved_. The project's own tooling (docs, workflows, leaderboard) is maintained like any normal repo. Keep that distinction crisp — it resolves almost every "wait, are we allowed to merge this?" question.
 
 ---
 
@@ -62,14 +63,14 @@ The app code is never *improved*. The project's own tooling (docs, workflows, le
 
 Contributors work in **their own fork** and open PRs against `upstream/main`. Maintainers work in branches on the main repo. Use these prefixes so both humans and automation can parse intent. (GitHub can't natively reject a mis-named branch, so this is convention + an optional CI lint; see §12.)
 
-| Prefix | Who | Purpose | Target | Merged? |
-|---|---|---|---|---|
-| `solution/<issue#>-<slug>` | Contributors (fork) | One answer to one issue | `main` (PR only) | **Never** |
-| `worsen/<slug>` | Maintainers / Dr. Frankenstein | Add or intensify badness | `main` | Yes (squash) |
-| `docs/<slug>` | Maintainers | Documentation only | `main` | Yes |
-| `ci/<slug>` | Maintainers | Workflows / automation | `main` | Yes |
-| `chore/<slug>` | Maintainers | Repo meta, tooling, deps machinery | `main` | Yes |
-| `infra/<slug>` | Maintainers | Hosting / deploy config | `main` | Yes |
+| Prefix                     | Who                            | Purpose                            | Target           | Merged?      |
+| -------------------------- | ------------------------------ | ---------------------------------- | ---------------- | ------------ |
+| `solution/<issue#>-<slug>` | Contributors (fork)            | One answer to one issue            | `main` (PR only) | **Never**    |
+| `worsen/<slug>`            | Maintainers / Dr. Frankenstein | Add or intensify badness           | `main`           | Yes (squash) |
+| `docs/<slug>`              | Maintainers                    | Documentation only                 | `main`           | Yes          |
+| `ci/<slug>`                | Maintainers                    | Workflows / automation             | `main`           | Yes          |
+| `chore/<slug>`             | Maintainers                    | Repo meta, tooling, deps machinery | `main`           | Yes          |
+| `infra/<slug>`             | Maintainers                    | Hosting / deploy config            | `main`           | Yes          |
 
 Examples: `solution/42-input-validation`, `worsen/booking-lock-ttl`, `docs/mid-batch-catalog`, `ci/leaderboard-action`.
 
@@ -83,7 +84,7 @@ Create a **branch ruleset** (Settings → Rules → Rulesets) targeting `main`:
 
 - **Restrict who can push:** maintainers team only (contributors can't push regardless, since they fork).
 - **Require a pull request before merging:** ON. 1 maintainer approval for worsening/meta PRs.
-- **Require status checks to pass:** ON — add the **`challenge-guard`** check (§13). This is the mechanism that makes solution PRs *un-mergeable*: the check fails whenever a PR is labeled `solution`, so the merge button stays blocked even if a maintainer slips.
+- **Require status checks to pass:** ON — add the **`challenge-guard`** check (§13). This is the mechanism that makes solution PRs _un-mergeable_: the check fails whenever a PR is labeled `solution`, so the merge button stays blocked even if a maintainer slips.
 - **Block force pushes:** ON.
 - **Restrict deletions:** ON (nobody deletes `main`).
 - **Require linear history:** ON (pairs with squash-only).
@@ -125,51 +126,51 @@ Define labels in four families. (Colors are suggestions; import them with a labe
 
 ### **Discipline / language**
 
-| Label | Hex | Meaning |
-|---|---|---|
-| `frontend` | `#1f6feb` | Next.js/React/TS |
-| `python` | `#3572A5` | Python API |
-| `php` | `#4F5D95` | PHP legacy service |
-| `go` | `#00ADD8` | Go booking service |
-| `qa` | `#d876e3` | Testing / bug bounty |
-| `pm` | `#0e8a16` | Product management |
-| `design` | `#ff69b4` | UI/UX/a11y |
-| `po` | `#5319e7` | Product ownership |
-| `devops` | `#0052cc` | Setup/CI/deploy |
+| Label      | Hex       | Meaning              |
+| ---------- | --------- | -------------------- |
+| `frontend` | `#1f6feb` | Next.js/React/TS     |
+| `python`   | `#3572A5` | Python API           |
+| `php`      | `#4F5D95` | PHP legacy service   |
+| `go`       | `#00ADD8` | Go booking service   |
+| `qa`       | `#d876e3` | Testing / bug bounty |
+| `pm`       | `#0e8a16` | Product management   |
+| `design`   | `#ff69b4` | UI/UX/a11y           |
+| `po`       | `#5319e7` | Product ownership    |
+| `devops`   | `#0052cc` | Setup/CI/deploy      |
 | `security` | `#b60205` | Security / DevSecOps |
 
 ### **Difficulty**
 
-| Label | Hex |
-|---|---|
+| Label    | Hex       |
+| -------- | --------- |
 | `junior` | `#c2e0c6` |
-| `mid` | `#fef2c0` |
+| `mid`    | `#fef2c0` |
 | `senior` | `#f9d0c4` |
-| `lead` | `#e99695` |
+| `lead`   | `#e99695` |
 
 ### **Type / scope**
 
-| Label | Hex | Meaning |
-|---|---|---|
-| `challenge` | `#0075ca` | A fixable flaw (most issues) |
-| `qa-bounty` | `#c5def5` | Undocumented bug to find + report |
-| `cross-service` | `#fbca04` | Bug at a service seam |
-| `architecture` | `#d93f0b` | Systemic/structural |
+| Label             | Hex       | Meaning                           |
+| ----------------- | --------- | --------------------------------- |
+| `challenge`       | `#0075ca` | A fixable flaw (most issues)      |
+| `qa-bounty`       | `#c5def5` | Undocumented bug to find + report |
+| `cross-service`   | `#fbca04` | Bug at a service seam             |
+| `architecture`    | `#d93f0b` | Systemic/structural               |
 | `upgrade-fixable` | `#fef2c0` | Best fixed by upgrading a version |
 
 ### **Workflow / status**
 
-| Label | Hex | Meaning |
-|---|---|---|
-| `solution` | `#6f42c1` | **On PRs** — marks a never-merge answer; triggers `challenge-guard` |
-| `top-solution` | `#a371f7` | Current highest-👍 answer for its issue |
-| `good-first-challenge` | `#7057ff` | Easy entry point |
-| `help-wanted` | `#008672` | Wants more attempts |
-| `dr-frankenstein` | `#24292e` | A worsening (maintainer) |
-| `needs-triage` | `#ededed` | Unlabeled/unsorted |
-| `duplicate` | `#cfd3d7` | — |
-| `invalid` | `#e4e669` | — |
-| `wontfix-by-design` | `#ffffff` | It's *supposed* to be broken |
+| Label                  | Hex       | Meaning                                                             |
+| ---------------------- | --------- | ------------------------------------------------------------------- |
+| `solution`             | `#6f42c1` | **On PRs** — marks a never-merge answer; triggers `challenge-guard` |
+| `top-solution`         | `#a371f7` | Current highest-👍 answer for its issue                             |
+| `good-first-challenge` | `#7057ff` | Easy entry point                                                    |
+| `help-wanted`          | `#008672` | Wants more attempts                                                 |
+| `dr-frankenstein`      | `#24292e` | A worsening (maintainer)                                            |
+| `needs-triage`         | `#ededed` | Unlabeled/unsorted                                                  |
+| `duplicate`            | `#cfd3d7` | —                                                                   |
+| `invalid`              | `#e4e669` | —                                                                   |
+| `wontfix-by-design`    | `#ffffff` | It's _supposed_ to be broken                                        |
 
 ---
 
@@ -242,12 +243,12 @@ One **Project board** as the public roadmap: columns for batches (`Junior ✅`, 
 
 The app is **intentionally vulnerable**, so GitHub's security automation will try to "help" in ways that undermine the project. Configure deliberately:
 
-- **Dependabot alerts:** **ON** — the alerts themselves are a DevSecOps *challenge* surface.
+- **Dependabot alerts:** **ON** — the alerts themselves are a DevSecOps _challenge_ surface.
 - **Dependabot security updates:** **OFF** — do **not** let it auto-open PRs that fix the vulnerable deps; that's the contributor's job.
 - **Dependabot version updates:** **OFF** — we deliberately pin old versions (see IDEAS → "Deliberately outdated versions").
-- **Secret scanning + push protection:** the repo contains *fake* secrets on purpose (a challenge). Push protection will block commits containing them. Either **disable push protection** for this repo, or mark those specific detections as "used in tests / false positive." Document that all committed secrets are fake and non-functional.
-- **Code scanning (CodeQL):** optional; if enabled, run it **non-blocking** — it's a way to *surface* vulnerabilities as challenges, not a gate.
-- **Private vulnerability reporting:** ON, but see `SECURITY.md` below — the *intentional* vulnerabilities are explicitly out of scope; only flaws in the project's own infrastructure (leaderboard bot, CI, hosting) are in scope.
+- **Secret scanning + push protection:** the repo contains _fake_ secrets on purpose (a challenge). Push protection will block commits containing them. Either **disable push protection** for this repo, or mark those specific detections as "used in tests / false positive." Document that all committed secrets are fake and non-functional.
+- **Code scanning (CodeQL):** optional; if enabled, run it **non-blocking** — it's a way to _surface_ vulnerabilities as challenges, not a gate.
+- **Private vulnerability reporting:** ON, but see `SECURITY.md` below — the _intentional_ vulnerabilities are explicitly out of scope; only flaws in the project's own infrastructure (leaderboard bot, CI, hosting) are in scope.
 
 ---
 
@@ -255,33 +256,33 @@ The app is **intentionally vulnerable**, so GitHub's security automation will tr
 
 Create these (I can generate them on request):
 
-| File | Purpose |
-|---|---|
-| `README.md` | ✅ exists — public front door |
-| `CONTRIBUTING.md` | **Missing** — the golden rules (never-merge, one issue = one flaw, 👍 voting, forking flow, branch naming). README currently links to it. |
-| `CODE_OF_CONDUCT.md` | Community standards |
-| `SECURITY.md` | **Important & clever** — "This app is intentionally insecure. Do NOT report the intentional vulnerabilities. Do NOT deploy it with real data. In scope: only the project's own infra." |
-| `LICENSE` | Permissive (MIT-style) **plus** a strong disclaimer: intentionally vulnerable, provided as-is, not for production. |
-| `.github/ISSUE_TEMPLATE/challenge.yml` / `qa-bounty.yml` / `config.yml` | Issue forms (§7) |
-| `.github/PULL_REQUEST_TEMPLATE.md` | PR template (§8) |
-| `.github/CODEOWNERS` | Route reviews to maintainers; require maintainer review on `main` |
-| `.github/labels.yml` | Source of truth for labels (§6), importable via a labels action |
-| `.github/workflows/*.yml` | Automation (§13) |
+| File                                                                    | Purpose                                                                                                                                                                                |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `README.md`                                                             | ✅ exists — public front door                                                                                                                                                          |
+| `CONTRIBUTING.md`                                                       | **Missing** — the golden rules (never-merge, one issue = one flaw, 👍 voting, forking flow, branch naming). README currently links to it.                                              |
+| `CODE_OF_CONDUCT.md`                                                    | Community standards                                                                                                                                                                    |
+| `SECURITY.md`                                                           | **Important & clever** — "This app is intentionally insecure. Do NOT report the intentional vulnerabilities. Do NOT deploy it with real data. In scope: only the project's own infra." |
+| `LICENSE`                                                               | Permissive (MIT-style) **plus** a strong disclaimer: intentionally vulnerable, provided as-is, not for production.                                                                     |
+| `.github/ISSUE_TEMPLATE/challenge.yml` / `qa-bounty.yml` / `config.yml` | Issue forms (§7)                                                                                                                                                                       |
+| `.github/PULL_REQUEST_TEMPLATE.md`                                      | PR template (§8)                                                                                                                                                                       |
+| `.github/CODEOWNERS`                                                    | Route reviews to maintainers; require maintainer review on `main`                                                                                                                      |
+| `.github/labels.yml`                                                    | Source of truth for labels (§6), importable via a labels action                                                                                                                        |
+| `.github/workflows/*.yml`                                               | Automation (§13)                                                                                                                                                                       |
 
 ---
 
 ## 13. Automation (GitHub Actions)
 
-| Workflow | Trigger | Does |
-|---|---|---|
-| **`challenge-guard`** | PR opened/labeled | Fails (as a required check) if the PR is labeled `solution`, making it un-mergeable. The backbone of the never-merge rule. |
-| **`auto-labeler`** | PR opened | Labels `solution`, copies discipline/difficulty from the linked issue, comments the "not merged" reminder. |
-| **`issue-form-labeler`** | Issue opened/edited | Reads the Discipline/Difficulty dropdown answers from the issue body and applies matching labels; drops `needs-triage` once a discipline is set. |
-| **`auto-scorer`** | PR / push | Runs the hidden test(s) for the linked challenge and posts an objective pass/fail signal (complements 👍). |
-| **`leaderboard`** | Scheduled (daily) | Reads 👍 reaction counts via the API, ranks solutions per issue, applies `top-solution`, and regenerates the leaderboard section/page. |
-| **`label-sync`** | Push to `labels.yml` | Applies the label taxonomy from `.github/labels.yml`. |
-| **`branch-name-lint`** | PR opened | Warns if the head branch doesn't match the naming convention (§2). |
-| **`stale`** *(optional)* | Scheduled | Manages abandoned `needs-triage` items (never touches `solution` PRs). |
+| Workflow                 | Trigger              | Does                                                                                                                                             |
+| ------------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`challenge-guard`**    | PR opened/labeled    | Fails (as a required check) if the PR is labeled `solution`, making it un-mergeable. The backbone of the never-merge rule.                       |
+| **`auto-labeler`**       | PR opened            | Labels `solution`, copies discipline/difficulty from the linked issue, comments the "not merged" reminder.                                       |
+| **`issue-form-labeler`** | Issue opened/edited  | Reads the Discipline/Difficulty dropdown answers from the issue body and applies matching labels; drops `needs-triage` once a discipline is set. |
+| **`auto-scorer`**        | PR / push            | Runs the hidden test(s) for the linked challenge and posts an objective pass/fail signal (complements 👍).                                       |
+| **`leaderboard`**        | Scheduled (daily)    | Reads 👍 reaction counts via the API, ranks solutions per issue, applies `top-solution`, and regenerates the leaderboard section/page.           |
+| **`label-sync`**         | Push to `labels.yml` | Applies the label taxonomy from `.github/labels.yml`.                                                                                            |
+| **`branch-name-lint`**   | PR opened            | Warns if the head branch doesn't match the naming convention (§2).                                                                               |
+| **`stale`** _(optional)_ | Scheduled            | Manages abandoned `needs-triage` items (never touches `solution` PRs).                                                                           |
 
 ---
 
@@ -297,7 +298,7 @@ Create these (I can generate them on request):
 
 GitHub Pages can't host this (it's a polyglot full-stack app with Python/PHP/Go/Redis/DB), so hosting is external. On the GitHub side:
 
-- **Environments (Settings → Environments):** create `production`. Add required reviewers and store deploy secrets there (never in the repo — the repo's fake secrets are the *challenge*, real deploy creds are not).
+- **Environments (Settings → Environments):** create `production`. Add required reviewers and store deploy secrets there (never in the repo — the repo's fake secrets are the _challenge_, real deploy creds are not).
 - **Deploy workflow:** an `infra/*`-owned Action that builds the containers and deploys on tag push (so each "monster version" is what's live, matching what assignments pin to).
 - **DNS:** at your registrar, point `projectfrankenstein.com` (and `www`) to the host. This is registrar/host configuration, not GitHub.
 
@@ -307,7 +308,7 @@ GitHub Pages can't host this (it's a polyglot full-stack app with Python/PHP/Go/
 - **No real user data. Ever.** Seed it with obviously fake data; state should be **ephemeral and auto-reset** on a schedule.
 - Put it behind **rate limiting / a WAF** and monitor abuse — an intentionally-injectable public app will be probed and used for mischief.
 - Add a **Terms of Use / disclaimer** page: it's a lab, provided as-is, do not submit real data, do not use it to attack others.
-- Assume it *will* be compromised and design so that "compromised" costs you nothing.
+- Assume it _will_ be compromised and design so that "compromised" costs you nothing.
 
 ---
 

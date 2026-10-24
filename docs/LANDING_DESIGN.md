@@ -4,8 +4,14 @@ type: spec
 status: current
 updated: 2026-10-25
 scope: [landing, frontend, design, motion, gsap]
-covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
-related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
+covers:
+  [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
+related:
+  [
+    spec-phase1-design,
+    adr-0001-next12-react17,
+    adr-0003-landing-as-separate-app,
+  ]
 superseded_by: null
 ---
 
@@ -103,6 +109,7 @@ Each of the six sections tagged "(patch)" in Page structure is wrapped in a patc
 Chosen level: **restrained**. Sections settle into place with a stitch and a spark; they do not fly in from different directions.
 
 Rules:
+
 - The settle must be finished (and `transform` cleared with `clearProps`) before any pinned content inside the patch reaches its pin start. Pinned lore and the sticky stack work as soon as it has settled. A transformed ancestor breaks pinning, so never leave a transform on a patch.
 - A patch that contains a pinned element (the lore) does not tilt or offset: a transformed ancestor skews the pin's range after any refresh. Its stitches still draw and it still sparks.
 - Each lore diagram (`lib/lore.ts`, `LoreArt`) shows every part that exists by that year; the parts and links new that year are drawn in the accent and play in once as the panel arrives (2026 adds a flaw marker on every part). Without JavaScript or under reduced motion the diagram is static.
@@ -124,13 +131,14 @@ The live Phase 1 API round trip stays on the landing page, restyled as the monst
 
 Mapping:
 
-| Check | Reads as | Backed by |
-|---|---|---|
-| `health` | **Heart** | Python API `/health` |
-| `products` | **Brain** (memory) | MySQL via `/api/products` |
+| Check       | Reads as                  | Backed by                        |
+| ----------- | ------------------------- | -------------------------------- |
+| `health`    | **Heart**                 | Python API `/health`             |
+| `products`  | **Brain** (memory)        | MySQL via `/api/products`        |
 | `php-check` | **Nerve** (the old spine) | PHP service via `/api/php-check` |
 
 States, all within the single accent:
+
 - Loading: "Checking" with a placeholder shaped like the final tile.
 - OK: the heart tile shows a pulsing line (heartbeat). The brain tile animates: several pulses hop between cells at random at any moment, and every few seconds one travels down the brainstem and leaves through the outlet on the tile's right edge. That signal enters the nerve tile at the shoulder on its left edge and spreads down the arm along every branch, ending in the fingertips. If the brain check fails while the nerve is OK, the nerve fires on its own every few seconds. Both stop while off screen and are static under reduced motion. Loading and fail dim the drawing.
 - Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own. Each tile fills in as its own check answers. If a check has not answered after 8 seconds, only its tile shows `FAIL: timed out`. Tiles reserve four lines for the reading, so a long error never changes their height.

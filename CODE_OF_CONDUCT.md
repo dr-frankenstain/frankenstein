@@ -2,7 +2,7 @@
 
 **The code is toxic. The community is not.**
 
-Frankenstein is a place to practice, learn, and compete good-naturedly on a deliberately awful codebase. That only works if people feel welcome.
+Project Frankenstein is a place to practice, learn, and compete good-naturedly on a deliberately awful codebase. That only works if people feel welcome.
 
 ## Our standards
 

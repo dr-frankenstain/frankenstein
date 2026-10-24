@@ -9,19 +9,20 @@ related: []
 superseded_by: null
 review: "guessed: type,updated"
 ---
+
 # Project Frankenstein — Vision & Overview
 
-> A deliberately terrible, but fully working, web application. It is never fixed — only worsened. People come to it to *solve* its problems, and the best solutions rise to the top.
+> A deliberately terrible, but fully working, web application. It is never fixed — only worsened. People come to it to _solve_ its problems, and the best solutions rise to the top.
 
 ## The one-line idea
 
-Frankenstein is a monster of a codebase: a real, running polyglot web app stitched together from every bad decision, anti-pattern, and dumb feature you've ever seen in production — kept intentionally broken so that developers, QAs, PMs, designers, and product owners can practice fixing it.
+Project Frankenstein is a monster of a codebase: a real, running polyglot web app stitched together from every bad decision, anti-pattern, and dumb feature you've ever seen in production — kept intentionally broken so that developers, QAs, PMs, designers, and product owners can practice fixing it.
 
 ## The problem it solves
 
-Realistic practice material is scarce. Tutorials use clean toy apps; real interviews use throwaway prompts; and "bad code" examples are usually too small to be interesting. There is no shared, realistic, *believably awful* codebase that the whole industry can point at and say "fix this."
+Realistic practice material is scarce. Tutorials use clean toy apps; real interviews use throwaway prompts; and "bad code" examples are usually too small to be interesting. There is no shared, realistic, _believably awful_ codebase that the whole industry can point at and say "fix this."
 
-Frankenstein is that shared artifact. One repo that is:
+Project Frankenstein is that shared artifact. One repo that is:
 
 - **Realistic** — the badness mirrors what actually happens in aging production systems, not cartoon mistakes.
 - **Comprehensive** — it aims to contain every category of common flaw, across every discipline and seniority level.
@@ -35,7 +36,7 @@ Frankenstein is that shared artifact. One repo that is:
 
 ## The core mechanic (what makes it coherent)
 
-- **`main` is permanently broken.** It only ever gets *worse*, via a maintainer persona ("Dr. Frankenstein") who periodically commits new horrors or reintroduces old bugs.
+- **`main` is permanently broken.** It only ever gets _worse_, via a maintainer persona ("Dr. Frankenstein") who periodically commits new horrors or reintroduces old bugs.
 - **Solutions are Pull Requests that are NEVER merged.** A PR is a submission, an answer to a documented problem — not a change to `main`. Merging one would heal the monster; we don't do that.
 - **Voting is GitHub 👍 reactions.** The top-👍 PR on an issue is the crowd's chosen best answer. No custom infrastructure.
 - **Everything is tagged** by discipline and language, so a contributor can work entirely within their layer.
@@ -47,17 +48,17 @@ A polyglot stack with a plausible backstory (see the README for the lore):
 
 ```yaml
 Next.js frontend ──► Python (FastAPI/Flask) API ──► PHP legacy service
-   │  (ThreeJS venue map)          │                       │
-   │                               └────► shared DB ◄───────┘
-   │                                   (both write directly)
-   │
-   └─ seat booking (bypasses the API) ─► PHP ─► Go booking service ─► Redis
-                                                         (seat locks / holds)
+│  (ThreeJS venue map)          │                       │
+│                               └────► shared DB ◄───────┘
+│                                   (both write directly)
+│
+└─ seat booking (bypasses the API) ─► PHP ─► Go booking service ─► Redis
+(seat locks / holds)
 ```
 
 Five languages (JS/TS, Python, PHP, Go) plus Redis and a shared DB. The worst bugs live both **within** each layer and at the **seams** between services (datetime/serialization/auth mismatches, float money math, cross-network N+1). This structure is not an accident — it is one of the flagship challenges.
 
-**The seat-booking path is the deep end.** A ThreeJS venue map (the venue stored as a JSON blob in the DB) where clicking a seat runs FE → PHP → Go → Redis and back. It bolts Go and Redis onto the PHP service and *bypasses the Python API entirely* — an architectural smell in itself — and concentrates the hardest problems in the whole project: concurrency and double-booking, Redis lock TTLs and ghost holds, Redis/DB drift, idempotency on duplicate clicks, and 3D-rendering performance. It anchors the senior/lead and Go challenge lines.
+**The seat-booking path is the deep end.** A ThreeJS venue map (the venue stored as a JSON blob in the DB) where clicking a seat runs FE → PHP → Go → Redis and back. It bolts Go and Redis onto the PHP service and _bypasses the Python API entirely_ — an architectural smell in itself — and concentrates the hardest problems in the whole project: concurrency and double-booking, Redis lock TTLs and ghost holds, Redis/DB drift, idempotency on duplicate clicks, and 3D-rendering performance. It anchors the senior/lead and Go challenge lines.
 
 ## Hard constraints (non-negotiable)
 

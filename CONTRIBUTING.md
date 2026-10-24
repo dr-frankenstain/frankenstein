@@ -1,6 +1,6 @@
-# Contributing to Frankenstein 🧟
+# Contributing to Project Frankenstein 🧟
 
-Frankenstein is a deliberately terrible, fully working app. You don't fix it — you submit how you *would* fix it, and the community votes on the best answers. Please read the golden rules before your first contribution.
+Project Frankenstein is a deliberately terrible, fully working app. You don't fix it — you submit how you _would_ fix it, and the community votes on the best answers. Please read the golden rules before your first contribution.
 
 ## The golden rules
 
@@ -32,11 +32,11 @@ Not every discipline submits code:
 
 ## Branch naming
 
-| Prefix | Who | Merged? |
-|---|---|---|
-| `solution/<issue#>-<slug>` | you (from your fork) | **Never** |
-| `worsen/<slug>` | maintainers | yes (the only app changes) |
-| `docs/`, `ci/`, `chore/`, `infra/<slug>` | maintainers | yes (project tooling only) |
+| Prefix                                   | Who                  | Merged?                    |
+| ---------------------------------------- | -------------------- | -------------------------- |
+| `solution/<issue#>-<slug>`               | you (from your fork) | **Never**                  |
+| `worsen/<slug>`                          | maintainers          | yes (the only app changes) |
+| `docs/`, `ci/`, `chore/`, `infra/<slug>` | maintainers          | yes (project tooling only) |
 
 ## What makes a good solution
 

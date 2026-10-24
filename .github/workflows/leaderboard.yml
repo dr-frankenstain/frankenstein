@@ -6,7 +6,7 @@ name: leaderboard
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -74,7 +74,7 @@ jobs:
             const topContribs = Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 20);
 
             // 5. Render LEADERBOARD.md.
-            let md = '# 🏆 Frankenstein Leaderboard\n\n';
+            let md = '# 🏆 Project Frankenstein Leaderboard\n\n';
             md += '_Auto-generated daily. Votes are 👍 reactions on open `solution` PRs._\n\n';
             md += '## Top contributors\n\n| Rank | Contributor | 👍 total |\n|---|---|---|\n';
             topContribs.forEach(([u, v], i) => { md += `| ${i + 1} | @${u} | ${v} |\n`; });

@@ -2,13 +2,13 @@
 
 ## This application is intentionally insecure
 
-Frankenstein is a deliberately vulnerable training app. SQL injection, plaintext passwords, exposed secrets, broken auth, IDOR, and many other flaws are **features, not bugs** — they exist so people can practice finding and fixing them.
+Project Frankenstein is a deliberately vulnerable training app. SQL injection, plaintext passwords, exposed secrets, broken auth, IDOR, and many other flaws are **features, not bugs** — they exist so people can practice finding and fixing them.
 
-**Please do NOT report the app's intentional vulnerabilities as security issues.** They are the whole point. If you've found one, that's a *challenge* — open it via the Challenge or QA Bug Bounty issue forms, or submit a solution PR against the relevant challenge.
+**Please do NOT report the app's intentional vulnerabilities as security issues.** They are the whole point. If you've found one, that's a _challenge_ — open it via the Challenge or QA Bug Bounty issue forms, or submit a solution PR against the relevant challenge.
 
 ## Never deploy this with real data
 
-- Do **not** run Frankenstein with real user data, real credentials, or on infrastructure that can reach anything you care about.
+- Do **not** run Project Frankenstein with real user data, real credentials, or on infrastructure that can reach anything you care about.
 - All secrets committed to this repository are **fake and non-functional**, present as challenges. Treat them as such.
 - If you self-host it, isolate and sandbox it, keep its data ephemeral, and put it behind rate limiting. Assume it will be compromised.
 
