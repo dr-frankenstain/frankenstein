@@ -2,7 +2,7 @@
 id: adr-0001-next12-react17
 type: adr
 status: current
-updated: 2026-10-23
+updated: 2026-10-24
 scope: [frontend, versions, nextjs, react]
 covers: [frontend/**]
 related: [spec-phase1-design]
