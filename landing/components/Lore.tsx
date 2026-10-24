@@ -15,8 +15,8 @@ const PANELS: { year: Year; title: string; text: string }[] = [
 ];
 
 // Fractions of the pan distance spent standing still on the first and last panel.
-const HOLD_START = 0.2;
-const HOLD_END = 0.35;
+const HOLD_START = 0.1;
+const HOLD_END = 0.175;
 
 // Each panel's drawing starts with its new pieces hidden and plays them once, as the panel arrives.
 function prepareArt(panel: Element): () => void {
