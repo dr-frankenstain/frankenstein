@@ -91,6 +91,7 @@ static=landing/.next/static
 if grep -rqE 'mix-blend-mode: ?soft-light|__flash' "$static"; then
   fail "built assets still contain the draft's full-screen flash overlay"
 fi
+assert_contains "$html" 'Project Frankenstein</a>' "nav brand is Project Frankenstein"
 assert_contains "$html" '<canvas' "shared lightning canvas"
 assert_contains "$html" 'aria-hidden="true"' "decorative canvas is hidden from assistive tech"
 

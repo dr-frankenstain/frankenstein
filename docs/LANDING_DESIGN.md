@@ -54,7 +54,7 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 - **Type:** condensed uppercase display (Big Shoulders Display 800/900), a grotesk for body (Geist Sans 400/500/600), a mono (Geist Mono 400/500), all self-hosted from `@fontsource` packages through `next/font/local`. No Inter, no serif.
 - **Shape:** sharp corners everywhere. Stitched look comes from dashed borders and the patch seams.
 - **Hero:** asymmetric, headline "Alive, and broken on purpose." in at most 2 lines on desktop, one sub line of at most 20 words, one primary and one secondary button. No eyebrow, tagline, trust strip or bottom text strip.
-- **Navigation:** one line, 64px, brand with a dashed underline, anchor links, one ghost button to GitHub.
+- **Navigation:** one line, 64px, the brand "Project Frankenstein" (also the page title) with a dashed underline, anchor links, one ghost button to GitHub.
 
 ## Code layout
 

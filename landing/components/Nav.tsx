@@ -6,7 +6,7 @@ export function Nav() {
     <header className={s.nav}>
       <div className={`${s.wrap} ${s.navInner}`}>
         <a className={s.brand} href="#top">
-          Frankenstein
+          Project Frankenstein
         </a>
         <ul className={s.navLinks}>
           <li><a href="#lore">Lore</a></li>

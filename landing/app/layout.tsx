@@ -4,7 +4,7 @@ import { body, display, mono } from './fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Frankenstein',
+  title: 'Project Frankenstein',
   description: 'A real web app stitched from every bad decision in production. Fix a flaw. The best answer wins.',
 };
 

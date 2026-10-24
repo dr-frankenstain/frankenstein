@@ -25,5 +25,5 @@ docker run --rm -v "$PWD/landing:/src:ro" node:22 sh -c '
   > "${TMPDIR:-/tmp}/landing-build.log" 2>&1 || { tail -30 "${TMPDIR:-/tmp}/landing-build.log"; fail "npm ci / tsc / next build failed"; }
 
 assert_eq "$(http_code http://localhost:3000/ --max-time 30)" 200 "landing status"
-assert_contains "$(curl -s --max-time 30 http://localhost:3000/)" "<title>Frankenstein" "landing title"
+assert_contains "$(curl -s --max-time 30 http://localhost:3000/)" "<title>Project Frankenstein" "landing title"
 echo "PASS: landing app"
