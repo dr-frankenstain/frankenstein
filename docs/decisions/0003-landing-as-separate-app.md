@@ -2,7 +2,7 @@
 id: adr-0003-landing-as-separate-app
 type: adr
 status: current
-updated: 2026-10-24
+updated: 2026-10-25
 scope: [landing, frontend, routing, nextjs, origins]
 covers: [landing/**, frontend/pages/index.tsx, frontend/docker-compose.yml]
 related: [adr-0001-next12-react17, spec-landing-design]

@@ -38,11 +38,11 @@ superseded_by: null
 
 - `adr-0001-next12-react17` — The frontend runs Next.js 12.3.4 on React 17 (Pages Router) — `docs/decisions/0001-next12-react17.md` (current, 2026-10-23)
 - `adr-0002-shared-external-network` — Services share one external Docker network created by the DB — `docs/decisions/0002-shared-external-network.md` (current, 2026-10-23)
-- `adr-0003-landing-as-separate-app` — The landing page is a separate latest-stack app on its own origin — `docs/decisions/0003-landing-as-separate-app.md` (current, 2026-10-23)
+- `adr-0003-landing-as-separate-app` — The landing page is a separate latest-stack app on its own origin — `docs/decisions/0003-landing-as-separate-app.md` (current, 2026-10-25)
 
 ### Specs
 
-- `spec-landing-design` — Landing Page — Design — `docs/LANDING_DESIGN.md` (current, 2026-10-24)
+- `spec-landing-design` — Landing Page — Design — `docs/LANDING_DESIGN.md` (current, 2026-10-25)
 - `spec-phase1-design` — Phase 1 — Skeleton & Scaffolding: Technical Design — `docs/PHASE1_DESIGN.md` (current, 2026-10-23)
 
 ### Operations

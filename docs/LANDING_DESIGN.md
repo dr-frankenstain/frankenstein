@@ -2,7 +2,7 @@
 id: spec-landing-design
 type: spec
 status: current
-updated: 2026-10-24
+updated: 2026-10-25
 scope: [landing, frontend, design, motion, gsap]
 covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
 related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
