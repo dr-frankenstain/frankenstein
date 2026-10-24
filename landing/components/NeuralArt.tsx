@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { gsap, useGSAP } from '../lib/gsap';
-import { BRAIN, NERVE, VIEW, brainSignal, childrenOf, edgeLength, neighborsOf, routeToOutlet, type Graph } from '../lib/neural';
+import { BRAIN, NERVE, VIEW, brainSignal, childrenOf, edgeLength, neighborsOf, routeBetween, type Graph } from '../lib/neural';
 import s from '../styles/landing.module.css';
 
 const ACCENT = '#a3e635';
@@ -11,11 +11,16 @@ const EDGE = '#6c746e';
 const POOL = 16;
 const SPEED = 110; // view-box units per second
 
-const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)];
-
 function Drawing({ graph, svg }: { graph: Graph; svg: React.RefObject<SVGSVGElement | null> }) {
   return (
     <svg ref={svg} className={s.neural} viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} aria-hidden="true" focusable="false">
+      {graph.shapes?.map((sh, i) =>
+        sh.thick ? (
+          <path key={`s${i}`} className={s.neuralDigit} d={sh.d} strokeWidth={sh.thick} />
+        ) : (
+          <path key={`s${i}`} className={s.neuralShape} d={sh.d} />
+        ),
+      )}
       {graph.edges.map(([a, b], i) => (
         <line
           key={i}
@@ -27,9 +32,19 @@ function Drawing({ graph, svg }: { graph: Graph; svg: React.RefObject<SVGSVGElem
           y2={graph.nodes[b].y}
         />
       ))}
-      {graph.nodes.map((n, i) => (
-        <circle key={i} data-n={i} className={i === graph.outlet ? s.neuralOutlet : s.neuralNode} cx={n.x} cy={n.y} r={i === graph.outlet ? 3 : 4} />
-      ))}
+      {graph.nodes.map((n, i) => {
+        const hub = graph.big?.includes(i);
+        return (
+          <circle
+            key={i}
+            data-n={i}
+            className={i === graph.outlet ? s.neuralOutlet : hub ? s.neuralHub : s.neuralNode}
+            cx={n.x}
+            cy={n.y}
+            r={i === graph.outlet ? 3 : hub ? 3.4 : 2.2}
+          />
+        );
+      })}
       {Array.from({ length: POOL }, (_, i) => (
         <circle key={i} data-p className={s.neuralPulse} r="2.5" cx="0" cy="0" opacity="0" />
       ))}
@@ -136,8 +151,11 @@ export function BrainArt({ active }: { active: boolean }) {
       }
       timer = gsap.delayedCall(0.7 + Math.random() * 0.9, () => api.run(tick));
     };
-    // Vary the first hop so the signal does not always take the same path.
-    const entranceRoute = (): number[] => [0, ...routeToOutlet(BRAIN, pick(neighborsOf(BRAIN, 0)))];
+    // Pass through a random cell on the way, so the signal does not always take the same path.
+    const entranceRoute = (): number[] => {
+      const via = Math.floor(Math.random() * (BRAIN.nodes.length - 6));
+      return [...routeBetween(BRAIN, 0, via), ...routeBetween(BRAIN, via, BRAIN.outlet).slice(1)];
+    };
     api.run(tick);
     return () => {
       alive = false;

@@ -72,6 +72,7 @@ case "$(echo "$html" | tr 'A-Z' 'a-z')" in *fifty*) fail "page still hard-codes 
 assert_contains "$html" 'aria-label="Search flaws"' "challenge search"
 assert_contains "$html" 'aria-label="Filter by stack"' "challenge stack filter"
 assert_contains "$html" "<details" "challenge rows expand"
+for year in 2014 2019 2021 2023 2026; do assert_contains "$html" "data-lore-art=\"$year\"" "lore diagram $year"; done
 for step in Pick Fork Fix Vote; do assert_contains "$html" "data-art=\"$step\"" "step diagram $step"; done
 assert_not_contains "$html" "data-reveal" "scroll reveal attributes are gone"
 assert_not_contains "$html" 'href="http://localhost:3001/product"' "unbuilt rooms are plain text"

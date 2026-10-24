@@ -319,6 +319,62 @@
   scroll-snap-align: start;
 }
 
+.loreWithArt {
+  flex-basis: min(88vw, 1100px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+}
+
+.loreWithArt .loreYear {
+  font-size: clamp(4rem, 11vw, 10rem);
+}
+
+.loreArt {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.loreBox {
+  fill: var(--surface);
+  stroke: #6c746e;
+  stroke-dasharray: 4 3;
+}
+
+.loreBoxHot {
+  fill: rgba(163, 230, 53, 0.1);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.loreLabel,
+.loreLabelHot {
+  font: 500 9px var(--mono);
+  fill: var(--muted);
+}
+
+.loreLabelHot {
+  fill: var(--accent);
+}
+
+.loreLink,
+.loreLinkHot {
+  fill: none;
+  stroke: #6c746e;
+  stroke-width: 1.2;
+}
+
+.loreLinkHot {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.loreFlaw {
+  fill: var(--accent);
+}
+
 .loreIntro {
   flex-basis: min(60vw, 700px);
 }
@@ -823,6 +879,11 @@
     border-bottom: 1px dashed var(--line);
   }
 
+  .loreWithArt {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
   .bento {
     grid-template-columns: 1fr;
   }
@@ -922,15 +983,35 @@
   overflow: visible;
 }
 
+.neuralShape {
+  fill: rgba(230, 232, 225, 0.04);
+  stroke: var(--text);
+  stroke-opacity: 0.45;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.neuralDigit {
+  fill: none;
+  stroke: rgba(230, 232, 225, 0.07);
+  stroke-linecap: round;
+}
+
 .neuralEdge {
   stroke: #6c746e;
-  stroke-width: 1;
-  stroke-opacity: 0.55;
+  stroke-width: 0.9;
+  stroke-opacity: 0.6;
 }
 
 .neuralNode {
   fill: #0f1311;
   stroke: var(--muted);
+  stroke-width: 1;
+}
+
+.neuralHub {
+  fill: #0f1311;
+  stroke: var(--text);
   stroke-width: 1.2;
 }
 

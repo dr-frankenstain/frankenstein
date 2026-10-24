@@ -2,7 +2,7 @@
 id: spec-landing-design
 type: spec
 status: current
-updated: 2026-10-26
+updated: 2026-10-27
 scope: [landing, frontend, design, motion, gsap]
 covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
 related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
@@ -26,7 +26,7 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 
 ## Non-goals
 
-- No photographs or illustrations. The lightning is the hero visual. The only drawings are the four small SVG diagrams of the how-it-works steps.
+- No photographs or illustrations. The lightning is the hero visual. The only drawings are small SVG line drawings: the four how-it-works step diagrams, the lore's architecture diagram, and the brain and nerve in the vital signs.
 - No light theme. Dark only.
 - No new routes or challenge pages (Phase 2 builds those).
 - No change to the challenge pages or their stack. The landing page is a separate app (`adr-0003-landing-as-separate-app`), so none of its styles or fonts can reach them.
@@ -67,7 +67,7 @@ Order:
 1. Hero (lightning canvas, reanimation intro)
 2. Marquee: one only, real flaws from the project
 3. Vital signs (patch)
-4. Lore: "How the monster got built", pinned horizontal pan on desktop, vertical stack on mobile, years 2014 to 2026 (patch)
+4. Lore: "How the monster got built", pinned horizontal pan on desktop, vertical stack on mobile, years 2014 to 2026, each panel beside a diagram of the stack as it stood that year (patch)
 5. Anatomy: five-cell bento of the stack, exactly five cells, each with a different texture (patch)
 6. How it works: Pick / Fork / Fix / Vote as a sticky stack, each step with a small animated diagram (patch)
 7. Challenges: sticky headline beside a searchable, filterable list of GitHub issues (patch)
@@ -105,6 +105,7 @@ Chosen level: **restrained**. Sections settle into place with a stitch and a spa
 Rules:
 - The settle must be finished (and `transform` cleared with `clearProps`) before any pinned content inside the patch reaches its pin start. Pinned lore and the sticky stack work as soon as it has settled. A transformed ancestor breaks pinning, so never leave a transform on a patch.
 - A patch that contains a pinned element (the lore) does not tilt or offset: a transformed ancestor skews the pin's range after any refresh. Its stitches still draw and it still sparks.
+- Each lore diagram (`lib/lore.ts`, `LoreArt`) shows every part that exists by that year; the parts and links new that year are drawn in the accent and play in once as the panel arrives (2026 adds a flaw marker on every part). Without JavaScript or under reduced motion the diagram is static.
 - The lore pan holds on its first and last panel (extra scroll distance with the track at rest), and the sticky stack keeps its last card stuck for another 60% of the viewport height before releasing it.
 - Hero lightning strikes every 1 to 3 seconds while the hero is on screen.
 - Links to GitHub (nav, footer, "Browse challenges" buttons, issue links) open in a new tab with `rel="noopener noreferrer"`.
@@ -117,7 +118,7 @@ Rules:
 
 ## Vital signs
 
-Layout: a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; the brain tile a small network of cells passing signals to each other; the nerve tile a branching nerve that a signal from the brain tile spreads along. Brain and nerve also show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
+Layout: a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; the brain tile a triangulated mesh in the outline of a side-view brain, with a brainstem running out to the right edge; the nerve tile a nerve through a horizontal arm (shoulder at the left, hand with fingers at the right) with a trunk and branches. Brain and nerve also show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
 
 The live Phase 1 API round trip stays on the landing page, restyled as the monster's vitals. Reuse `runChecks` (moved unchanged into `landing/lib/checks.ts`); keep each row's `data-testid="check-<name>"` and its `OK (...)` / `FAIL: ...` text so tests and the browser check keep working.
 
@@ -131,7 +132,7 @@ Mapping:
 
 States, all within the single accent:
 - Loading: "Checking" with a placeholder shaped like the final tile.
-- OK: the heart tile shows a pulsing line (heartbeat). The brain tile animates: pulses hop between cells at random, and every few seconds one leaves through the outlet on the tile's right edge. That signal enters the nerve tile on its left edge and spreads along every branch. If the brain check fails while the nerve is OK, the nerve fires on its own every few seconds. Both stop while off screen and are static under reduced motion. Loading and fail dim the drawing.
+- OK: the heart tile shows a pulsing line (heartbeat). The brain tile animates: pulses hop between cells at random, and every few seconds one travels down the brainstem and leaves through the outlet on the tile's right edge. That signal enters the nerve tile at the shoulder on its left edge and spreads down the arm along every branch, ending in the fingertips. If the brain check fails while the nerve is OK, the nerve fires on its own every few seconds. Both stop while off screen and are static under reduced motion. Loading and fail dim the drawing.
 - Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own. Each tile fills in as its own check answers. If a check has not answered after 8 seconds, only its tile shows `FAIL: timed out`. Tiles reserve four lines for the reading, so a long error never changes their height.
 
 ## Accessibility and safety
