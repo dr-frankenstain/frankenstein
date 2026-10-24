@@ -25,6 +25,7 @@ API_KEY=${API_KEY}
 ENV
   cat > frontend/.env.local <<ENV
 NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_LANDING_URL=http://localhost:3000
 ENV
 }
 
@@ -44,7 +45,8 @@ wait_for() {
 db_healthy() { [ "$(docker inspect -f '{{.State.Health.Status}}' frankenstein-db 2>/dev/null)" = healthy ]; }
 php_up()      { curl -fs --max-time 10 -H "X-API-Key: ${API_KEY}" http://localhost:8080/health.php; }
 python_up()   { curl -fs --max-time 10 http://localhost:8000/health; }
-frontend_up() { curl -fs --max-time 30 http://localhost:3000/; }
+# the legacy app's / answers 302 (it forwards to the landing page), so only the status counts
+frontend_up() { [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:3001/)" = 302 ]; }
 
 raise() {
   write_env_files
@@ -53,7 +55,7 @@ raise() {
   up backend/python-api;  wait_for python-api python_up
   up frontend;            wait_for frontend frontend_up
   echo "It's alive!"
-  echo "  frontend:   http://localhost:3000"
+  echo "  frontend:   http://localhost:3001"
   echo "  python api: http://localhost:8000"
   echo "  php:        http://localhost:8080"
 }

@@ -18,9 +18,11 @@ assert_eq "${out##*$'\n'}" 502 "/api/php-check status when PHP is down"
 assert_contains "$out" "unreachable" "php-check detail"
 assert_not_contains "$out" "Traceback" "php-check must not leak a traceback"
 
-# CORS: only the frontend origin
-ok=$(curl -s -D- -o /dev/null -H 'Origin: http://localhost:3000' $API/health)
-assert_contains "$(echo "$ok" | tr 'A-Z' 'a-z')" "access-control-allow-origin: http://localhost:3000" "CORS allows frontend origin"
+# CORS: only the landing and legacy frontend origins
+for origin in http://localhost:3000 http://localhost:3001; do
+  ok=$(curl -s -D- -o /dev/null -H "Origin: $origin" $API/health)
+  assert_contains "$(echo "$ok" | tr 'A-Z' 'a-z')" "access-control-allow-origin: $origin" "CORS allows $origin"
+done
 bad=$(curl -s -D- -o /dev/null -H 'Origin: http://evil.test' $API/health | tr 'A-Z' 'a-z')
 assert_not_contains "$bad" "access-control-allow-origin" "CORS must not allow other origins"
 echo "PASS: python"

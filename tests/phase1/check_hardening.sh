@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/../.." || exit 1
 source tests/phase1/lib.sh
 
-for pair in python:8000 php:8080 frontend:3000; do
+for pair in python:8000 php:8080 frontend:3001; do
   assert_contains "$(docker port "frankenstein-${pair%%:*}")" "127.0.0.1:${pair##*:}" "${pair%%:*} port must bind 127.0.0.1 only"
 done
 

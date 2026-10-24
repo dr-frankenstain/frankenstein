@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Expects: frontend container up on :3000 (build/typecheck run in a throwaway node:16 container).
+# Expects: legacy frontend container up on :3001 (build/typecheck run in a throwaway node:16 container).
 cd "$(dirname "$0")/../.." || exit 1
 source tests/phase1/lib.sh
 
@@ -13,8 +13,12 @@ assert_eq "$(lock typescript)" 4.5.5 "locked typescript version"
 docker run --rm -v "$PWD/frontend:/app" -w /app node:16 sh -c "npm ci --no-audit --no-fund && npx tsc --noEmit && npx next build" \
   > "${TMPDIR:-/tmp}/frontend-build.log" 2>&1 || { tail -30 "${TMPDIR:-/tmp}/frontend-build.log"; fail "npm ci / tsc / next build failed"; }
 
-html=$(curl -s --max-time 30 http://localhost:3000/)
-assert_eq "$(http_code http://localhost:3000/ --max-time 30)" 200 "frontend status"
-assert_contains "$html" "Challenges" "challenges heading"
-assert_contains "$html" "No challenges yet" "empty challenges state"
+legacy=http://localhost:3001
+redirect() { curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 30 "$@"; }
+assert_eq "$(redirect "$legacy/")" "302 http://localhost:3000/" "legacy / redirects to the landing page"
+assert_eq "$(redirect "$legacy/?redirectTo=%2Fproduct")" "302 http://localhost:3000/?redirectTo=%2Fproduct" "redirectTo is forwarded"
+# redirectTo is attacker-controlled: it is forwarded as data, never used as the destination
+assert_eq "$(redirect "$legacy/?redirectTo=https%3A%2F%2Fevil.example")" \
+  "302 http://localhost:3000/?redirectTo=https%3A%2F%2Fevil.example" "an external redirectTo cannot change the destination"
+assert_eq "$(http_code "$legacy/nope" --max-time 30)" 404 "legacy unknown route"
 echo "PASS: frontend"

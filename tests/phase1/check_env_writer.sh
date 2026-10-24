@@ -19,6 +19,7 @@ assert_contains "$php" "API_KEY=igor-says-hello" "php api key"
 assert_not_contains "$php" "MYSQL_PASSWORD" "php .env must use MYSQL_PASS, not MYSQL_PASSWORD"
 
 assert_contains "$fe" "NEXT_PUBLIC_API_URL=http://localhost:8000" "frontend api url"
+assert_contains "$fe" "NEXT_PUBLIC_LANDING_URL=http://localhost:3000" "frontend landing url"
 
 for f in backend/python-api/.env backend/php-service/.env frontend/.env.local; do
   git check-ignore -q "$f" || fail "$f must be gitignored"
