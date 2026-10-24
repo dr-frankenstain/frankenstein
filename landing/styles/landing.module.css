@@ -991,12 +991,6 @@
   stroke-linejoin: round;
 }
 
-.neuralDigit {
-  fill: none;
-  stroke: rgba(230, 232, 225, 0.07);
-  stroke-linecap: round;
-}
-
 .neuralEdge {
   stroke: #6c746e;
   stroke-width: 0.9;

@@ -2,7 +2,7 @@
 id: spec-landing-design
 type: spec
 status: current
-updated: 2026-10-27
+updated: 2026-10-24
 scope: [landing, frontend, design, motion, gsap]
 covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
 related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
@@ -118,7 +118,7 @@ Rules:
 
 ## Vital signs
 
-Layout: a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; the brain tile a triangulated mesh in the outline of a side-view brain, with a brainstem running out to the right edge; the nerve tile a nerve through a horizontal arm (shoulder at the left, hand with fingers at the right) with a trunk and branches. Brain and nerve also show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
+Layout: a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; the brain tile a triangulated mesh in the outline of a side-view brain, with a brainstem running out to the right edge; the nerve tile a bare nerve tree in the shape of a horizontal arm (shoulder at the left, trunk and branches, four fingers of different lengths and a thumb, all ending clear of the tile's right edge; no outline is drawn). Brain and nerve also show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
 
 The live Phase 1 API round trip stays on the landing page, restyled as the monster's vitals. Reuse `runChecks` (moved unchanged into `landing/lib/checks.ts`); keep each row's `data-testid="check-<name>"` and its `OK (...)` / `FAIL: ...` text so tests and the browser check keep working.
 
@@ -132,7 +132,7 @@ Mapping:
 
 States, all within the single accent:
 - Loading: "Checking" with a placeholder shaped like the final tile.
-- OK: the heart tile shows a pulsing line (heartbeat). The brain tile animates: pulses hop between cells at random, and every few seconds one travels down the brainstem and leaves through the outlet on the tile's right edge. That signal enters the nerve tile at the shoulder on its left edge and spreads down the arm along every branch, ending in the fingertips. If the brain check fails while the nerve is OK, the nerve fires on its own every few seconds. Both stop while off screen and are static under reduced motion. Loading and fail dim the drawing.
+- OK: the heart tile shows a pulsing line (heartbeat). The brain tile animates: several pulses hop between cells at random at any moment, and every few seconds one travels down the brainstem and leaves through the outlet on the tile's right edge. That signal enters the nerve tile at the shoulder on its left edge and spreads down the arm along every branch, ending in the fingertips. If the brain check fails while the nerve is OK, the nerve fires on its own every few seconds. Both stop while off screen and are static under reduced motion. Loading and fail dim the drawing.
 - Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own. Each tile fills in as its own check answers. If a check has not answered after 8 seconds, only its tile shows `FAIL: timed out`. Tiles reserve four lines for the reading, so a long error never changes their height.
 
 ## Accessibility and safety

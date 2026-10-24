@@ -50,4 +50,15 @@ describe('nerve graph', () => {
   it('has a positive length for every edge', () => {
     expect(NERVE.edges.every(([a, b]) => edgeLength(NERVE, a, b) > 0)).toBe(true);
   });
+
+  it('draws no silhouette behind the nerves', () => {
+    expect(NERVE.shapes).toBeUndefined();
+  });
+
+  it('ends in fingers of different lengths, clear of the right edge', () => {
+    const tips = NERVE.nodes.filter((n, i) => n.x > 240 && childrenOf(NERVE, i).length === 0);
+    expect(tips.length).toBeGreaterThanOrEqual(5);
+    expect(new Set(tips.map((n) => n.x)).size).toBeGreaterThanOrEqual(4);
+    expect(Math.max(...NERVE.nodes.map((n) => n.x))).toBeLessThanOrEqual(VIEW.w - 16);
+  });
 });

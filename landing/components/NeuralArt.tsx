@@ -8,19 +8,15 @@ import s from '../styles/landing.module.css';
 const ACCENT = '#a3e635';
 const NODE = '#0f1311';
 const EDGE = '#6c746e';
-const POOL = 16;
+const POOL = 40;
 const SPEED = 110; // view-box units per second
 
 function Drawing({ graph, svg }: { graph: Graph; svg: React.RefObject<SVGSVGElement | null> }) {
   return (
     <svg ref={svg} className={s.neural} viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} aria-hidden="true" focusable="false">
-      {graph.shapes?.map((sh, i) =>
-        sh.thick ? (
-          <path key={`s${i}`} className={s.neuralDigit} d={sh.d} strokeWidth={sh.thick} />
-        ) : (
-          <path key={`s${i}`} className={s.neuralShape} d={sh.d} />
-        ),
-      )}
+      {graph.shapes?.map((sh, i) => (
+        <path key={`s${i}`} className={s.neuralShape} d={sh.d} />
+      ))}
       {graph.edges.map(([a, b], i) => (
         <line
           key={i}
@@ -131,7 +127,7 @@ export function BrainArt({ active }: { active: boolean }) {
       if (depth <= 0) return;
       const options = neighborsOf(BRAIN, at).filter((n) => n !== from);
       const next = options.length ? options : neighborsOf(BRAIN, at);
-      const fanout = Math.random() < 0.4 ? 2 : 1;
+      const fanout = Math.random() < 0.55 ? 2 : 1;
       [...next].sort(() => Math.random() - 0.5).slice(0, fanout).forEach((n) => api.send(at, n, () => api.run(() => cascade(n, at, depth - 1))));
     };
 
@@ -146,10 +142,10 @@ export function BrainArt({ active }: { active: boolean }) {
     const tick = () => {
       if (!alive) return;
       if (api.visible()) {
-        if (n++ % 3 === 0) route(entranceRoute());
-        else cascade(Math.floor(Math.random() * BRAIN.nodes.length), -1, 3);
+        if (n++ % 4 === 0) route(entranceRoute());
+        for (let i = 0; i < 2; i++) cascade(Math.floor(Math.random() * BRAIN.nodes.length), -1, 4);
       }
-      timer = gsap.delayedCall(0.7 + Math.random() * 0.9, () => api.run(tick));
+      timer = gsap.delayedCall(0.3 + Math.random() * 0.5, () => api.run(tick));
     };
     // Pass through a random cell on the way, so the signal does not always take the same path.
     const entranceRoute = (): number[] => {
