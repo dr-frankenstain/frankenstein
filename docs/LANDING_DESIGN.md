@@ -92,8 +92,9 @@ Chosen level: **restrained**. Sections settle into place with a stitch and a spa
 
 Rules:
 - The settle must be finished (and `transform` cleared with `clearProps`) before any pinned content inside the patch reaches its pin start. Pinned lore and the sticky stack work as soon as it has settled. A transformed ancestor breaks pinning, so never leave a transform on a patch.
+- A patch that contains a pinned element (the lore) does not tilt or offset: a transformed ancestor skews the pin's range after any refresh. Its stitches still draw and it still sparks.
 - Content inside a patch is readable at all times; the settle moves the patch, it never fades content to invisible. There are no scroll-triggered fades: the patch settle is the only scroll motion.
-- **Server-rendered and no-JS state is the final, fully visible state.** The hero's masked headline and hidden sub line and buttons are only set up by JavaScript, in a layout effect before paint, and only when motion is allowed. A failsafe reveals everything after 3 seconds if the intro has not finished.
+- **Server-rendered and no-JS state is the final, fully visible state.** The hero's masked headline and hidden sub line and buttons are only set up by JavaScript, in a layout effect before paint, and only when motion is allowed. A wall-clock failsafe (`setTimeout`, not GSAP's clock) reveals everything after 3 seconds if the intro has not finished. The lore track scrolls sideways by hand until JS marks it pinned.
 - All lightning is drawn on **one shared fixed canvas** (`pointer-events: none`) driven by one `gsap.ticker` callback. The hero strikes and the seam sparks use the same bolt generator. Do not create a canvas per patch.
 - Mobile (below 768px): no tilt or offset; stitches draw once on entry; no sparks. The lore pan and sticky stack collapse to vertical.
 - Reduced motion: patches are static with their stitches already drawn, no sparks, one static bolt in the hero.
@@ -115,7 +116,7 @@ Mapping:
 States, all within the single accent:
 - Loading: "Checking" with a placeholder shaped like the final tile.
 - OK: the heart tile shows a pulsing line (heartbeat); brain and nerve tiles show their live detail text.
-- Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own. If the checks have not answered after 8 seconds, every pending tile shows `FAIL: timed out`.
+- Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own. Each tile fills in as its own check answers. If a check has not answered after 8 seconds, only its tile shows `FAIL: timed out`. Tiles reserve four lines for the reading, so a long error never changes their height.
 
 ## Accessibility and safety
 

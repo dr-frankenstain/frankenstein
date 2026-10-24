@@ -54,7 +54,7 @@ frontend/
 ```bash
 cd frontend
 npm install      # note: package.json intentionally has duplicate/unused deps
-npm run dev      # http://localhost:3001 (in its container: `docker compose -f frontend/docker-compose.yml up -d --build`)
+npm run dev      # http://localhost:3000 on the host (it collides with the landing app); the container maps it to http://localhost:3001: `docker compose -f frontend/docker-compose.yml up -d --build`
 ```
 
 The frontend expects the Python API at `http://localhost:8000` (see `docs/backend/SETUP.md`). If the API isn't up, most pages still render but data calls fail — some pages "fail" more gracefully than others (on purpose).

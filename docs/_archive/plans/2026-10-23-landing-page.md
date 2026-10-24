@@ -1,8 +1,8 @@
 ---
 id: plan-landing-page
 type: plan
-status: current
-updated: 2026-10-23
+status: done
+updated: 2026-10-24
 scope: [landing, frontend, gsap, motion, routing]
 covers: []
 related: [spec-landing-design, adr-0001-next12-react17]

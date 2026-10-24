@@ -20,6 +20,9 @@ export function Lore() {
     () => {
       const mm = gsap.matchMedia();
       mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+        // Without JS the track scrolls sideways by hand; the pan takes over only while this runs.
+        const el = root.current!;
+        el.setAttribute('data-pinned', '');
         const distance = () => track.current!.scrollWidth - window.innerWidth;
         gsap.to(track.current, {
           x: () => -distance(),
@@ -33,6 +36,7 @@ export function Lore() {
             invalidateOnRefresh: true,
           },
         });
+        return () => el.removeAttribute('data-pinned');
       });
     },
     { scope: root },

@@ -23,7 +23,7 @@ export default function Page() {
         <Hero />
         <Marquee />
         <Patch id="vitals" seed={11} tilt={1}><VitalSigns /></Patch>
-        <Patch id="lore" seed={23} tilt={-1}><Lore /></Patch>
+        <Patch id="lore" seed={23} tilt={0}><Lore /></Patch>
         <Patch id="anatomy" seed={37} tilt={1}><Anatomy /></Patch>
         <Patch id="how" seed={41} tilt={-1}><HowItWorks /></Patch>
         <Patch id="challenges" seed={59} tilt={1}><Challenges /></Patch>

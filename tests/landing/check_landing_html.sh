@@ -96,4 +96,14 @@ done
 assert_eq "$(grep -o 'clip-path:polygon(' "$tmp/home.html" | wc -l | tr -d ' ')" 6 "every patch body has a cut edge"
 assert_not_contains "$html" "transform:" "nothing starts transformed on the server"
 
+# --- no JS: the lore track must stay reachable (JS alone turns it into a pinned pan)
+[ -d "$static" ] || fail "built static assets missing at $static"
+python3 - "$static" <<'PY' || fail "lore container hides its overflowing panels without JS"
+import glob, re, sys
+css = "".join(open(f).read() for f in glob.glob(sys.argv[1] + "/**/*.css", recursive=True))
+rules = re.findall(r"\.[\w-]*_lore\{([^}]*)\}", css)
+assert rules, "lore rule not found in built css"
+assert not any("overflow:hidden" in r.replace(" ", "") for r in rules), "lore is overflow:hidden by default"
+PY
+
 echo "PASS: landing html"

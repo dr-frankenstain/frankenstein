@@ -291,7 +291,14 @@
 /* lore: horizontal pan */
 .lore {
   position: relative;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+/* set by JS only while the pinned pan is active */
+.lore[data-pinned] {
   overflow: hidden;
+  scroll-snap-type: none;
 }
 
 .loreTrack {
@@ -307,6 +314,7 @@
   flex-direction: column;
   justify-content: center;
   border-right: 1px dashed var(--line);
+  scroll-snap-align: start;
 }
 
 .loreIntro {
@@ -558,17 +566,8 @@
   }
 }
 
-/* no pinned pan when motion is reduced: let the lore scroll sideways by hand */
+/* no sticky stack when motion is reduced (the lore already scrolls sideways by hand) */
 @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
-  .loreTrack {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-  }
-
-  .lorePanel {
-    scroll-snap-align: start;
-  }
-
   .stackCard {
     position: static;
     min-height: 0;
@@ -618,6 +617,7 @@
 }
 
 .reading {
+  min-height: 6.4em; /* four lines: a long browser error must not grow the tile */
   font: 500 0.9rem var(--mono);
   color: var(--text);
   overflow-wrap: anywhere;

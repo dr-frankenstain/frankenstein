@@ -10,7 +10,7 @@ import s from '../styles/landing.module.css';
 const SEAM_PAD = 8;
 const SEAM_HEIGHT = 28 + SEAM_PAD * 2;
 
-export function Patch({ id, seed, tilt, children }: { id?: string; seed: number; tilt: 1 | -1; children: ReactNode }) {
+export function Patch({ id, seed, tilt, children }: { id?: string; seed: number; tilt: 1 | -1 | 0; children: ReactNode }) {
   const wrap = useRef<HTMLDivElement>(null);
   const seam = useRef<SVGSVGElement>(null);
   const sparked = useRef(false);
@@ -61,9 +61,10 @@ export function Patch({ id, seed, tilt, children }: { id?: string; seed: number;
               },
             },
           })
+          // A patch holding a pinned element (tilt 0) is never moved: a transformed ancestor skews the pin's range.
           .fromTo(
             el,
-            { rotation: tilt, y: 24, transformOrigin: tilt > 0 ? '0% 0%' : '100% 0%' },
+            { rotation: tilt, y: tilt ? 24 : 0, transformOrigin: tilt > 0 ? '0% 0%' : '100% 0%' },
             { rotation: 0, y: 0, ease: 'none' },
             0,
           )
@@ -80,7 +81,7 @@ export function Patch({ id, seed, tilt, children }: { id?: string; seed: number;
         });
       });
     },
-    { scope: wrap, dependencies: [stitches.length] },
+    { scope: wrap, dependencies: [stitches.length], revertOnUpdate: true },
   );
 
   return (

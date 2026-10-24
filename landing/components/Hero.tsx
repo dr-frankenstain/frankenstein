@@ -57,17 +57,16 @@ export function Hero() {
           delay: 0.3,
           onComplete: () => {
             introDone = true;
-            failsafe.kill();
+            window.clearTimeout(failsafe);
             schedule();
           },
         });
         tl.add(strike)
           .to(lines, { yPercent: 0, duration: 0.9, ease: 'expo.out', stagger: 0.12 }, '<')
           .to(SUB_AND_CTA, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1 }, '-=0.4');
-        // If the intro has not finished by 3s, show everything.
-        const failsafe = gsap.delayedCall(3, () => {
-          tl.progress(1);
-        });
+        // If the intro has not finished by 3s of wall-clock time, show everything. This must not
+        // ride GSAP's own clock: a stalled ticker or a paused global timeline would stall it too.
+        const failsafe = window.setTimeout(() => tl.progress(1), 3000);
 
         const trigger = ScrollTrigger.create({
           trigger: el,
@@ -82,7 +81,7 @@ export function Hero() {
         return () => {
           el.removeEventListener('pointermove', onMove);
           trigger.kill();
-          failsafe.kill();
+          window.clearTimeout(failsafe);
           next?.kill();
           tl.kill();
         };
