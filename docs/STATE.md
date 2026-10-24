@@ -2,7 +2,7 @@
 id: state
 type: state
 status: current
-updated: 2026-10-23
+updated: 2026-10-24
 scope: [status, current, progress]
 covers: []
 related: [index]
@@ -23,7 +23,8 @@ superseded_by: null
 
 ## Shipped and working
 
-- Phase 1 skeleton (`spec-phase1-design`): MySQL with the deliberately messy schema and seed data, FastAPI service, PHP service, Next.js landing page showing a live API round trip, and the hidden `.pull-the-lever.sh` one-shot bring-up. Verified by `tests/phase1/check_*.sh`.
+- Phase 1 skeleton (`spec-phase1-design`): MySQL with the deliberately messy schema and seed data, FastAPI service, PHP service, the legacy Next.js app, and the hidden `.pull-the-lever.sh` one-shot bring-up. Verified by `tests/phase1/check_*.sh`.
+- Landing page (`spec-landing-design`): a separate Next 16 app in `landing/` on :3000 with the patchwork sections, shared lightning canvas, and live vital signs from the API checks. The legacy Next 12 app in `frontend/` is on :3001 and its `/` redirects to the landing page. Verified by `tests/landing/*.sh` and `tests/phase1/check_frontend.sh`.
 
 ## In progress
 
@@ -33,7 +34,7 @@ superseded_by: null
 
 ## Next up
 
-1. Phase 2 junior batch: build the 6 frontend pages and 5 backend handlers specced under `docs/frontend/pages/` and `docs/backend/`.
+1. Phase 2 junior batch: build the 6 frontend pages and 5 backend handlers specced under `docs/frontend/pages/` and `docs/backend/`. When a challenge page ships, set its `built` flag in `landing/lib/challenges.ts`, extend `tests/landing/check_routing.sh`, and link home from the legacy page with the absolute `NEXT_PUBLIC_LANDING_URL`.
 
 ## Known broken / deliberately deferred
 
@@ -49,7 +50,7 @@ superseded_by: null
 
 - Frontend is Next.js 12.3.4 + React 17 on the Pages Router (`adr-0001-next12-react17`).
 - Services share the external network `frankenstein-net` owned by the DB compose file (`adr-0002-shared-external-network`).
-- The landing page is a separate Next 16 app on :3000; the Next 12 app moves to :3001 and its `/` redirects to the landing page (`adr-0003-landing-as-separate-app`).
+- The landing page is a separate Next 16 app on :3000; the Next 12 app is on :3001 and its `/` redirects to the landing page (`adr-0003-landing-as-separate-app`).
 
 ## Open questions
 

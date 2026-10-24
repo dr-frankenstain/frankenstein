@@ -1,8 +1,8 @@
 ---
 id: spec-landing-design
 type: spec
-status: draft
-updated: 2026-10-23
+status: current
+updated: 2026-10-24
 scope: [landing, frontend, design, motion, gsap]
 covers: [landing/app/**, landing/components/**, landing/lib/**, landing/styles/**]
 related: [spec-phase1-design, adr-0001-next12-react17, adr-0003-landing-as-separate-app]
@@ -10,8 +10,6 @@ superseded_by: null
 ---
 
 # Landing Page — Design
-
-> Not yet implemented. The approved visual draft is `docs/assets/landing-draft/index.html` (open it in a browser; add `?hold` to freeze each lightning strike). It is a throwaway reference, to be deleted when this ships. This doc says how the real page differs from it.
 
 ## Intent
 
@@ -36,7 +34,7 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 
 ## Anti-goals (a failure even if it technically works)
 
-- Landing styles or fonts leak onto the deliberately ugly pages. Concretely (author's call): the landing page is its own app; `app/globals.css` sets only the dark `html`/`body`, and component styles live in one CSS Module.
+- Landing styles or fonts leak onto the deliberately ugly pages. Concretely: the landing page is its own app; `app/globals.css` sets only the dark `html`/`body`, and component styles live in one CSS Module.
 - Patch motion makes content hard to read, or hides it until an animation finishes.
 - Any full-screen flash or strobing. See Accessibility.
 - The page looks empty, blank or broken when the Python API is down.
@@ -50,17 +48,21 @@ The organising idea is the monster itself. Frankenstein's monster is patched tog
 - Ship no scroll listeners on `window` and no `requestAnimationFrame` loops that touch React state. Use ScrollTrigger and `gsap.ticker`. Every animation has cleanup on unmount.
 - Honour `prefers-reduced-motion`. Motion that collapses to static in that mode: the load intro, lightning strikes, patch settle, zaps, marquee, pinned lore pan, sticky stack, and the heartbeat.
 
-## Look and feel (decided, matches the draft)
+## Look and feel
 
 - **Theme:** dark only, `color-scheme: dark`. Near-black ground `#0a0c0b`, text `#e6e8e1`, muted `#9aa39c`, and **one accent**, galvanic green `#a3e635`, used identically everywhere. No second accent, including for errors.
-- **Type:** condensed uppercase display (draft uses Big Shoulders Display 800/900), a grotesk for body (draft uses Geist), a mono (draft uses Geist Mono). The builder picks the self-hostable packages; if Geist is not available as an npm font package, choose the nearest grotesk and say so. No Inter, no serif.
+- **Type:** condensed uppercase display (Big Shoulders Display 800/900), a grotesk for body (Geist Sans 400/500/600), a mono (Geist Mono 400/500), all self-hosted from `@fontsource` packages through `next/font/local`. No Inter, no serif.
 - **Shape:** sharp corners everywhere. Stitched look comes from dashed borders and the patch seams.
 - **Hero:** asymmetric, headline "Alive, and broken on purpose." in at most 2 lines on desktop, one sub line of at most 20 words, one primary and one secondary button. No eyebrow, tagline, trust strip or bottom text strip.
 - **Navigation:** one line, 64px, brand with a dashed underline, anchor links, one ghost button to GitHub.
 
+## Code layout
+
+The app is `landing/`. Server components render the static sections; each animating piece is a `'use client'` leaf in `landing/components/` that calls GSAP directly. Pure logic lives in `landing/lib/` and is unit-tested: `challenges.ts`, `links.ts`, `rng.ts`, `bolt.ts`, `patch.ts`, `vitals.ts`. `lib/lightning.ts` owns the one shared canvas layer, reached through a module-level ref.
+
 ## Page structure
 
-Order (the Vital signs position is the author's call, not the user's):
+Order:
 
 1. Hero (lightning canvas, reanimation intro)
 2. Marquee: one only, real flaws from the project
@@ -73,9 +75,9 @@ Order (the Vital signs position is the author's call, not the user's):
 
 The marquee is part of the hero's band and has no cut edge. The footer is not a patch. That makes six patches: Vital signs, Lore, Anatomy, How it works, Challenges, Final call to action.
 
-Copy is the draft's copy, with one change: the challenges intro says "Every flaw is open as its own issue" instead of a hard-coded "fifty-six" (author's call: a hard number rots). The "Eleven rooms" headline is derived from the registry length. No em-dashes anywhere on the page; use hyphens. No emoji.
+The challenges intro says "Every flaw is open as its own issue" and never hard-codes a count of flaws, because a fixed number rots. The "Eleven rooms" headline is derived from the registry length. No em-dashes anywhere on the page; use hyphens. No emoji.
 
-The Challenges list renders from `landing/lib/challenges.ts`. The `Challenge` type becomes `{ label: string; group: 'Frontend' | 'Python API' | 'PHP service'; summary: string; href: string; built: boolean }` (author's call). `label` is what the code cell shows (`/product`, `POST /api/orders`). `href` is the route for frontend rooms, joined to `NEXT_PUBLIC_CHALLENGES_URL` (default `http://localhost:3001`) when rendered, and a GitHub issues search URL for that endpoint for backend rooms. Rooms link with plain `<a>`, not `next/link`. All 11 junior-batch rooms are registered now with `built: false`; an unbuilt entry renders as plain text, a built one as a link to `href`. Phase 2 flips `built` as each room ships. The old `route`/`title` fields are removed.
+The Challenges list renders from `landing/lib/challenges.ts`. The `Challenge` type is `{ label: string; group: 'Frontend' | 'Python API' | 'PHP service'; summary: string; href: string; built: boolean }`. `label` is what the code cell shows (`/product`, `POST /api/orders`). `href` is the route for frontend rooms, joined to `NEXT_PUBLIC_CHALLENGES_URL` (default `http://localhost:3001`) when rendered, and a GitHub issues search URL for that endpoint for backend rooms. Rooms link with plain `<a>`, not `next/link`. All 11 junior-batch rooms are registered now with `built: false`; an unbuilt entry renders as plain text, a built one as a link to `href`. Phase 2 flips `built` as each room ships.
 
 ## The patch system (the central piece)
 
@@ -89,20 +91,20 @@ Each of the six sections tagged "(patch)" in Page structure is wrapped in a patc
 Chosen level: **restrained**. Sections settle into place with a stitch and a spark; they do not fly in from different directions.
 
 Rules:
-- The settle must be finished (and `transform` cleared with `clearProps`) before any pinned content inside the patch reaches its pin start. Pinned lore and the sticky stack must behave exactly as in the draft once settled. A transformed ancestor breaks pinning, so never leave a transform on a patch.
-- Content inside a patch is readable at all times; the settle moves the patch, it never fades content to invisible. The draft's scroll-triggered `data-reveal` fades are dropped (author's call): the patch settle is the only scroll motion.
-- **Server-rendered and no-JS state is the final, fully visible state.** The hero's masked headline and hidden sub line and buttons are only set up by JavaScript, in a layout effect before paint, and only when motion is allowed. A failsafe reveals everything after 3 seconds if the intro has not finished (author's call).
+- The settle must be finished (and `transform` cleared with `clearProps`) before any pinned content inside the patch reaches its pin start. Pinned lore and the sticky stack work as soon as it has settled. A transformed ancestor breaks pinning, so never leave a transform on a patch.
+- Content inside a patch is readable at all times; the settle moves the patch, it never fades content to invisible. There are no scroll-triggered fades: the patch settle is the only scroll motion.
+- **Server-rendered and no-JS state is the final, fully visible state.** The hero's masked headline and hidden sub line and buttons are only set up by JavaScript, in a layout effect before paint, and only when motion is allowed. A failsafe reveals everything after 3 seconds if the intro has not finished.
 - All lightning is drawn on **one shared fixed canvas** (`pointer-events: none`) driven by one `gsap.ticker` callback. The hero strikes and the seam sparks use the same bolt generator. Do not create a canvas per patch.
-- Mobile (below 768px): no tilt or offset; stitches still draw; one spark per patch is optional. The lore pan and sticky stack collapse to vertical.
+- Mobile (below 768px): no tilt or offset; stitches draw once on entry; no sparks. The lore pan and sticky stack collapse to vertical.
 - Reduced motion: patches are static with their stitches already drawn, no sparks, one static bolt in the hero.
 
 ## Vital signs
 
-Layout (author's call, there is no draft reference): a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; brain and nerve show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
+Layout: a full-width patch with the heading "Proof of life", the one-line intro "These readings come from the stack running right now.", and three equal tiles in a row (stacked on mobile). Each tile has its organ name, a one-line descriptor, and the live reading. The heart tile carries the heartbeat line; brain and nerve show their detail text. Descriptors: Heart "The Python API answers"; Brain "MySQL remembers"; Nerve "PHP, reached through Python".
 
 The live Phase 1 API round trip stays on the landing page, restyled as the monster's vitals. Reuse `runChecks` (moved unchanged into `landing/lib/checks.ts`); keep each row's `data-testid="check-<name>"` and its `OK (...)` / `FAIL: ...` text so tests and the browser check keep working.
 
-Mapping (the metaphor names are the author's guess; the user asked for "heart and brain"):
+Mapping:
 
 | Check | Reads as | Backed by |
 |---|---|---|
@@ -113,11 +115,11 @@ Mapping (the metaphor names are the author's guess; the user asked for "heart an
 States, all within the single accent:
 - Loading: "Checking" with a placeholder shaped like the final tile.
 - OK: the heart tile shows a pulsing line (heartbeat); brain and nerve tiles show their live detail text.
-- Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own.
+- Fail: the line goes flat and dims, the tile shows `FAIL: <reason>`, and the page layout does not shift. Each tile fails on its own. If the checks have not answered after 8 seconds, every pending tile shows `FAIL: timed out`.
 
 ## Accessibility and safety
 
-- **No flashing.** The draft flashes the whole screen about four times in half a second during the intro, which exceeds the WCAG limit of three flashes per second. The real page must not flash the screen at all. Localised glow on the bolt is fine; any luminance change on a bolt stays at or below three per second and low contrast.
+- **No flashing.** The page never flashes the screen: there is no full-viewport overlay, and a bolt's brightness only decays smoothly, so nothing changes luminance more than three times a second (WCAG).
 - Text contrast meets WCAG AA. The muted text colour is only used at sizes where it passes.
 - Keyboard focus is visible (accent outline). Anchor links work without JavaScript.
 - Decorative canvas and stitches are `aria-hidden`.
@@ -133,10 +135,3 @@ Two apps, two origins, no proxy. The landing page owns `http://localhost:3000`; 
 - `tests/phase1/check_frontend.sh` checks the legacy app: build, typecheck, lockfile, and its redirecting `/`.
 - Browser verification at desktop and mobile widths: hero reanimates, a bolt is visible, each patch settles and shows its stitches, vitals show `OK` with the stack up and per-tile `FAIL:` with Python stopped, lore pan and sticky stack still work after settling, and there is no horizontal overflow on mobile.
 - Verify with `prefers-reduced-motion` on, and with Back from the legacy origin.
-
-## Left to the builder
-
-- Exact polygon shapes, stitch spacing and length, easing, and timings.
-- Component and CSS Module file layout under `landing/components/` and `landing/styles/`.
-- How the shared canvas knows each seam's position (read from the patch's DOM rect via ScrollTrigger).
-- Heartbeat rendering (SVG path or canvas).

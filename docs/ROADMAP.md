@@ -2,7 +2,7 @@
 id: plan-roadmap
 type: plan
 status: current
-updated: 2026-10-23
+updated: 2026-10-24
 scope: [roadmap]
 covers: []
 related: []
@@ -56,7 +56,7 @@ Content status so far: junior FE + BE **challenge docs are written**; all app **
 **Scope:**
 
 - Monorepo layout with **per-service compose files** (`frontend/`, `backend/python-api/`, `backend/php-service/`, `db/`) — **no root compose** — plus the hidden `.pull-the-lever.sh`.
-- Next.js app boots; a landing page that indexes the (soon-to-exist) bad pages.
+- Next.js app boots; its `/` forwards to the landing app, a separate Next 16 app that indexes the (soon-to-exist) bad pages (`adr-0003-landing-as-separate-app`).
 - Python API boots and serves a couple of trivial endpoints; talks to the shared DB.
 - PHP service boots and is reachable from Python.
 - Shared MySQL with seed schema + obviously-fake data.

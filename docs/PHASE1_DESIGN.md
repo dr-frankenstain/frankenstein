@@ -2,7 +2,7 @@
 id: spec-phase1-design
 type: spec
 status: current
-updated: 2026-10-23
+updated: 2026-10-24
 scope: [phase1]
 covers: [.pull-the-lever.sh, frontend/**, backend/**, db/**, tests/phase1/**]
 related: []
@@ -30,9 +30,7 @@ frankenstein/
 ├── .pull-the-lever.sh
 ├── frontend/
 │   ├── docker-compose.yml
-│   ├── pages/index.tsx        # landing page, indexes future bad pages
-│   ├── lib/checks.ts          # runChecks(apiBase): the three API round-trip checks
-│   ├── lib/challenges.ts      # empty list; Phase 2 pages register here
+│   ├── pages/index.tsx        # redirects to the landing app (carries redirectTo); Phase 2 pages live beside it
 │   ├── package.json           # next@12.3.4, react/react-dom@17.0.2, typescript@4.5.5
 │   ├── Dockerfile
 │   └── .env.local.example
@@ -80,7 +78,7 @@ Starter tables per `IMPLEMENTATION_PLAN.md` §6, seeded with obviously-fake data
 - `GET /health` — liveness only, no DB.
 - `GET /api/products` — queries MySQL directly via PyMySQL (no ORM), returns seeded rows.
 - `GET /api/php-check` — calls `PHP_SERVICE_URL` + `/health.php` with the API key (3 s timeout) and returns `{"php": <PHP health JSON>}`; any failure returns `502 {"status":"error","detail":"php-service unreachable"}`.
-- CORS allows only the origin `http://localhost:3000`.
+- CORS allows only the origins `http://localhost:3000` (landing) and `http://localhost:3001` (legacy frontend).
 - Config is read with `os.environ[...]` at import; a missing variable crashes the container.
 
 **PHP service (plain PHP 7.4 + mysqli, no framework):**

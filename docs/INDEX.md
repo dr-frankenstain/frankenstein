@@ -42,7 +42,7 @@ superseded_by: null
 
 ### Specs
 
-- `spec-landing-design` — Landing Page — Design — `docs/LANDING_DESIGN.md` (draft, 2026-10-23)
+- `spec-landing-design` — Landing Page — Design — `docs/LANDING_DESIGN.md` (current, 2026-10-24)
 - `spec-phase1-design` — Phase 1 — Skeleton & Scaffolding: Technical Design — `docs/PHASE1_DESIGN.md` (current, 2026-10-23)
 
 ### Operations

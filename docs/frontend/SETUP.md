@@ -2,7 +2,7 @@
 id: ops-setup-2
 type: ops
 status: current
-updated: 2026-10-23
+updated: 2026-10-24
 scope: [setup]
 covers: []
 related: []
@@ -10,6 +10,8 @@ superseded_by: null
 review: "guessed: type,updated"
 ---
 # Frontend — Setup & Conventions
+
+There are two frontend apps. `landing/` is the polished landing page on the latest stack (Next 16, React 19) at `http://localhost:3000`, specced in `docs/LANDING_DESIGN.md`. `frontend/` is the deliberately outdated app that holds the challenge pages at `http://localhost:3001`. Its `/` redirects to the landing page and forwards a `redirectTo` query param; the destination origin comes from `NEXT_PUBLIC_LANDING_URL`, never from the request. This doc describes `frontend/`.
 
 The frontend is a **Next.js (Pages Router)** application. It is the "face" of the monster: every bad pattern gets its own dedicated page/route so it can be understood and challenged in isolation.
 
@@ -27,14 +29,14 @@ Per the project constraints, **do not** combine multiple bad patterns into a sin
 - lives at its own route under `pages/`,
 - demonstrates **one** primary bad pattern (it may have secondary flaws, but one is the headline),
 - has a matching implementation doc in `docs/frontend/pages/`,
-- is registered in the app's page index so contributors can find it.
+- is registered in the landing app's challenge list (`landing/lib/challenges.ts`: set `built: true`) so contributors can find it. Legacy pages link home with the absolute landing URL.
 
 ## Folder layout (target)
 
 ```
 frontend/
 ├── pages/
-│   ├── index.tsx                     # landing / index of bad pages
+│   ├── index.tsx                     # redirect to the landing app (`NEXT_PUBLIC_LANDING_URL`)
 │   ├── product.tsx             # → docs/frontend/pages/01-inline-styles-product-page.md
 │   ├── profile.tsx             # → docs/frontend/pages/02-untyped-profile-page.md
 │   ├── cart.tsx                # → docs/frontend/pages/03-localstorage-cart.md
@@ -52,7 +54,7 @@ frontend/
 ```bash
 cd frontend
 npm install      # note: package.json intentionally has duplicate/unused deps
-npm run dev      # http://localhost:3000
+npm run dev      # http://localhost:3001 (in its container: `docker compose -f frontend/docker-compose.yml up -d --build`)
 ```
 
 The frontend expects the Python API at `http://localhost:8000` (see `docs/backend/SETUP.md`). If the API isn't up, most pages still render but data calls fail — some pages "fail" more gracefully than others (on purpose).
@@ -67,4 +69,4 @@ Every page doc states its difficulty (`junior` / `mid` / `senior` / `lead`). Thi
 2. Implement exactly one headline bad pattern.
 3. Write the implementation doc in `docs/frontend/pages/NN-name.md` using the existing docs as a template.
 4. Open the matching GitHub issue(s), tagged `frontend` + language + difficulty.
-5. Link the page from the landing index.
+5. Set its `built` flag to `true` in `landing/lib/challenges.ts`.
