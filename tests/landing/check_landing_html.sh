@@ -61,7 +61,8 @@ PY
 # --- static sections
 for needle in "How the monster got built" "Nobody has the full picture" "Five languages, one shared database" \
   "Fix it on paper" "flaws, all on fire" "Every flaw is open as its own issue" 'id="challenges"' \
-  "/product" "/api/" "/php/" "It stays broken. You can still win."; do
+  "/product" "/api/" "/php/" "It stays broken. You can still win." \
+  "lives only in the browser" "localStorage" "open flaw"; do
   assert_contains "$html" "$needle" "static section copy"
 done
 assert_order "$html" "2014" "2019" "2021" "2023" "2026" "Nobody has the full picture"

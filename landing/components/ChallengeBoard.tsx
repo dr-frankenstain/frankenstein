@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { defaultBoard, isNarrowed, SORTS, stacksOf, tagsOf, visibleIssues, type BoardState, type SortKey } from '../lib/board';
+import { FILTER_EVENT, type BoardFilter } from '../lib/flaws';
 import { ScrollTrigger } from '../lib/gsap';
 import type { Issue } from '../lib/issues';
 import s from '../styles/landing.module.css';
@@ -17,6 +18,16 @@ export function ChallengeBoard({ issues, live }: { issues: Issue[]; live: Record
   const featuredCount = issues.filter((i) => i.featured).length;
   const stacks = stacksOf(issues);
   const tags = tagsOf(issues);
+
+  // Links elsewhere on the page (the anatomy) can narrow the board before scrolling to it.
+  useEffect(() => {
+    const onFilter = (e: Event) => {
+      const { stack = null, query = '' } = (e as CustomEvent<BoardFilter>).detail;
+      setBoard((b) => ({ ...b, stack, query, tags: [], showAll: false }));
+    };
+    window.addEventListener(FILTER_EVENT, onFilter);
+    return () => window.removeEventListener(FILTER_EVENT, onFilter);
+  }, []);
 
   // The list changes height, and the patches below it were measured against the old height.
   const first = useRef(true);

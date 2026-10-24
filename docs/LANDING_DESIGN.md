@@ -68,7 +68,7 @@ Order:
 2. Marquee: one only, real flaws from the project
 3. Vital signs (patch)
 4. Lore: "How the monster got built", pinned horizontal pan on desktop, vertical stack on mobile, years 2014 to 2026, each panel beside a diagram of the stack as it stood that year (patch)
-5. Anatomy: five-cell bento of the stack, exactly five cells, each with a different texture (patch)
+5. Anatomy: five-cell bento of the stack, exactly five cells, each with a different texture (patch). The frontend, Python and PHP cells each show a live "N open flaws" count from the GitHub issues; clicking it filters the challenge board to that stack and scrolls to it (a plain anchor to `#challenges` without JavaScript). The frontend cell also says the cart lives only in the browser's localStorage, linking to the board filtered to the `/cart` flaws.
 6. How it works: Pick / Fork / Fix / Vote as a sticky stack, each step with a small animated diagram (patch)
 7. Challenges: sticky headline beside a searchable, filterable list of GitHub issues (patch)
 8. Final call to action (patch), then the footer

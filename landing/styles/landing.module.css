@@ -436,6 +436,10 @@
   font-size: clamp(2rem, 3.4vw, 3.2rem);
 }
 
+.cell p + p {
+  margin-top: 0.6rem;
+}
+
 .cell p {
   color: var(--muted);
   font-size: 1rem;
@@ -445,6 +449,21 @@
 .pin {
   font: 500 0.8rem var(--mono);
   color: var(--accent);
+}
+
+.root .flawLink {
+  display: block;
+  margin-top: 0.6rem;
+  font: 600 0.85rem var(--mono);
+  color: var(--accent);
+  text-decoration: underline dashed;
+  text-underline-offset: 0.25em;
+}
+
+.root .cell p .flawLink {
+  display: inline;
+  margin-top: 0;
+  font: inherit;
 }
 
 .cFront {

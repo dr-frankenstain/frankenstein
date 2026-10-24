@@ -1,6 +1,6 @@
-import { challenges, fallbackIssues, liveHref } from '../lib/challenges';
-import { loadIssues } from '../lib/github';
+import { challenges, liveHref } from '../lib/challenges';
 import { ISSUES_URL } from '../lib/links';
+import { loadAllIssues } from '../lib/source';
 import s from '../styles/landing.module.css';
 import { ChallengeBoard } from './ChallengeBoard';
 
@@ -9,8 +9,7 @@ const NUMBER_WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Sev
 // Server component: the issues come from GitHub (refreshed on a timer), with the registry as the fallback.
 export async function Challenges() {
   const challengesUrl = process.env.NEXT_PUBLIC_CHALLENGES_URL ?? 'http://localhost:3001';
-  const fetched = await loadIssues(undefined, process.env.GITHUB_TOKEN);
-  const issues = fetched ?? fallbackIssues(challenges);
+  const issues = await loadAllIssues();
   const live: Record<string, string> = {};
   for (const issue of issues) {
     const href = liveHref(issue, challenges, challengesUrl);
