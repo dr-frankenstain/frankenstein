@@ -79,8 +79,12 @@ const BUILD: Record<string, (art: Element) => gsap.core.Timeline> = {
   },
 };
 
+// Matches `top` of .stackCard in the stylesheet.
+const STICK_TOP = 64;
+
 export function HowItWorks() {
   const root = useRef<HTMLDivElement>(null);
+  const stackRef = useRef<HTMLDivElement>(null);
 
   // Sticky stack, desktop only: each step buries the one before it.
   useGSAP(
@@ -104,21 +108,30 @@ export function HowItWorks() {
         });
       });
 
-      // Each diagram plays once as its card arrives. Reduced motion keeps the final, static diagram.
+      // Each diagram plays when its card has stuck in place (not while it is still scrolling in), and plays
+      // again the next time the card arrives. Reduced motion keeps the final, static diagram.
+      // The cards are position: sticky, so a trigger on the card itself measures a moving target: the start is
+      // computed from the stack (which does not move) plus the heights of the cards before it.
       mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const stack = stackRef.current!;
+        const cards = gsap.utils.toArray<HTMLElement>('[data-card]', root.current);
+        const stuckAt = (i: number) => cards.slice(0, i).reduce((y, c) => y + c.offsetHeight, 0);
         const restore: (() => void)[] = [];
-        gsap.utils.toArray<HTMLElement>('[data-card]', root.current).forEach((card) => {
+        cards.forEach((card, i) => {
           const art = card.querySelector('[data-art]');
           const build = art && BUILD[art.getAttribute('data-art') ?? ''];
           if (!art || !build) return;
           const tl = build(art);
           ScrollTrigger.create({
-            trigger: card,
-            start: 'top 70%',
-            once: true,
-            onEnter: () => tl.play(),
+            trigger: stack,
+            start: () => `top+=${stuckAt(i)} top+=${STICK_TOP}`,
+            end: () => `top+=${stuckAt(i + 1)} top+=${STICK_TOP}`,
+            onEnter: () => void tl.restart(),
+            // Scrolled back above the card: reset, so it plays again on the next arrival.
+            onLeaveBack: () => void tl.pause(0),
+            // Loaded already past this card: show the finished diagram rather than replaying it.
             onRefresh: (self) => {
-              if (self.progress > 0 && tl.progress() === 0) tl.play();
+              if (self.progress > 0 && tl.progress() === 0) tl.progress(1);
             },
           });
           restore.push(() => {
@@ -139,7 +152,7 @@ export function HowItWorks() {
           <h2 className={`${s.display} ${s.sectionTitle}`}>Fix it on paper</h2>
           <p>The main branch only gets worse. Your fix is an answer, not a patch.</p>
         </div>
-        <div className={s.stack}>
+        <div ref={stackRef} className={s.stack}>
           {STEPS.map((step) => (
             <div key={step.title} className={s.stackCard} data-card>
               <div className={s.stackInner} data-card-inner>
