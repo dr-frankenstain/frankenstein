@@ -2,13 +2,14 @@
 id: ops-setup
 type: ops
 status: current
-updated: 2026-10-23
+updated: 2026-10-25
 scope: [setup]
 covers: []
 related: []
 superseded_by: null
 review: "guessed: type,updated"
 ---
+
 # Backend — Setup & Conventions
 
 The backend is deliberately polyglot: a **Python API** that the frontend talks to, which in turn calls a **legacy PHP service**. Both write to the same database. This is the realistic legacy mess described in the project lore.
@@ -39,7 +40,7 @@ Each backend flaw gets its own doc:
 - Python features → `docs/backend/python/NN-name.md`
 - PHP features → `docs/backend/php/NN-name.md`
 
-Cross-service flaws (bugs at the *seam* between Python and PHP) will get their own `cross-service` docs in later (mid/senior/lead) batches. This junior batch keeps each flaw contained within a single service.
+Cross-service flaws (bugs at the _seam_ between Python and PHP) will get their own `cross-service` docs in later (mid/senior/lead) batches. This junior batch keeps each flaw contained within a single service.
 
 ## Folder layout (target)
 
@@ -65,7 +66,7 @@ Redis runs as its own service in `docker compose` (seat locks/holds).
 
 ## Running it
 
-There is **no root compose / single "up" command** — each service (DB, Python API, PHP, Go, Redis) is started **separately**, in the right order, with its own config. The hidden `.pull-the-lever.sh` at the repo root does it all at once, but it is undocumented publicly (owner-only; see `IMPLEMENTATION_PLAN.md`). To run services individually:
+There is **no root compose / single "up" command** — each service (DB, Python API, PHP, Go, Redis) is started **separately**, in the right order, with its own config. To run services individually:
 
 ```bash
 # Python API (DB stack must already be up; reads backend/python-api/.env)
@@ -85,7 +86,7 @@ go run .                              # needs Redis running (see compose)
 
 ## Versions are deliberately outdated
 
-Python, Pydantic, PHP, and Go are pinned a major version or two behind (e.g., Python 3.8, Pydantic v1, PHP 7.4, Go 1.19). A whole class of challenge is fixable by *upgrading* and adopting the newer idiomatic pattern — PHP 8.1 enums/`match`, Pydantic v2, Python `match` + modern typing, Go 1.22 (which fixes loop-variable capture) + `slices`/generics. Pins are explicit in `requirements.txt` and the Dockerfiles. See `docs/IDEAS.md` → "Deliberately outdated versions."
+Python, Pydantic, PHP, and Go are pinned a major version or two behind (e.g., Python 3.8, Pydantic v1, PHP 7.4, Go 1.19). A whole class of challenge is fixable by _upgrading_ and adopting the newer idiomatic pattern — PHP 8.1 enums/`match`, Pydantic v2, Python `match` + modern typing, Go 1.22 (which fixes loop-variable capture) + `slices`/generics. Pins are explicit in `requirements.txt` and the Dockerfiles. See `docs/IDEAS.md` → "Deliberately outdated versions."
 
 ## Difficulty tagging
 

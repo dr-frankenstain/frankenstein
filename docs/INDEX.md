@@ -2,7 +2,7 @@
 id: index
 type: index
 status: current
-updated: 2026-10-23
+updated: 2026-10-25
 scope: [routing, navigation]
 covers: []
 related: []
@@ -43,7 +43,7 @@ superseded_by: null
 ### Specs
 
 - `spec-landing-design` — Landing Page — Design — `docs/LANDING_DESIGN.md` (current, 2026-10-25)
-- `spec-phase1-design` — Phase 1 — Skeleton & Scaffolding: Technical Design — `docs/PHASE1_DESIGN.md` (current, 2026-10-23)
+- `spec-phase1-design` — Phase 1 — Skeleton & Scaffolding: Technical Design — `docs/PHASE1_DESIGN.md` (current, 2026-10-25)
 
 ### Operations
 
@@ -62,15 +62,14 @@ superseded_by: null
 - `ops-ideas` — Frankenstein — Idea Backlog — `docs/IDEAS.md` (current, 2026-10-23)
 - `ops-junior-backend` — Bad Solutions — Junior Backend Developer — `docs/bad-solutions/junior-backend.md` (current, 2026-08-10)
 - `ops-junior-frontend` — Bad Solutions — Junior Frontend Developer — `docs/bad-solutions/junior-frontend.md` (current, 2026-08-10)
-- `ops-project` — Project Frankenstein — Vision & Overview — `docs/PROJECT.md` (current, 2026-08-10)
-- `ops-setup` — Backend — Setup & Conventions — `docs/backend/SETUP.md` (current, 2026-08-10)
+- `ops-project` — Project Frankenstein — Vision & Overview — `docs/PROJECT.md` (current, 2026-10-25)
+- `ops-setup` — Backend — Setup & Conventions — `docs/backend/SETUP.md` (current, 2026-10-25)
 - `ops-setup-2` — Frontend — Setup & Conventions — `docs/frontend/SETUP.md` (current, 2026-10-23)
 
 ### Plans
 
-- `plan-implementation-plan` — Project Frankenstein — Technical Implementation Plan — `docs/IMPLEMENTATION_PLAN.md` (current, 2026-10-23)
-- `plan-owner-manual-tasks` — Owner Manual Tasks — Sergey's Checklist — `docs/OWNER_MANUAL_TASKS.md` (current, 2026-08-10)
-- `plan-roadmap` — Project Frankenstein — Roadmap — `docs/ROADMAP.md` (current, 2026-10-23)
+- `plan-implementation-plan` — Project Frankenstein — Technical Implementation Plan — `docs/IMPLEMENTATION_PLAN.md` (current, 2026-10-25)
+- `plan-roadmap` — Project Frankenstein — Roadmap — `docs/ROADMAP.md` (current, 2026-10-25)
 
 ## Archive
 

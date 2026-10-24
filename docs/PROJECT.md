@@ -2,7 +2,7 @@
 id: ops-project
 type: ops
 status: current
-updated: 2026-10-23
+updated: 2026-10-25
 scope: [project]
 covers: []
 related: []
@@ -88,7 +88,6 @@ We ship **developer** badness first, level by level, starting with **junior**. O
 - `docs/GITHUB_SETUP.md` — how to configure the GitHub repo (settings, branches, labels, rulesets, PR/issue templates, security, automation, hosting).
 - `docs/ROADMAP.md` — the phased plan (Now/Next/Later) from repo setup to launch and beyond.
 - `docs/IMPLEMENTATION_PLAN.md` — the technical build plan (stack, monorepo layout, dev setup, CI, deployment) per phase.
-- `docs/OWNER_MANUAL_TASKS.md` — the owner's checklist of everything that must be done by hand.
 - `docs/frontend/SETUP.md` — how the frontend is built and run.
 - `docs/frontend/pages/*.md` — one doc per bad page.
 - `docs/backend/SETUP.md` — how the backend services are built and run.

@@ -407,7 +407,11 @@ def walk_docs():
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith(".")]
         for fn in sorted(files):
             if fn.endswith(".md") and fn.lower() not in SKIP_FILES:
-                yield os.path.join(root, fn)
+                path = os.path.join(root, fn)
+                # git-ignored docs are private and local-only; they are not part of the doc set
+                if subprocess.run(["git", "check-ignore", "-q", path], capture_output=True).returncode == 0:
+                    continue
+                yield path
 
 
 def build_plans(args):

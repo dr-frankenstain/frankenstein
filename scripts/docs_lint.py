@@ -202,6 +202,14 @@ class Report:
         self.warnings.append((path, msg))
 
 
+def is_git_ignored(path):
+    """True for files git ignores (private, local-only docs): they are not part of the public doc set."""
+    try:
+        return subprocess.run(["git", "check-ignore", "-q", path], capture_output=True).returncode == 0
+    except Exception:
+        return False
+
+
 # Build output and vendored trees that turn up inside docs/ in real repos
 # (Rust's target/doc, generated API docs, a stray node_modules).
 SKIP_DIRS = {"_archive", "_templates", "node_modules", "target", "dist", "build",
@@ -227,6 +235,8 @@ def collect_docs(report):
             if not is_doc(fn):
                 continue
             path = os.path.join(root, fn)
+            if is_git_ignored(path):
+                continue
             try:
                 text = open(path, encoding="utf-8").read()
             except Exception as e:

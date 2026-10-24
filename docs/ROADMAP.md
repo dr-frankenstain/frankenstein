@@ -2,34 +2,35 @@
 id: plan-roadmap
 type: plan
 status: current
-updated: 2026-10-24
+updated: 2026-10-25
 scope: [roadmap]
 covers: []
 related: []
 superseded_by: null
 review: "guessed: updated,status"
 ---
+
 # Project Frankenstein — Roadmap
 
 A phased plan for building and launching the monster. Framed as **Now / Next / Later** to avoid false precision on dates (this is a nights-and-weekends project, so phases are sized small and shippable). Each phase has a clear **exit criterion** and a **monster version** tag.
 
-> **Sequencing principle:** ship a *Minimum Lovable Monster* early. We don't wait for every batch of badness before going live — we launch after the junior batch, then keep worsening in public. A live, growing monster is the whole point.
+> **Sequencing principle:** ship a _Minimum Lovable Monster_ early. We don't wait for every batch of badness before going live — we launch after the junior batch, then keep worsening in public. A live, growing monster is the whole point.
 
 ---
 
 ## Status at a glance
 
-| Phase | Name | Horizon | Status | Version |
-|---|---|---|---|---|
-| 0 | Governance & repo setup | **Now** | In progress | — |
-| 1 | Skeleton & scaffolding | **Now** | Done | `v0.1` |
-| 2 | Junior batch (Minimum Lovable Monster) | **Next** | Docs ready, code not started | `v1.0` |
-| 3 | Soft launch & hosting | **Next** | Not started | `v1.x` |
-| 4 | Seat-booking flagship (Go + Redis) | **Later** | Design ready | `v2.0` |
-| 5 | Mid batch | **Later** | Not started | `v2.x` |
-| 6 | Senior / Lead batch | **Later** | Not started | `v3.0` |
-| 7 | Non-dev disciplines (QA/PM/PO/Design/DevOps) | **Later** | Not started | `v3.x` |
-| ∞ | Ongoing worsening & community ops | **Continuous** | — | rolling |
+| Phase | Name                                         | Horizon        | Status                       | Version |
+| ----- | -------------------------------------------- | -------------- | ---------------------------- | ------- |
+| 0     | Governance & repo setup                      | **Now**        | In progress                  | —       |
+| 1     | Skeleton & scaffolding                       | **Now**        | Done                         | `v0.1`  |
+| 2     | Junior batch (Minimum Lovable Monster)       | **Next**       | Docs ready, code not started | `v1.0`  |
+| 3     | Soft launch & hosting                        | **Next**       | Not started                  | `v1.x`  |
+| 4     | Seat-booking flagship (Go + Redis)           | **Later**      | Design ready                 | `v2.0`  |
+| 5     | Mid batch                                    | **Later**      | Not started                  | `v2.x`  |
+| 6     | Senior / Lead batch                          | **Later**      | Not started                  | `v3.0`  |
+| 7     | Non-dev disciplines (QA/PM/PO/Design/DevOps) | **Later**      | Not started                  | `v3.x`  |
+| ∞     | Ongoing worsening & community ops            | **Continuous** | —                            | rolling |
 
 Content status so far: junior FE + BE **challenge docs are written**; all app **code is still to be built**. Everything else is design/backlog.
 
@@ -43,7 +44,7 @@ Content status so far: junior FE + BE **challenge docs are written**; all app **
 
 **Scope:** push the current docs; create the 28 labels; issue/PR templates and workflows live; `main` ruleset with `challenge-guard` as a required check; Discussions categories; Dependabot/secret-scanning configured the "wrong" way on purpose (see `GITHUB_SETUP.md`).
 
-**Dependencies:** GitHub MCP connected (for labels/issues); manual UI steps by the owner (`OWNER_MANUAL_TASKS.md`).
+**Dependencies:** GitHub MCP connected (for labels/issues); manual UI steps by the owner.
 
 **Exit criterion:** a contributor could, in principle, fork, open a `solution/*` PR, and see it auto-labeled and blocked from merge.
 
@@ -51,11 +52,11 @@ Content status so far: junior FE + BE **challenge docs are written**; all app **
 
 ### Phase 1 — Skeleton & scaffolding (`v0.1`)
 
-**Goal:** the polyglot app runs end-to-end — with *no bad features yet*, just the wiring — where **each service is started separately** (no unified command) and the hidden `.pull-the-lever.sh` brings it all up in one shot. This is the hardest, highest-leverage phase: everything else hangs off a running skeleton.
+**Goal:** the polyglot app runs end-to-end — with _no bad features yet_, just the wiring — where **each service is started separately** (no unified command). This is the hardest, highest-leverage phase: everything else hangs off a running skeleton.
 
 **Scope:**
 
-- Monorepo layout with **per-service compose files** (`frontend/`, `backend/python-api/`, `backend/php-service/`, `db/`) — **no root compose** — plus the hidden `.pull-the-lever.sh`.
+- Monorepo layout with **per-service compose files** (`frontend/`, `backend/python-api/`, `backend/php-service/`, `db/`) — **no root compose**.
 - Next.js app boots; its `/` forwards to the landing app, a separate Next 16 app that indexes the (soon-to-exist) bad pages (`adr-0003-landing-as-separate-app`).
 - Python API boots and serves a couple of trivial endpoints; talks to the shared DB.
 - PHP service boots and is reachable from Python.
@@ -165,10 +166,10 @@ Not a phase with an end — the operating rhythm once live:
 
 ```yaml
 Phase 0 ─► Phase 1 ─► Phase 2 ─► Phase 3 (LAUNCH)
-                          │
-                          ├─► Phase 4 ─► Phase 6
-                          └─► Phase 5 ─┘
-                                        └─► Phase 7
+│
+├─► Phase 4 ─► Phase 6
+└─► Phase 5 ─┘
+└─► Phase 7
 ```
 
 The critical path to launch is **0 → 1 → 2 → 3**. Everything after launch runs in parallel-ish, gated mostly by the flagship (Phase 4) feeding the senior/lead seam challenges (Phase 6).
@@ -182,5 +183,4 @@ The critical path to launch is **0 → 1 → 2 → 3**. Everything after launch 
 ## Related docs
 
 - Technical build details per phase: [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md).
-- Everything the owner must do by hand: [`OWNER_MANUAL_TASKS.md`](./OWNER_MANUAL_TASKS.md).
 - Repo configuration: [`GITHUB_SETUP.md`](./GITHUB_SETUP.md). Backlog of all ideas: [`IDEAS.md`](./IDEAS.md).

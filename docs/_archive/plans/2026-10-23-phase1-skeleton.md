@@ -13,7 +13,7 @@ superseded_by: null
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** A fresh clone runs the polyglot stack end to end (DB, PHP, Python, Next.js), each service started separately, with `.pull-the-lever.sh` as the hidden one-shot, and the landing page showing a live API round trip.
+**Goal:** A fresh clone runs the polyglot stack end to end (DB, PHP, Python, Next.js), each service started separately, and the landing page showing a live API round trip.
 
 **Architecture:** Four independently-composed services share one external Docker network created by the DB's compose file, so start order matters by construction. Python and PHP both talk to the one MySQL directly. Tests are bash smoke scripts under `tests/phase1/` that hit the running containers; each task writes its script first and watches it fail.
 
@@ -29,22 +29,21 @@ superseded_by: null
 - Config is deliberately three conventions. MySQL image: `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`. Python: `DB_HOST` `DB_USER` `DB_PASSWORD` `DB_NAME` `PHP_SERVICE_URL` `PHP_SERVICE_API_KEY`. PHP: `MYSQL_HOST` `MYSQL_USER` `MYSQL_PASS` `MYSQL_DATABASE` `API_KEY`.
 - Schema: no foreign keys; inconsistent naming and timestamps exactly as listed in Task 2; money columns are `DECIMAL`, never `FLOAT`.
 - No application-level bad patterns (Phase 2). Phase 1's badness is architecture, setup, and schema only.
-- `.pull-the-lever.sh` is referenced in no public file: not `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `.github/**`, or any service directory.
 - All credentials are fake. `.env` files stay gitignored; only `.env.example` is committed.
 - Commits: one per task, message ends with `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. Do not push; the user pushes.
 
 ## Fixed values (chosen here; spec leaves open)
 
-| Item | Value |
-|---|---|
-| Shared network | `frankenstein-net` (created by `db/docker-compose.yml`; others declare it `external: true`) |
+| Item                  | Value                                                                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Shared network        | `frankenstein-net` (created by `db/docker-compose.yml`; others declare it `external: true`)                                              |
 | Containers / services | `frankenstein-db` / `db`; `frankenstein-php` / `php-service`; `frankenstein-python` / `python-api`; `frankenstein-frontend` / `frontend` |
-| Host ports | frontend 3000, Python 8000, PHP 8080. DB is not published |
-| DB creds | database `frankenstein`, user `frank`, password `monster`, root password `root_monster` |
-| PHP API key | `igor-says-hello` |
-| Python → PHP URL | `PHP_SERVICE_URL=http://php-service:8080` |
-| Frontend → API | `NEXT_PUBLIC_API_URL=http://localhost:8000` |
-| CORS | Python allows only origin `http://localhost:3000` |
+| Host ports            | frontend 3000, Python 8000, PHP 8080. DB is not published                                                                                |
+| DB creds              | database `frankenstein`, user `frank`, password `monster`, root password `root_monster`                                                  |
+| PHP API key           | `igor-says-hello`                                                                                                                        |
+| Python → PHP URL      | `PHP_SERVICE_URL=http://php-service:8080`                                                                                                |
+| Frontend → API        | `NEXT_PUBLIC_API_URL=http://localhost:8000`                                                                                              |
+| CORS                  | Python allows only origin `http://localhost:3000`                                                                                        |
 
 ## Review Focus
 
@@ -60,31 +59,31 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 
 ## File Structure
 
-| Path | Responsibility |
-|---|---|
-| `.pull-the-lever.sh` | Hidden bootstrap. Task 1: `--env-only`. Task 6: full bring-up |
-| `tests/phase1/lib.sh` | Shared bash assertion/HTTP helpers |
-| `tests/phase1/check_*.sh` | One smoke script per task |
-| `db/docker-compose.yml`, `db/init.sql` | MySQL, network owner, schema + seed |
-| `backend/python-api/*` | `main.py` (single FastAPI module), `requirements.txt`, `Dockerfile`, `docker-compose.yml`, `.env.example` |
-| `backend/php-service/*` | `health.php`, `db.php`, `Dockerfile`, `docker-compose.yml`, `.env.example` |
-| `frontend/*` | `pages/index.tsx`, `lib/checks.ts`, `lib/challenges.ts`, `package.json` + lockfile, `tsconfig.json`, `Dockerfile`, `docker-compose.yml`, `.env.local.example` |
+| Path                                   | Responsibility                                                                                                                                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tests/phase1/lib.sh`                  | Shared bash assertion/HTTP helpers                                                                                                                            |
+| `tests/phase1/check_*.sh`              | One smoke script per task                                                                                                                                     |
+| `db/docker-compose.yml`, `db/init.sql` | MySQL, network owner, schema + seed                                                                                                                           |
+| `backend/python-api/*`                 | `main.py` (single FastAPI module), `requirements.txt`, `Dockerfile`, `docker-compose.yml`, `.env.example`                                                     |
+| `backend/php-service/*`                | `health.php`, `db.php`, `Dockerfile`, `docker-compose.yml`, `.env.example`                                                                                    |
+| `frontend/*`                           | `pages/index.tsx`, `lib/checks.ts`, `lib/challenges.ts`, `package.json` + lockfile, `tsconfig.json`, `Dockerfile`, `docker-compose.yml`, `.env.local.example` |
 
 ---
 
 ### Task 1: Test helpers and env writer
 
 **Files:**
-- Create: `tests/phase1/lib.sh`, `tests/phase1/check_env_writer.sh`, `.pull-the-lever.sh` (executable)
+
+- Create: `tests/phase1/lib.sh`, `tests/phase1/check_env_writer.sh`
 - Modify: `.gitignore` (add `.env.local`)
 
 **Interfaces:**
-- Produces in `lib.sh`: `fail MSG` (stderr, exit 1); `assert_eq ACTUAL EXPECTED MSG`; `assert_contains HAYSTACK NEEDLE MSG`; `http_code URL [curl args…]` → prints status code; `wait_for_url URL SECONDS [curl args…]` → exit 0 once 2xx, 1 on timeout; `mysql_exec SQL` → runs `mysql -N` as `frank` inside `frankenstein-db`.
-- Produces: `.pull-the-lever.sh --env-only` writes `backend/python-api/.env`, `backend/php-service/.env`, `frontend/.env.local` with the Fixed values above, overwriting existing files, exits 0.
 
-- [ ] **Step 1: Write `tests/phase1/check_env_writer.sh`.** It runs `./.pull-the-lever.sh --env-only`, then asserts: the Python `.env` contains all six Python keys with `DB_HOST=db` and `PHP_SERVICE_API_KEY=igor-says-hello`; the PHP `.env` contains `MYSQL_PASS=monster` and `API_KEY=igor-says-hello` and no `MYSQL_PASSWORD`; the frontend file contains `NEXT_PUBLIC_API_URL=http://localhost:8000`; `git check-ignore` reports all three as ignored.
+- Produces in `lib.sh`: `fail MSG` (stderr, exit 1); `assert_eq ACTUAL EXPECTED MSG`; `assert_contains HAYSTACK NEEDLE MSG`; `http_code URL [curl args…]` → prints status code; `wait_for_url URL SECONDS [curl args…]` → exit 0 once 2xx, 1 on timeout; `mysql_exec SQL` → runs `mysql -N` as `frank` inside `frankenstein-db`.
+
+- [ ] **Step 1: Write `tests/phase1/check_env_writer.sh`.** It runs hidden script, then asserts: the Python `.env` contains all six Python keys with `DB_HOST=db` and `PHP_SERVICE_API_KEY=igor-says-hello`; the PHP `.env` contains `MYSQL_PASS=monster` and `API_KEY=igor-says-hello` and no `MYSQL_PASSWORD`; the frontend file contains `NEXT_PUBLIC_API_URL=http://localhost:8000`; `git check-ignore` reports all three as ignored.
 - [ ] **Step 2: Run `bash tests/phase1/check_env_writer.sh`.** Expected: FAIL (script missing).
-- [ ] **Step 3: Implement `lib.sh` and `.pull-the-lever.sh`.** The script has a `write_env_files` function and an argument switch; with no arguments it prints "not implemented yet" and exits 1 (Task 6 replaces this). Add `.env.local` to `.gitignore`.
+- [ ] **Step 3: Implement `lib.sh`.** The script has a `write_env_files` function and an argument switch; with no arguments it prints "not implemented yet" and exits 1 (Task 6 replaces this). Add `.env.local` to `.gitignore`.
 - [ ] **Step 4: Run the check.** Expected: `PASS`.
 - [ ] **Step 5: Commit** — `feat: add phase1 test helpers and env writer`.
 
@@ -93,9 +92,11 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 ### Task 2: Database and shared network
 
 **Files:**
+
 - Create: `db/docker-compose.yml`, `db/init.sql`, `tests/phase1/check_db.sh`
 
 **Interfaces:**
+
 - Consumes: `lib.sh` helpers (Task 1).
 - Produces: container `frankenstein-db` (healthcheck `mysqladmin ping`), named volume `frankenstein-db-data`, network `frankenstein-net`. Schema, exactly:
   - `users(id, email, name, password_plaintext, password_md5, created_at)`
@@ -124,9 +125,11 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 ### Task 3: Python API
 
 **Files:**
+
 - Create: `backend/python-api/{main.py,requirements.txt,Dockerfile,docker-compose.yml,.env.example}`, `tests/phase1/check_python.sh`
 
 **Interfaces:**
+
 - Consumes: DB schema and network (Task 2); `.env` from `--env-only` (Task 1).
 - Produces on `localhost:8000`:
   - `GET /health` → `200 {"status":"ok"}`, no DB access.
@@ -142,7 +145,7 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
   - `/api/php-check` → `502` within 5 s (use `curl --max-time 5`), body contains `unreachable`, body does not contain `Traceback`;
   - `curl -s -D- -H 'Origin: http://localhost:3000' …/health` has `access-control-allow-origin: http://localhost:3000`; the same request with `Origin: http://evil.test` has no `access-control-allow-origin` header.
 - [ ] **Step 2: Run it.** Expected: FAIL (connection refused).
-- [ ] **Step 3: Implement `main.py`, `requirements.txt`, `Dockerfile`, `docker-compose.yml`.** Compose: `env_file: .env`, publishes `8000:8000`, joins `frankenstein-net` as external. Run `./.pull-the-lever.sh --env-only` then `docker compose -f backend/python-api/docker-compose.yml up -d --build`.
+- [ ] **Step 3: Implement `main.py`, `requirements.txt`, `Dockerfile`, `docker-compose.yml`.** Compose: `env_file: .env`, publishes `8000:8000`, joins `frankenstein-net` as external. Run hidden script then `docker compose -f backend/python-api/docker-compose.yml up -d --build`.
 - [ ] **Step 4: Run the check.** Expected: `PASS`.
 - [ ] **Step 5: Commit** — `feat: add FastAPI service`.
 
@@ -151,9 +154,11 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 ### Task 4: PHP service
 
 **Files:**
+
 - Create: `backend/php-service/{health.php,db.php,Dockerfile,docker-compose.yml,.env.example}`, `tests/phase1/check_php.sh`
 
 **Interfaces:**
+
 - Consumes: DB and network (Task 2); `.env` (Task 1); Python `/api/php-check` (Task 3).
 - Produces on `localhost:8080`: `GET /health.php` requires header `X-API-Key` equal to env `API_KEY` (compared with `hash_equals`).
   - valid key, DB reachable → `200 {"status":"ok","db":"ok"}`;
@@ -177,9 +182,11 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 ### Task 5: Frontend
 
 **Files:**
+
 - Create: `frontend/{package.json,package-lock.json,tsconfig.json,next-env.d.ts,Dockerfile,docker-compose.yml,.env.local.example}`, `frontend/pages/index.tsx`, `frontend/lib/checks.ts`, `frontend/lib/challenges.ts`, `tests/phase1/check_frontend.sh`
 
 **Interfaces:**
+
 - Consumes: the three Python endpoints (Task 3/4); `NEXT_PUBLIC_API_URL`.
 - Produces:
   - `lib/checks.ts`: `type CheckResult = { name: string; ok: boolean; detail: string }`; `async function runChecks(apiBase: string): Promise<CheckResult[]>` returning results for names `health`, `products`, `php-check` in that order. Each check catches its own error, so one failure never hides the others.
@@ -203,19 +210,20 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 ### Task 6: Friction, hidden bootstrap, and full verification
 
 **Files:**
-- Modify: `.pull-the-lever.sh` (full bring-up)
+
 - Create: `tests/phase1/check_friction.sh`, `tests/phase1/check_bootstrap.sh`
 
 **Interfaces:**
+
 - Consumes: every service from Tasks 2–5; `write_env_files` from Task 1.
-- Produces: `./.pull-the-lever.sh` (no args). Steps: write env files; `docker compose up -d --build` in order **db → php-service → python-api → frontend**; after each, poll its readiness (DB: container health; PHP: `/health.php` with the key; Python: `/health`; frontend: `/`) for `WAIT_TIMEOUT` seconds (default 30). A timeout prints a message to stderr naming the service and `did not become healthy` and exits 1; success prints the three URLs and exits 0. Safe to run when already up.
+- Produces: hidden script (no args). Steps: write env files; `docker compose up -d --build` in order **db → php-service → python-api → frontend**; after each, poll its readiness (DB: container health; PHP: `/health.php` with the key; Python: `/health`; frontend: `/`) for `WAIT_TIMEOUT` seconds (default 30). A timeout prints a message to stderr naming the service and `did not become healthy` and exits 1; success prints the three URLs and exits 0. Safe to run when already up.
 
 - [ ] **Step 1: Write `check_friction.sh`**, asserting:
   - Python `.env.example` lacks `PHP_SERVICE_API_KEY`; PHP `.env.example` contains `MYSQL_PASSWORD` and no `MYSQL_PASS=`;
   - starting the PHP container from a copy of `.env.example` as `.env` makes `/health.php` fail to connect to the DB (503 or 401), and starting Python from the example `.env` exits with `KeyError: 'PHP_SERVICE_API_KEY'` in `docker logs`;
   - with the DB stack fully down, `docker compose -f backend/php-service/docker-compose.yml up -d` exits non-zero, its output contains `frankenstein-net`, and `docker ps -a --filter name=frankenstein-php -q` is empty;
-  - none of `README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md .github frontend backend db` mentions `pull-the-lever` (`grep -r` finds nothing). The script restores working env files at the end by running `./.pull-the-lever.sh --env-only`.
-- [ ] **Step 2: Write `check_bootstrap.sh`**, asserting: after tearing everything down with `down -v` in order frontend → python-api → php-service → db, a first `./.pull-the-lever.sh` exits 0 and prints `localhost:3000`; `/health` (8000), `/health.php` with the key (8080), and `/` (3000) all return 200; `/api/php-check` returns 200; a **second** run exits 0 and endpoints still return 200; then after another full teardown, `WAIT_TIMEOUT=1 ./.pull-the-lever.sh` exits non-zero with `db` and `did not become healthy` on stderr (fresh volume cannot be healthy in 1 s).
+  - none of `README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md .github frontend backend db` mentions `pull-the-lever` (`grep -r` finds nothing). The script restores working env files at the end by running hidden script.
+- [ ] **Step 2: Write `check_bootstrap.sh`**, asserting: after tearing everything down with `down -v` in order frontend → python-api → php-service → db, a first hidden script exits 0 and prints `localhost:3000`; `/health` (8000), `/health.php` with the key (8080), and `/` (3000) all return 200; `/api/php-check` returns 200; a **second** run exits 0 and endpoints still return 200; then after another full teardown, hidden script exits non-zero with `db` and `did not become healthy` on stderr (fresh volume cannot be healthy in 1 s).
 - [ ] **Step 3: Run both.** Expected: FAIL (bootstrap unimplemented).
 - [ ] **Step 4: Implement the full bootstrap** per the Interfaces block. Fix any friction-check failures by adjusting the `.env.example` files from Tasks 3–4, not the checks.
 - [ ] **Step 5: Run `check_friction.sh`, then `check_bootstrap.sh`, then every earlier `check_*.sh` once against the final running stack.** Expected: all `PASS`.
@@ -226,6 +234,7 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 ### Task 7: Docs catch-up and ADRs
 
 **Files:**
+
 - Modify: `docs/PHASE1_DESIGN.md`, `docs/STATE.md`, `docs/INDEX.md`, `docs/IMPLEMENTATION_PLAN.md`, `docs/ROADMAP.md`, `docs/frontend/SETUP.md`, `docs/PROJECT.md` and any other doc that says "Next 13" or shows `app/…/page.tsx` paths (grep first)
 - Create: `docs/decisions/0001-next12-react17.md`, `docs/decisions/0002-shared-external-network.md` from `docs/_templates/adr.md`
 
@@ -252,4 +261,4 @@ Likely failures the spec implies but doesn't state, each pinned by a test in the
 - [ ] `check_bootstrap.sh` and every earlier `check_*.sh` pass against a fresh stack
 - [ ] the spec reflects the shipped behavior
 - [ ] docs/STATE.md moved this out of "In progress"
-- [ ] this file is in docs/_archive/plans/
+- [ ] this file is in docs/\_archive/plans/
