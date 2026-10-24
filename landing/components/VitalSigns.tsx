@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckResult, runChecks } from '../lib/checks';
-import { toVitals, Vital } from '../lib/vitals';
+import { CHECKS, CheckResult, runCheck } from '../lib/checks';
+import { mergeResult, toVitals, Vital } from '../lib/vitals';
 import s from '../styles/landing.module.css';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
@@ -19,10 +19,13 @@ export function VitalSigns() {
 
   useEffect(() => {
     let live = true;
-    runChecks(API_BASE).then((r) => {
-      if (live) setResults(r);
-    });
-    // A hung request must not leave the tiles on "Checking" forever.
+    // Each tile fills in as its own check answers, so one slow dependency never holds back the others.
+    CHECKS.forEach((check) =>
+      runCheck(API_BASE, check).then((r) => {
+        if (live) setResults((prev) => mergeResult(prev, r));
+      }),
+    );
+    // A hung request must not leave its tile on "Checking" forever.
     const watchdog = setTimeout(() => {
       if (live) setTimedOut(true);
     }, WATCHDOG_MS);

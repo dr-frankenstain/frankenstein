@@ -15,6 +15,11 @@ const ORGANS: Pick<Vital, 'name' | 'organ' | 'descriptor'>[] = [
   { name: 'php-check', organ: 'Nerve', descriptor: 'PHP, reached through Python' },
 ];
 
+// Results arrive one check at a time; a later result for the same check replaces the earlier one.
+export function mergeResult(prev: CheckResult[] | null, next: CheckResult): CheckResult[] {
+  return [...(prev ?? []).filter((r) => r.name !== next.name), next];
+}
+
 export function toVitals(results: CheckResult[] | null, timedOut = false): Vital[] {
   return ORGANS.map((organ) => {
     const r = results?.find((x) => x.name === organ.name);

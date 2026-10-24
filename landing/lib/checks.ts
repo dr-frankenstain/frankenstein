@@ -1,8 +1,8 @@
 export type CheckResult = { name: string; ok: boolean; detail: string };
 
-type Check = { name: string; path: string; describe: (body: unknown) => string };
+export type Check = { name: string; path: string; describe: (body: unknown) => string };
 
-const CHECKS: Check[] = [
+export const CHECKS: Check[] = [
   { name: 'health', path: '/health', describe: () => 'API is up' },
   {
     name: 'products',
@@ -12,7 +12,7 @@ const CHECKS: Check[] = [
   { name: 'php-check', path: '/api/php-check', describe: () => 'Python reached the PHP service' },
 ];
 
-async function runCheck(apiBase: string, check: Check): Promise<CheckResult> {
+export async function runCheck(apiBase: string, check: Check): Promise<CheckResult> {
   try {
     const res = await fetch(apiBase + check.path);
     if (!res.ok) {

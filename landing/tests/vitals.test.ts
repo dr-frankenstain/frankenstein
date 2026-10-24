@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CheckResult } from '../lib/checks';
-import { toVitals } from '../lib/vitals';
+import { mergeResult, toVitals } from '../lib/vitals';
 
 const ok = (name: string, detail = 'fine'): CheckResult => ({ name, ok: true, detail });
 const bad = (name: string, detail = 'HTTP 500'): CheckResult => ({ name, ok: false, detail });
@@ -56,5 +56,26 @@ describe('toVitals', () => {
   it('fails a missing result when timed out', () => {
     const v = toVitals([ok('health')], true);
     expect(v.map((x) => x.status)).toEqual(['ok', 'fail', 'fail']);
+  });
+});
+
+describe('mergeResult', () => {
+  it('adds a first result to an empty state', () => {
+    expect(mergeResult(null, ok('health'))).toEqual([ok('health')]);
+  });
+
+  it('keeps earlier results and adds the new one', () => {
+    expect(mergeResult([ok('health')], bad('products'))).toEqual([ok('health'), bad('products')]);
+  });
+
+  it('replaces an earlier result with the same name', () => {
+    expect(mergeResult([bad('health')], ok('health'))).toEqual([ok('health')]);
+  });
+
+  it('lets one slow check leave the others readable when the watchdog fires', () => {
+    const partial = mergeResult(mergeResult(null, ok('health')), ok('php-check'));
+    const v = toVitals(partial, true);
+    expect(v.map((x) => x.status)).toEqual(['ok', 'fail', 'ok']);
+    expect(v[1].reading).toBe('FAIL: timed out');
   });
 });
