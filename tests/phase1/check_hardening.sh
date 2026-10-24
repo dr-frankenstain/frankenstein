@@ -4,11 +4,11 @@
 cd "$(dirname "$0")/../.." || exit 1
 source tests/phase1/lib.sh
 
-for pair in python:8000 php:8080 frontend:3001; do
+for pair in python:8000 php:8080 frontend:3001 landing:3000; do
   assert_contains "$(docker port "frankenstein-${pair%%:*}")" "127.0.0.1:${pair##*:}" "${pair%%:*} port must bind 127.0.0.1 only"
 done
 
-for svc in db php python frontend; do
+for svc in db php python frontend landing; do
   proj=$(docker inspect -f '{{index .Config.Labels "com.docker.compose.project"}}' "frankenstein-$svc")
   assert_eq "$proj" "frankenstein-$svc" "$svc compose project name must be unique to this repo"
 done

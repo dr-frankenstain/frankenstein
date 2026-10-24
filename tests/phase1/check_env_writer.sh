@@ -7,6 +7,7 @@ source tests/phase1/lib.sh
 py=$(cat backend/python-api/.env)
 php=$(cat backend/php-service/.env)
 fe=$(cat frontend/.env.local)
+land=$(cat landing/.env.local)
 
 for k in DB_HOST DB_USER DB_PASSWORD DB_NAME PHP_SERVICE_URL PHP_SERVICE_API_KEY; do
   assert_contains "$py" "$k=" "python .env has $k"
@@ -20,8 +21,10 @@ assert_not_contains "$php" "MYSQL_PASSWORD" "php .env must use MYSQL_PASS, not M
 
 assert_contains "$fe" "NEXT_PUBLIC_API_URL=http://localhost:8000" "frontend api url"
 assert_contains "$fe" "NEXT_PUBLIC_LANDING_URL=http://localhost:3000" "frontend landing url"
+assert_contains "$land" "NEXT_PUBLIC_API_URL=http://localhost:8000" "landing api url"
+assert_contains "$land" "NEXT_PUBLIC_CHALLENGES_URL=http://localhost:3001" "landing challenges url"
 
-for f in backend/python-api/.env backend/php-service/.env frontend/.env.local; do
+for f in backend/python-api/.env backend/php-service/.env frontend/.env.local landing/.env.local; do
   git check-ignore -q "$f" || fail "$f must be gitignored"
 done
 echo "PASS: env writer"

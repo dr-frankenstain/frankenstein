@@ -35,11 +35,11 @@ mysql_exec() {
   docker exec frankenstein-db mysql -ufrank -pmonster frankenstein -N -e "$1" 2>/dev/null
 }
 
-# teardown_stack -> stop and remove all four services and their volumes (reverse start order)
+# teardown_stack -> stop and remove all five services and their volumes (reverse start order)
 teardown_stack() {
   local d
   ./.pull-the-lever.sh --env-only
-  for d in frontend backend/python-api backend/php-service db; do
+  for d in landing frontend backend/python-api backend/php-service db; do
     docker compose -f "$d/docker-compose.yml" down -v >/dev/null 2>&1 || true
   done
 }

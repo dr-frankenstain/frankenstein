@@ -34,7 +34,7 @@ assert_contains "$out" "frankenstein-net" "failure names the missing network"
 assert_eq "$(docker ps -aq --filter name=frankenstein-php)" "" "no half-started php container"
 
 # The hidden script is referenced nowhere public
-hits=$(grep -rl "pull-the-lever" README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md .github frontend backend db \
+hits=$(grep -rl "pull-the-lever" README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md .github frontend landing backend db \
   --exclude-dir=node_modules --exclude-dir=.next 2>/dev/null)
 assert_eq "$hits" "" "pull-the-lever must not be referenced publicly"
 

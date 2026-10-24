@@ -18,8 +18,11 @@ if [ -n "$LANDING_HOST" ]; then
   (cd landing && exec npx next start -p 3999 >"$tmp/start.log" 2>&1) &
   pid=$!
 else
-  docker run -d --name frankenstein-landing-check -p 127.0.0.1:3999:3999 -v "$PWD/landing:/app" -w /app node:22 \
-    sh -c "npm ci --no-audit --no-fund && npx next build && npx next start -p 3999" >/dev/null || fail "could not start the check container"
+  mkdir "$tmp/out"
+  docker run -d --name frankenstein-landing-check -p 127.0.0.1:3999:3999 -v "$PWD/landing:/src:ro" -v "$tmp/out:/out" node:22 sh -c '
+    mkdir /app && tar -C /src --exclude=node_modules --exclude=.next -cf - . | tar -C /app -xf - && cd /app &&
+    npm ci --no-audit --no-fund && npx next build && cp -r .next/static /out/static && chmod -R a+rwX /out &&
+    npx next start -p 3999' >/dev/null || fail "could not start the check container"
 fi
 wait_for_url http://localhost:3999/ 240 || { [ -n "$LANDING_HOST" ] || docker logs frankenstein-landing-check 2>&1 | tail -30; tail -30 "$tmp/build.log" 2>/dev/null; fail "landing did not come up on :3999"; }
 
@@ -77,7 +80,9 @@ done
 assert_order "$html" "Proof of life" "How the monster got built"
 
 # --- no full-screen flash (WCAG: at most three flashes per second)
-if grep -rqE 'mix-blend-mode: ?soft-light|__flash' landing/.next/static; then
+static=landing/.next/static
+[ -n "$LANDING_HOST" ] || static="$tmp/out/static"
+if grep -rqE 'mix-blend-mode: ?soft-light|__flash' "$static"; then
   fail "built assets still contain the draft's full-screen flash overlay"
 fi
 assert_contains "$html" '<canvas' "shared lightning canvas"

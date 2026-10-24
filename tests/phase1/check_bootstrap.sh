@@ -8,12 +8,14 @@ stack_ok() {
   assert_eq "$(http_code http://localhost:8000/health)" 200 "$1: python /health"
   assert_eq "$(http_code http://localhost:8080/health.php -H "$KEY")" 200 "$1: php /health.php"
   assert_eq "$(http_code http://localhost:3001/ --max-time 30)" 302 "$1: legacy frontend / redirects"
+  assert_eq "$(http_code http://localhost:3000/ --max-time 30)" 200 "$1: landing /"
   assert_eq "$(http_code http://localhost:8000/api/php-check)" 200 "$1: python /api/php-check"
 }
 
 teardown_stack
 out=$(./.pull-the-lever.sh 2>&1) || fail "first bootstrap run failed: ${out: -400}"
 assert_contains "$out" "localhost:3001" "bootstrap prints the legacy frontend URL"
+assert_contains "$out" "localhost:3000" "bootstrap prints the landing URL"
 stack_ok "first run"
 
 ./.pull-the-lever.sh >/dev/null 2>&1 || fail "second bootstrap run (already up) failed"

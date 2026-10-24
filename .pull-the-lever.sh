@@ -7,7 +7,7 @@ API_KEY="igor-says-hello"
 WAIT_TIMEOUT="${WAIT_TIMEOUT:-30}"
 
 write_env_files() {
-  mkdir -p backend/python-api backend/php-service frontend
+  mkdir -p backend/python-api backend/php-service frontend landing
   cat > backend/python-api/.env <<ENV
 DB_HOST=db
 DB_USER=frank
@@ -26,6 +26,10 @@ ENV
   cat > frontend/.env.local <<ENV
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_LANDING_URL=http://localhost:3000
+ENV
+  cat > landing/.env.local <<ENV
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_CHALLENGES_URL=http://localhost:3001
 ENV
 }
 
@@ -47,6 +51,7 @@ php_up()      { curl -fs --max-time 10 -H "X-API-Key: ${API_KEY}" http://localho
 python_up()   { curl -fs --max-time 10 http://localhost:8000/health; }
 # the legacy app's / answers 302 (it forwards to the landing page), so only the status counts
 frontend_up() { [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:3001/)" = 302 ]; }
+landing_up()  { curl -fs --max-time 30 http://localhost:3000/; }
 
 raise() {
   write_env_files
@@ -54,7 +59,9 @@ raise() {
   up backend/php-service; wait_for php-service php_up
   up backend/python-api;  wait_for python-api python_up
   up frontend;            wait_for frontend frontend_up
+  up landing;             wait_for landing landing_up
   echo "It's alive!"
+  echo "  landing:    http://localhost:3000"
   echo "  frontend:   http://localhost:3001"
   echo "  python api: http://localhost:8000"
   echo "  php:        http://localhost:8080"
